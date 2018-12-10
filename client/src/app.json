@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/my/main",
+    "pages/index/main",
+    "pages/zutuan/main",
+    "pages/near/main"
+    
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "批物帮—买啥都批发！",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color":"#8a8a8a",
+    "selectedColor":"#CE4031",
+    "backgroundColor":"#fff",
+    "borderStyle":"white",
+    "position": "bottom",
+    "list":[{
+      "pagePath":"pages/index/main",
+      "text":"每日批发",
+      "iconPath":"/static/icon/index.png",
+      "selectedIconPath":"/static/icon/index1.png"
+    },{
+      "pagePath":"pages/zutuan/main",
+      "text":"组团",
+      "iconPath":"/static/icon/tuan.png",
+      "selectedIconPath":"/static/icon/tuan1.png"
+    },{
+      "pagePath":"pages/near/main",
+      "text":"周边",
+      "iconPath":"/static/icon/near.png",
+      "selectedIconPath":"/static/icon/near1.png"
+    },{
+      "pagePath":"pages/my/main",
+      "text":"我的",
+      "iconPath":"/static/icon/my.png",
+      "selectedIconPath":"/static/icon/my1.png"
+    }]
+
+  }
+}

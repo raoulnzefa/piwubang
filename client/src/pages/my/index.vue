@@ -6,10 +6,10 @@
       <div class="l">
         <img :src="userInfo.avatarUrl" alt="原始头像" mode="widthFix">
       </div>
-      <div class="m1 m" v-if="!haslogin">
+      <div class="m1 m" v-if="!logged">
         <button class="loginbtn" open-type="getUserInfo" @getuserinfo="getUserInfo">立即登录</button>
       </div>
-      <div class="m2 m" v-if="haslogin">
+      <div class="m2 m" v-if="logged">
         <span>{{userInfo.nickName}}</span>
       </div>
 
@@ -18,52 +18,56 @@
     <div class="mainpart mid">
       <div class="head">
         <div class="myorder">我的订单</div>
-        <div class="toall">查看全部<i class='iconfont icon-tubiao_xiangyou'></i></div>
+        <div class="toall">查看全部
+          <i class="iconfont icon-tubiao_xiangyou"></i>
+        </div>
       </div>
       <div class="list">
         <div>
-          <i class='iconfont icon-fukuan'></i>
+          <i class="iconfont icon-fukuan"></i>
           <div>待付款</div>
         </div>
         <div>
-          <i class='iconfont icon-icon-test'></i>
+          <i class="iconfont icon-icon-test"></i>
           <div>待发货</div>
         </div>
         <div>
-          <i class='iconfont icon-yifahuodefuben'></i>
+          <i class="iconfont icon-yifahuodefuben"></i>
           <div>已发货</div>
         </div>
         <div>
-          <i class='iconfont icon-yiwanchengdingdan'></i>
+          <i class="iconfont icon-yiwanchengdingdan"></i>
           <div>已完成</div>
         </div>
         <div>
-          <i class='iconfont icon-tui'></i>
+          <i class="iconfont icon-tui"></i>
           <div>退换货</div>
         </div>
       </div>
     </div>
     <div class="mainpart btm">
-      <div class="list">
-        收货地址<i class='iconfont icon-tubiao_xiangyou'></i>
+      <div class="list">收货地址
+        <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">
-        联系我们<i class='iconfont icon-tubiao_xiangyou'></i>
+      <div class="list">联系我们
+        <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">
-        供应商入驻<i class='iconfont icon-tubiao_xiangyou'></i>
+      <div class="list">供应商入驻
+        <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">
-        我的邀请<i class='iconfont icon-tubiao_xiangyou'></i>
+      <div class="list">我的邀请
+        <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">
-        联系我们<i class='iconfont icon-tubiao_xiangyou'></i>
+      <div class="list">联系我们
+        <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
     </div>
     <!-- <mp-button open-type="getUserInfo" @getuserinfo="getUserInfo">123</mp-button> -->
   </div>
 </template>
 <script>
+import qc from 'wafer2-client-sdk'
+import config from '@/config'
 import mpButton from "mpvue-weui/src/button";
 export default {
   components: {
@@ -71,7 +75,7 @@ export default {
   },
   data: function() {
     return {
-      haslogin: false,
+      logged: false,
       userInfo: {
         avatarUrl: "/static/img/initialAvatar.png",
         city: "",
@@ -89,47 +93,104 @@ export default {
     console.log(this);
 
     // 授权检查
-    wx.getSetting({
-      success(res) {
-        console.log(res.authSetting);
-        // let
-        if (res.authSetting["scope.userInfo"]) {
-          // 已授权
-          self.haslogin = true;
-          wx.getUserInfo({
-            success: res => {
-              self.userInfo = res.userInfo;
-              console.log(res);
-            }
-          });
-        } else {
-          // 未授权
-        }
-        // res.authSetting = {
-        //   "scope.userInfo": true,
-        //   "scope.userLocation": true
-        // }
-      }
-    });
+    // wx.getSetting({
+    //   success(res) {
+    //     console.log(res.authSetting);
+    //     // let
+    //     if (res.authSetting["scope.userInfo"]) {
+    //       // 已授权
+    //       self.logged = true;
+    //       wx.getUserInfo({
+    //         success: res => {
+    //           self.userInfo = res.userInfo;
+    //           console.log(res);
+    //         }
+    //       });
+    //     } else {
+    //       // 未授权
+    //     }
+    //     // res.authSetting = {
+    //     //   "scope.userInfo": true,
+    //     //   "scope.userLocation": true
+    //     // }
+    //   }
+    // });
   },
   methods: {
+    showBusy: text =>
+      wx.showToast({
+        title: text,
+        icon: "loading",
+        duration: 10000
+      }),
+
+    // 显示成功提示
+    showSuccess: text =>
+      wx.showToast({
+        title: text,
+        icon: "success"
+      }),
+
+    // 显示失败提示
+    showModel: (title, content) => {
+      wx.hideToast();
+      wx.showModal({
+        title,
+        content: JSON.stringify(content),
+        showCancel: false
+      });
+    },
     getUserInfo() {
       console.log(this);
       var self = this;
       console.log("getuserinfo");
       // 调用登录接口
-      wx.login({
-        success: () => {
-          wx.getUserInfo({
-            success: res => {
-              self.haslogin = true;
 
-              self.userInfo = res.userInfo;
-              console.log(res);
-            }
-          });
-        }
-      });
+      this.showBusy("正在登录");
+      const session = qc.Session.get();
+
+      if (session) {
+        // 第二次登录
+        // 或者本地已经有登录态
+        // 可使用本函数更新登录态
+        qc.loginWithCode({
+          success: res => {
+            self.userInfo=res
+            self.logged=true 
+            self.showSuccess("登录成功");
+          },
+          fail: err => {
+            console.error(err);
+            self.showModel("登录错误", err.message);
+          }
+        });
+      } else {
+        // 首次登录
+        qc.login({
+          success: res => {
+            self.userInfo=res
+            self.logged=true 
+            self.showSuccess("登录成功");
+          },
+          fail: err => {
+            console.error(err);
+            self.showModel("登录错误", err.message);
+          }
+        });
+      }
+
+      // wx.login({
+      //   success: () => {
+      //     wx.getUserInfo({
+      //       success: res => {
+      //         self.logged = true;
+
+      //         self.userInfo = res.userInfo;
+      //         console.log(res);
+      //       }
+      //     });
+      //   }
+      // });
     }
   }
 };
@@ -173,44 +234,43 @@ $maincolor: #ce4031;
       background: #ce4031;
     }
   }
-  .mid{
-    .head{
+  .mid {
+    .head {
       display: flex;
       flex-direction: row;
-      justify-content: space-between ;
-      .myorder{
+      justify-content: space-between;
+      .myorder {
         font-family: Courier, monospace;
         font-size: 36rpx;
-        
       }
-      .toall{
+      .toall {
         display: flex;
         flex-direction: row;
-        align-items:center;
-        color: rgb(156,156,156);
+        align-items: center;
+        color: rgb(156, 156, 156);
         font-size: 32rpx;
       }
     }
-    .list{
+    .list {
       display: flex;
       flex-direction: row;
       justify-content: space-around;
-      &>div{
+      & > div {
         text-align: center;
-        i{
+        i {
           font-size: 75rpx;
           // color: rgb(166,166,166);
-          color:  $maincolor;
+          color: $maincolor;
         }
-        div{
+        div {
           font-size: 32rpx;
-          color: rgb(89,89,89)
+          color: rgb(89, 89, 89);
         }
       }
     }
   }
-  .btm{
-    .list{  
+  .btm {
+    .list {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -218,7 +278,6 @@ $maincolor: #ce4031;
       justify-content: space-between;
       border-bottom: 1px solid #eee;
     }
-
   }
 }
 </style>

@@ -27,6 +27,7 @@ export default {
     width: 750rpx;
     background: pink;
     position: relative;
+    overflow: hidden;
     img{
       width: 100%;
       float:left;

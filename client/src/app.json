@@ -1,16 +1,19 @@
 {
   "pages": [
-    "pages/my/main",
+    "pages/goodsdetail/main",
     "pages/index/main",
+    
+    "pages/my/main",
+  
     "pages/zutuan/main",
     "pages/near/main"
     
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
+    "navigationBarBackgroundColor": "#CE4031",
     "navigationBarTitleText": "批物帮—买啥都批发！",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "white"
   },
   "tabBar": {
     "color":"#8a8a8a",

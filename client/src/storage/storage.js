@@ -1,3 +1,5 @@
+// 小程序端存储
+
 const CACHE_TIME = 86400000 // 1day
 
 function save(key, data) {

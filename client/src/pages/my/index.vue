@@ -8,6 +8,7 @@
       </div>
       <div class="m1 m" v-if="!logged">
         <button class="loginbtn" open-type="getUserInfo" @getuserinfo="getUserInfo">立即登录</button>
+        <!-- <mp-button class="loginbtn" open-type="getUserInfo" @getuserinfo="getUserInfo">立即登录</mp-button> -->
       </div>
       <div class="m2 m" v-if="logged">
         <span>{{userInfo.nickName}}</span>
@@ -90,31 +91,31 @@ export default {
   created() {
     //
     var self = this;
-    console.log(this);
+    // console.log(this);
 
     // 授权检查
-    // wx.getSetting({
-    //   success(res) {
-    //     console.log(res.authSetting);
-    //     // let
-    //     if (res.authSetting["scope.userInfo"]) {
-    //       // 已授权
-    //       self.logged = true;
-    //       wx.getUserInfo({
-    //         success: res => {
-    //           self.userInfo = res.userInfo;
-    //           console.log(res);
-    //         }
-    //       });
-    //     } else {
-    //       // 未授权
-    //     }
-    //     // res.authSetting = {
-    //     //   "scope.userInfo": true,
-    //     //   "scope.userLocation": true
-    //     // }
-    //   }
-    // });
+    wx.getSetting({
+      success(res) {
+        // console.log(res.authSetting);
+        // let
+        if (res.authSetting["scope.userInfo"]) {
+          // 已授权
+          self.logged = true;
+          wx.getUserInfo({
+            success: res => {
+              self.userInfo = res.userInfo;
+              // console.log(res);
+            }
+          });
+        } else {
+          // 未授权
+        }
+        // res.authSetting = {
+        //   "scope.userInfo": true,
+        //   "scope.userLocation": true
+        // }
+      }
+    });
   },
   methods: {
     showBusy: text =>
@@ -141,9 +142,7 @@ export default {
       });
     },
     getUserInfo() {
-      console.log(this);
       var self = this;
-      console.log("getuserinfo");
       // 调用登录接口
 
       this.showBusy("正在登录");
@@ -160,7 +159,7 @@ export default {
             self.showSuccess("登录成功");
           },
           fail: err => {
-            console.error(err);
+            // console.error(err);
             self.showModel("登录错误", err.message);
           }
         });
@@ -173,7 +172,7 @@ export default {
             self.showSuccess("登录成功");
           },
           fail: err => {
-            console.error(err);
+            // console.error(err);
             self.showModel("登录错误", err.message);
           }
         });

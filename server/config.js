@@ -6,20 +6,22 @@ const CONF = {
 
     // 微信小程序 App ID
     appId: 'wx88152eef614c3441',
-
     // 微信小程序 App Secret
     appSecret: '37971006ed3baa814e0de260131788cd',
+
+    // 加密token
     wxMessageToken: 'tech997.com',
+    
     // 是否使用腾讯云代理登录小程序
-    useQcloudLogin: true,
+    useQcloudLogin: false,
     // 
     serverHost: 'localhost',
     tunnelServerUrl: '',
     tunnelSignatureKey: '',
-    // 腾讯云存储的相关信息
-    qcloudAppId: '1257779595',
-    qcloudSecretId: 'AKIDc5DzdAbt0xkJVYtTr6QeruoYfXHuCgpo',
-    qcloudSecretKey: 'JWgaO3awGnFf2IOL8lzsPuNtJYgEpuof',
+    // 腾讯云存储的相关信息 见：https://console.qcloud.com/cos5/bucket/setting?type=filelist&bucketName=piwubang-1257779595&path=%252Ftestupload%252F&region=ap-shanghai
+    qcloudAppId: '1257779595', 
+    qcloudSecretId: 'AKIDc5DzdAbt0xkJVYtTr6QeruoYfXHuCgpo', 
+    qcloudSecretKey: 'JWgaO3awGnFf2IOL8lzsPuNtJYgEpuof', 
     /**
      * MySQL 配置，用来存储 session 和用户信息
      * 若使用了腾讯云微信小程序解决方案

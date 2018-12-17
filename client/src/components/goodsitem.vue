@@ -147,6 +147,7 @@ $maincolor: #ce4031;
           border-radius: 35rpx;
           color: #fff;
           background-color: $maincolor;
+          font-size: 36rpx;
         }
         .hoverbtn {
           background-color: #9c2518;

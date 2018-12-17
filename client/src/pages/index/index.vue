@@ -313,6 +313,7 @@ swiper {
     color: $maincolor;
     border: 1px solid $maincolor;
     margin: 0;
+    font-size: 36rpx;
   }
   .joinbtnhover {
     background-color: #eee;

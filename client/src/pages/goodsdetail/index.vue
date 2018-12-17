@@ -64,11 +64,13 @@ import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
+import qc from 'wafer2-client-sdk'
+import conf from '@/config'
 
 import slogan from "@/components/slogan";
 import goodsItem from "@/components/goodsitem";
 
-import mpButton from "mpvue-weui/src/button";
+// import mpButton from "mpvue-weui/src/button";
 
 export default {
   data() {
@@ -104,7 +106,6 @@ export default {
   },
   components: {
     slogan,
-    mpButton,
     goodsItem
   },
   methods: {
@@ -178,8 +179,7 @@ export default {
     },
     routeToHome() {
       let url = "/pages/index/main";
-      console.log(url);
-
+      // console.log(url);
       wx.switchTab({ url });
     },
     contact() {},
@@ -188,23 +188,46 @@ export default {
       // https://developers.weixin.qq.com/miniprogram/dev/api/wx.requestPayment.html
       // https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_3&index=1
       // 有点复杂 需要通读API
-      wx.requestPayment({
-        timeStamp:new Date().getTime()+'',
-        nonceStr:"as3da3sd3asd35a3s5d13as1d3",
-        package:'',
-        signType:"",//默认MD5
-        paySign:'',
-        success:function(){
-          console.log('success');
+      // wx.requestPayment({
+      //   timeStamp:new Date().getTime()+'',
+      //   nonceStr:"as3da3sd3asd35a3s5d13as1d3",
+      //   package:'',
+      //   signType:"",//默认MD5
+      //   paySign:'',
+      //   success:function(){
+      //     console.log('success');
+      //   },
+      //   fail:function(){
+      //     console.log('fail');
+
+      //   },
+      //   complete:function(){
+      //     console.log('complete');
+      //   }
+      // })
+
+      // 跳转至订单页
+      // let url = "/pages/order/main";
+      // // console.log(url);
+      // wx.navigateTo({ url });
+
+      // 测试支付
+      //qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
+      qc.request({
+        url: conf.service.prepayUrl,
+        method:"POST",
+        data:{
+          orderCode:'asd7as7d89a79s8d',//商户订单号
+          money:'0.22',
+          orderID:'asd7as7d89a79s8d',
         },
-        fail:function(){
-          console.log('fail');
-          
+        success: function(response) {
+          console.log(response);
         },
-        complete:function(){
-          console.log('complete');
+        fail: function(err) {
+          console.log(err);
         }
-      })
+      });
     }
   }
 };

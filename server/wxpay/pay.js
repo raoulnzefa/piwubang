@@ -20,17 +20,17 @@ const mchid = '1515387251'
 const mchkey = 'TVU1MO18PS9YQLW58P2SENSEW6O46JIY';
 const wxurl = 'http://www.tech997.cn/';
 
-const unifiedorder = (ctx, next) => {
+const unifiedorder = async (ctx, next) => {
     console.log('ctx.query:');
-    console.log(ctx);
+    console.log(ctx.query);
     console.log('-------------');
 
     
     //首先拿到前端传过来的参数
-    let orderCode = ctx.query.orderCode;
-    let money =     ctx.query.money;
-    let orderID =   ctx.query.orderID;
-
+    let orderCode = 'asc4as1cas1c3' //ctx.query.orderCode;
+    let money =  0.39   //ctx.query.money;
+    let orderID =  'asc4as1cas1c36' //ctx.query.orderID;
+    let openid = 'oxw_15Ul35xC40YCRmCxSgzl1trQ'
     console.log('APP传过来的参数是：', orderCode + '----' + money + '------' + orderID );
     
     /**
@@ -65,7 +65,7 @@ const unifiedorder = (ctx, next) => {
     let timestamp = payutil.createTimeStamp();
     let body = '测试微信支付';
     let out_trade_no = orderCode;
-    let total_fee = payutil.getmoney(0.38);
+    let total_fee = payutil.getmoney(0.41);
     let spbill_create_ip = ctx.req.connection.remoteAddress;
     console.log('ip:' + spbill_create_ip);
     
@@ -76,13 +76,14 @@ const unifiedorder = (ctx, next) => {
         appid,
         body,
         mch_id,
-        mchkey,
         nonce_str,
         notify_url,
         out_trade_no,
         spbill_create_ip,
         total_fee,
-        trade_type
+        trade_type,
+        mchkey,
+        openid
     );
 
     console.log('sign==', sign);
@@ -98,6 +99,7 @@ const unifiedorder = (ctx, next) => {
     formData += "<spbill_create_ip>" + spbill_create_ip + "</spbill_create_ip>";
     formData += "<total_fee>" + total_fee + "</total_fee>";
     formData += "<trade_type>" + trade_type + "</trade_type>";
+    formData += "<openid>" + openid + "</openid>";
     formData += "<sign>" + sign + "</sign>";
     formData += "</xml>";
 
@@ -105,40 +107,53 @@ const unifiedorder = (ctx, next) => {
     //官方API https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1
     var url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     
-
-    request({ url: url, method: 'POST', body: formData }, function (err, response, body) {
-        if (!err && response.statusCode == 200) {
-            console.log(body);
-
-            xmlreader.read(body.toString("utf-8"), function (errors, response) {
-                if (null !== errors) {
-                    console.log(errors)
-                    return;
+    let getunifiedorder = async function(url, formData ){
+        return new Promise(function(resolve, reject){
+            request({ url: url, method: 'POST', body: formData}, function (err, response, body) {
+                if (!err && response.statusCode == 200) {
+                    console.log(body);
+        
+                    xmlreader.read(body.toString("utf-8"), function (errors, response) {
+                        if (null !== errors) {
+                            console.log(errors)
+                            return;
+                        }
+                        console.log('--------------response--------------');
+                        
+                        console.log(response);
+                        console.log('--------------response end--------------');
+                        
+                        console.log('长度===', response.xml.prepay_id.text().length);
+                        var prepay_id = response.xml.prepay_id.text();
+                        console.log('解析后的prepay_id==', prepay_id); //wx18003137410865252a0c67431314681173
+        
+        
+                        //将预支付订单和其他信息一起签名后返回给前端
+                        let paySign = payutil.paysignjsapifinal(appid, mch_id, prepay_id, nonce_str, timestamp, mchkey);
+                        console.log('paySign:',paySign);
+                        
+                        resolve({ 
+                            'prepayId': prepay_id, 
+                            'nonceStr': nonce_str, 
+                            'timeStamp': timestamp, 
+                            'package': 'prepay_id='+prepay_id, 
+                            'paySign': paySign 
+                        })
+                        // ctx.body = 
+                        // next()
+                    });
+        
+        
+                }else{
+                    resolve('getunifiedorder fail')
                 }
-                console.log('长度===', response.xml.prepay_id.text().length);
-                var prepay_id = response.xml.prepay_id.text();
-                console.log('解析后的prepay_id==', prepay_id);
-
-
-                //将预支付订单和其他信息一起签名后返回给前端
-                let finalsign = payutil.paysignjsapifinal(appid, mch_id, prepay_id, nonce_str, timestamp, mchkey);
-
-                ctx.body = { 
-                    'appId': appid, 
-                    'partnerId': mchid, 
-                    'prepayId': prepay_id, 
-                    'nonceStr': nonce_str, 
-                    'timeStamp': timestamp, 
-                    'package': 'Sign=WXPay', 
-                    'sign': finalsign 
-                }
-
+                
             });
-
-
-        }
-    });
-
+        })
+    }
+    
+    let res = await getunifiedorder(url, formData )
+    ctx.body = res
 }
 
 module.exports = unifiedorder

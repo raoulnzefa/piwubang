@@ -188,12 +188,20 @@ export default {
       // https://developers.weixin.qq.com/miniprogram/dev/api/wx.requestPayment.html
       // https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_3&index=1
       // 有点复杂 需要通读API
+  //     { appid: 'wx88152eef614c3441',
+//         partnerid: '1515387251',
+  //       prepayid: 'wx18003137410865252a0c67431314681173',
+  //       package: 'Sign=WXPay',
+  //       noncestr: '777W81KWYTCE',
+  //       timestamp: '1545064296' }
+  //       stringstringstring= appid=wx88152eef614c3441&noncestr=777W81KWYTCE&package=Sign=WXPay&partnerid=1515387251&prepayid=wx18003137410865252a0c67431314681173&timestamp=1545064296&key=TVU1MO18PS9YQLW58P2SENSEW6O46JIY
       // wx.requestPayment({
-      //   timeStamp:new Date().getTime()+'',
-      //   nonceStr:"as3da3sd3asd35a3s5d13as1d3",
-      //   package:'',
-      //   signType:"",//默认MD5
-      //   paySign:'',
+      //   // appId:'wx88152eef614c3441',
+      //   timeStamp: '1545065922',
+      //   nonceStr:"95GQTD8OCKFC",
+      //   package:'prepay_id=wx18005843135707252a0c67430768776579',
+      //   signType:"MD5",//默认MD5
+      //   paySign:'DD32FD592AF142FA6E330DC236EBA968',
       //   success:function(){
       //     console.log('success');
       //   },
@@ -212,7 +220,8 @@ export default {
       // wx.navigateTo({ url });
 
       // 测试支付
-      //qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
+      // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
+      
       qc.request({
         url: conf.service.prepayUrl,
         method:"POST",
@@ -228,6 +237,7 @@ export default {
           console.log(err);
         }
       });
+
     }
   }
 };

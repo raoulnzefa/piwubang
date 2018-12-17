@@ -26,7 +26,7 @@ var wxpay = {
     },
  
     //签名加密算法
-    paysignjsapi: function (appid, body, mch_id, nonce_str, notify_url, out_trade_no, spbill_create_ip, total_fee, trade_type, mchkey) {
+    paysignjsapi: function (appid, body, mch_id, nonce_str, notify_url, out_trade_no, spbill_create_ip, total_fee, trade_type, mchkey, openid) {
         var ret = {
             appid: appid,
             mch_id: mch_id,
@@ -36,7 +36,8 @@ var wxpay = {
             out_trade_no: out_trade_no,
             spbill_create_ip: spbill_create_ip,
             total_fee: total_fee,
-            trade_type: trade_type
+            trade_type: trade_type,
+            openid: openid
         };
         console.log('ret==', ret);
         var string = raw(ret);
@@ -49,12 +50,13 @@ var wxpay = {
     //签名加密算法,第二次的签名
     paysignjsapifinal: function (appid,mch_id,prepayid,noncestr,timestamp,mchkey) {
         var ret = {
-            appid: appid,
-            partnerid: mch_id,
-            prepayid: prepayid,
-            package: 'Sign=WXPay',
-            noncestr: noncestr,
-            timestamp: timestamp,
+            appId: appid,
+            // partnerid: mch_id,
+            // prepayid: prepayid,
+            signType:"MD5",
+            package: 'prepay_id=' + prepayid,
+            nonceStr: noncestr,
+            timeStamp: timestamp,
         };
         console.log('retretret==', ret);
         var string = raw(ret);

@@ -223,8 +223,9 @@ export default {
       // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
       
       qc.request({
+        login:true,
         url: conf.service.prepayUrl,
-        method:"POST",
+        // method:"POST",
         data:{
           orderCode:'asd7as7d89a79s8d',//商户订单号
           money:'0.22',

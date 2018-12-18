@@ -5,13 +5,15 @@
  * @author shenjie
  *
  * Created at     : 2018-12-17 16:14:34 
- * Last modified  : 2018-12-17 18:56:10
+ * Last modified  : 2018-12-18 18:17:05
  */
 
 var request = require('request');
 var xmlreader = require("xmlreader");
 var fs = require("fs");
 var payutil = require('./utils');
+var generateOrderId = require('./orderid.js');
+
 
 // 支付配置项
 const appid = 'wx88152eef614c3441';
@@ -25,6 +27,7 @@ const unifiedorder = async (ctx, next) => {
     console.log(ctx.query);
     console.log('-------------');
 
+    // 用户信息 存储于 ctx.state.$wxInfo
     
     //首先拿到前端传过来的参数
     let orderCode = 'asc4as1cas1c3' //ctx.query.orderCode;
@@ -103,7 +106,7 @@ const unifiedorder = async (ctx, next) => {
     formData += "<sign>" + sign + "</sign>";
     formData += "</xml>";
 
-    console.log('formData===', formData);
+    // console.log('formData===', formData);
     //官方API https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1
     var url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     
@@ -111,17 +114,12 @@ const unifiedorder = async (ctx, next) => {
         return new Promise(function(resolve, reject){
             request({ url: url, method: 'POST', body: formData}, function (err, response, body) {
                 if (!err && response.statusCode == 200) {
-                    console.log(body);
         
                     xmlreader.read(body.toString("utf-8"), function (errors, response) {
                         if (null !== errors) {
                             console.log(errors)
                             return;
                         }
-                        console.log('--------------response--------------');
-                        
-                        console.log(response);
-                        console.log('--------------response end--------------');
                         
                         console.log('长度===', response.xml.prepay_id.text().length);
                         var prepay_id = response.xml.prepay_id.text();
@@ -139,13 +137,11 @@ const unifiedorder = async (ctx, next) => {
                             'package': 'prepay_id='+prepay_id, 
                             'paySign': paySign 
                         })
-                        // ctx.body = 
-                        // next()
                     });
         
         
                 }else{
-                    resolve('getunifiedorder fail')
+                    resolve(err)
                 }
                 
             });

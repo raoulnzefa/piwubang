@@ -36,7 +36,7 @@ router.post('/message', controllers.message.post)
 
 
 // !!! 小程序支付
-router.post('/prepay', unifiedorder)
+router.get('/prepay', validationMiddleware, unifiedorder)
 
 // !!! 小程序支付 回调
 // router.get('/wxnotify', unifiedorder)

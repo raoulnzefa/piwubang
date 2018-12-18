@@ -20,7 +20,4 @@ app.use(router.routes())
 app.listen(config.port, () => {
     debug(`sever started, and is listening on port ${config.port}`);
     console.log(`listen @${config.port} `);
-    
-
-
 })

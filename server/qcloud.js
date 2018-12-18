@@ -13,7 +13,6 @@ const sdkConfig = (() => {
         const stats = fs.statSync(sdkConfigPath)
 
         if (!stats.isFile()) {
-            console.log('sdk.config.json 不存在，将使用 config.js 中的配置')
             debug('666sdk.config.json 不存在，将使用 config.js 中的配置')
             return {}
         }

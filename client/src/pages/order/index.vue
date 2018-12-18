@@ -1,50 +1,32 @@
 <template>
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
-    <swiper indicator-dots="true" circular="true" next-margin="0" previous-margin="0">
-      <block v-for="(x, i) in goodsdetail.urls" :key="i">
-        <swiper-item>
-          <img :src="x" class="slide-image" mode>
-        </swiper-item>
-      </block>
-    </swiper>
-    <div class="head">
-      <div class="title">{{goodsdetail.name}}</div>
-      <div class="brdesc">{{goodsdetail.briefDesc}}</div>
-    </div>
-    <!-- #f9ffea -->
-    <div class="price">
-      <div class="up">
+    <div class="header main">
+      <div class="u">订单详情</div>
+      <div class="m">
         <div class="l">
-          <div class="nowprice">
-            <div class="tag">批物价</div>
-            <div class="nowmoney">￥{{goodsdetail.currentPrice}}</div>
-          </div>
-          <div class="oldprice">
-            <div class="tag">市场价</div>
-            <div class="oldmoney">￥{{goodsdetail.oldPrice}}</div>
-          </div>
+          <img :src="goodsdetail.urls[0]" mode='widthFix' alt="">
+        </div>
+        <div class="m">
+          {{goodsdetail.name}}
         </div>
         <div class="r">
-          <div class="tag">各大商超价</div>
-          <div
-            class="marketprice"
-            v-for="(x,i) in goodsdetail.marketPrice"
-            :key="i"
-          >{{x.name}}:￥{{x.price}}</div>
+          ￥{{goodsdetail.currentPrice}}
         </div>
       </div>
-      <div class="down">
-        <i class="iconfont icon-kucunguanli"></i>
-        商品库存{{goodsdetail.stock}}件
+      <div class="d">
+          数量：
+          <button @click="count>1?count--:''" :disabled='count<=1'>-</button>
+          <input type="text" v-model='count' disabled>
+          <button @click="count++">+</button>
       </div>
+
     </div>
-    <!-- <div class="countchange">
-        数量：
-        <button @click="count>0?count--:''" :disabled='count==0'>-</button>
-        <input type="text" v-model='count' disabled>
-        <button @click="count++">+</button>
-    </div> -->
+    <div class="main">
+      <div class="u">发货详情</div>
+      
+    </div>
+    <div class="main"></div>
 
 
     <!--  -->
@@ -52,17 +34,13 @@
       <div class="item s part1">
         <div @click="routeToHome">
           <i class="iconfont icon-shouye"></i>
-          前往首页
-        </div>
-        <div @click="contact">
-          <i class="iconfont icon-dianhua"></i>
-          联系商家
+          返回首页
         </div>
       </div>
       <div class="item b part4">
-        <!-- 加入购物车 -->
+        总计:￥{{totalfee || 0}}
       </div>
-      <div class="item b part5" hover-class="hoverbtn" @click="buynow">立即购买</div>
+      <div class="item b part5" hover-class="hoverbtn" @click="paynow">确认付款</div>
     </div>
   </div>
 </template>
@@ -89,7 +67,7 @@ export default {
       location: "尚未获取定位",
 
       goodsdetail: {
-        goodsid: "asd13as1d",
+        _id: "asd13as1d",
         name: "智利车厘子",
         briefDesc: "智利车厘子",
         soldCount: "125",
@@ -117,6 +95,11 @@ export default {
   components: {
     slogan,
     goodsItem
+  },
+  computed:{
+    totalfee:function(){
+      return this.count * this.goodsdetail.currentPrice
+    }
   },
   methods: {
     bindViewTap() {
@@ -193,10 +176,7 @@ export default {
       wx.switchTab({ url });
     },
     contact() {},
-    buynow() {
-      console.log("buynow");
-      let url = `/pages/order/main?goodsid=${this.goodsdetail.goodsid}&count=${this.count}`
-      wx.navigateTo({url})
+    paynow() {
       // https://developers.weixin.qq.com/miniprogram/dev/api/wx.requestPayment.html
       // https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_3&index=1
       // 有点复杂 需要通读API
@@ -234,22 +214,22 @@ export default {
       // 测试支付
       // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
       
-      // qc.request({
-      //   login:true,
-      //   url: conf.service.prepayUrl,
-      //   // method:"POST",
-      //   data:{
-      //     orderCode:'asd7as7d89a79s8d',//商户订单号
-      //     money:'0.22',
-      //     orderID:'asd7as7d89a79s8d',
-      //   },
-      //   success: function(response) {
-      //     console.log(response);
-      //   },
-      //   fail: function(err) {
-      //     console.log(err);
-      //   }
-      // });
+      qc.request({
+        login:true,
+        url: conf.service.prepayUrl,
+        // method:"POST",
+        data:{
+          orderCode:'asd7as7d89a79s8d',//商户订单号
+          money:'0.22',
+          orderID:'asd7as7d89a79s8d',
+        },
+        success: function(response) {
+          console.log(response);
+        },
+        fail: function(err) {
+          console.log(err);
+        }
+      });
 
     }
   }
@@ -259,92 +239,49 @@ export default {
 <style scoped lang='scss'>
 $maincolor: #ce4031;
 
-swiper {
-  width: 750rpx;
-  height: 450rpx;
-  swiper-item {
-    width: 750rpx;
-    img {
-      display: flex;
-      width: 750rpx;
-      height: 100%;
-    }
-  }
-}
-.head {
-  padding: 20rpx 0;
-  text-align: center;
-  .title {
-    font-size: 40rpx;
-    font-weight: 700;
-    max-width: 80%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    margin: 0 auto;
-  }
-  .brdesc {
-    color: rgb(107, 107, 107);
-    max-width: 80%;
-    margin: 0 auto;
-  }
-}
-.price {
-  background-color: #f9ffea;
+.main{
+  border-top: 20rpx solid #f5f5f5 ;
   padding: 20rpx 20rpx;
-  .up {
-    display: flex;
-    flex-direction: row;
-    .l {
-      width: 65%;
-      display: flex;
-      flex-direction: row;
-      .nowmoney {
-        font-size: 60rpx;
-        color: $maincolor;
-        height: 100rpx;
-      }
-      .oldmoney {
-        height: 100rpx;
-        line-height: 100rpx;
-        text-decoration: line-through;
-        color: #c0c0c0;
-      }
-    }
-    .r {
-      width: 35%;
-      .marketprice {
-        font-size: 28rpx;
-      }
-    }
-    .tag {
-      background-color: #ffebcf;
-      font-size: 24rpx;
-      text-align: center;
-      height: 30rpx;
-      line-height: 30rpx;
-      border-radius: 15rpx;
-      display: inline-block;
-      padding: 0 15rpx;
-      margin: 0 auto;
-    }
-  }
-  .down {
-    color: rgb(141, 141, 141);
-    border-top: 1px solid #eafcbe;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    i {
-      color: $maincolor;
-    }
-  }
 }
-.countchange{
+
+.header{
+  .u{
+    color: #b3b3b3;
+    font-size: 32rpx;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  &>.m{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 20rpx 0;
+    border-bottom: 1px solid #f5f5f5;
+    .l{
+      width: 25%;
+      img{
+        width: 90%;
+      }
+    }
+    .m{
+      width: 50%;
+      text-align: left!important;
+      display: flex;
+      justify-content: flex-start;
+      padding-left: 25rpx;
+      font-size: 32rpx;
+    }
+    .r{
+      width: 25%;
+      font-size: 32rpx;
+      text-align: center!important;
+    }
+  }
+  .d{
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
+    padding: 20rpx 0 0;
     button{
       width: 60rpx;
       height: 60rpx;
@@ -363,6 +300,7 @@ swiper {
       font-size: 40rpx;
     }
   }
+}
 .foot {
   position: fixed;
   bottom: 0;
@@ -373,7 +311,7 @@ swiper {
   flex-direction: row;
   z-index: 9999;
   .s {
-    width: 40%;
+    width: 24%;
     display: flex;
     flex-direction: row;
     text-align: center;
@@ -381,7 +319,7 @@ swiper {
     height: 100rpx;
     overflow: hidden;
     & > div {
-      width: 50%;
+      width: 100%;
     }
     i {
       font-size: 34rpx;
@@ -395,12 +333,16 @@ swiper {
   .part4 {
     // background-color: #ffe900;
     color: #000;
-    font-size: 40rpx;
+    font-size: 35rpx;
+    width: 46%;
+    color: $maincolor;
+    text-align: center;
+    font-weight: 700;
   }
   .part5 {
     background-color: $maincolor;
     color: #fff;
-    font-size: 40rpx;
+    font-size: 35rpx;
     text-align: center;
   }
   .hoverbtn {

@@ -7,7 +7,7 @@ var wxpay = {
  
     //把金额转为分
     getmoney: function (money) {
-        return parseFloat(money) * 100;
+        return Math.floor(parseFloat(money) * 100);
     },
  
     // 随机字符串产生函数  
@@ -39,11 +39,11 @@ var wxpay = {
             trade_type: trade_type,
             openid: openid
         };
-        console.log('ret==', ret);
+        // console.log('ret==', ret);
         var string = raw(ret);
         var key = mchkey;
         string = string + '&key=' + key;
-        console.log('string=', string);
+        // console.log('string=', string);
         var crypto = require('crypto');
         return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase();
     },
@@ -58,11 +58,11 @@ var wxpay = {
             nonceStr: noncestr,
             timeStamp: timestamp,
         };
-        console.log('retretret==', ret);
+        // console.log('retretret==', ret);
         var string = raw(ret);
         var key = mchkey;
         string = string + '&key=' + key;
-        console.log('stringstringstring=', string);
+        // console.log('stringstringstring=', string);
         var crypto = require('crypto');
         return crypto.createHash('md5').update(string, 'utf8').digest('hex').toUpperCase();
     },

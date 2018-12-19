@@ -31,7 +31,7 @@ const CONF = {
         host: 'localhost',
         port: 3306,
         user: 'root',
-        db: 'cAuth',
+        db: 'piwubang',
         pass: 'root',
         char: 'utf8mb4'
     },
@@ -51,7 +51,7 @@ const CONF = {
     // 微信登录态有效期
     wxLoginExpires: 7200
 }
-console.log(process.env.NODE_ENV);
+// console.log(process.env.NODE_ENV);
 
 // module.exports = process.env.NODE_ENV === 'local' ? Object.assign({}, CONF, require('./config.local')) : CONF;
 module.exports = process.env.NODE_ENV === 'local' ? Object.assign({}, CONF) : CONF;

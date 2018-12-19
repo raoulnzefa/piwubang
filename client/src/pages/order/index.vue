@@ -51,6 +51,8 @@ import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
+import wxpay from "@/wxapis/wxpay";
+
 import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
@@ -176,58 +178,42 @@ export default {
       wx.switchTab({ url });
     },
     contact() {},
-    paynow() {
-      // https://developers.weixin.qq.com/miniprogram/dev/api/wx.requestPayment.html
-      // https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_3&index=1
-      // 有点复杂 需要通读API
-  //     { appid: 'wx88152eef614c3441',
-//         partnerid: '1515387251',
-  //       prepayid: 'wx18003137410865252a0c67431314681173',
-  //       package: 'Sign=WXPay',
-  //       noncestr: '777W81KWYTCE',
-  //       timestamp: '1545064296' }
-  //       stringstringstring= appid=wx88152eef614c3441&noncestr=777W81KWYTCE&package=Sign=WXPay&partnerid=1515387251&prepayid=wx18003137410865252a0c67431314681173&timestamp=1545064296&key=TVU1MO18PS9YQLW58P2SENSEW6O46JIY
-      // wx.requestPayment({
-      //   // appId:'wx88152eef614c3441',
-      //   timeStamp: '1545065922',
-      //   nonceStr:"95GQTD8OCKFC",
-      //   package:'prepay_id=wx18005843135707252a0c67430768776579',
-      //   signType:"MD5",//默认MD5
-      //   paySign:'DD32FD592AF142FA6E330DC236EBA968',
-      //   success:function(){
-      //     console.log('success');
-      //   },
-      //   fail:function(){
-      //     console.log('fail');
-
-      //   },
-      //   complete:function(){
-      //     console.log('complete');
-      //   }
-      // })
-
-      // 跳转至订单页
-      // let url = "/pages/order/main";
-      // // console.log(url);
-      // wx.navigateTo({ url });
-
-      // 测试支付
+    async paynow() {
+      wx.showLoading({
+        title: 'Loading...',
+      })
+      // 统一下单 生成订单号
       // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
-      
       qc.request({
         login:true,
         url: conf.service.prepayUrl,
         // method:"POST",
         data:{
-          orderCode:'asd7as7d89a79s8d',//商户订单号
-          money:'0.22',
-          orderID:'asd7as7d89a79s8d',
+          count: this.count,
+          _id: this.goodsdetail._id
         },
-        success: function(response) {
-          console.log(response);
+        success: function(res) {
+          wx.hideLoading();
+          console.log(res.data);
+          if(res.data.code == 1 && res.data.success){
+            console.log('支付中');
+            wxpay( res.data.data )
+            
+            
+          }else{
+            wx.showToast({
+              title: res.data.data.reason,
+              icon: 'none',
+              duration: 2000
+            })
+          }
         },
         fail: function(err) {
           console.log(err);
+          wx.hideLoading();
+        },
+        complete:function(){
+          // wx.hideLoading();
         }
       });
 

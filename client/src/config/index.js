@@ -4,9 +4,9 @@
 
 // 此处主机域名修改成腾讯云解决方案分配的域名
 // var host = 'https://123456.qcloud.la';
-var host = 'http://192.168.2.102:5757';
 // var host = 'http://localhost:5757';
-// var host = 'http://192.168.1.146:5757';
+// var host = 'http://192.168.2.102:5757';
+var host = 'http://192.168.1.146:5757';
 
 
 var config = {

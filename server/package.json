@@ -24,6 +24,7 @@
     "pify": "^2.3.0",
     "request": "^2.88.0",
     "wafer-node-sdk": "^1.4.1",
+    "xml2js": "^0.4.19",
     "xmlreader": "^0.2.3"
   },
   "devDependencies": {

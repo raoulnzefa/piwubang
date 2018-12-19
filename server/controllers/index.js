@@ -22,7 +22,7 @@ const mapDir = d => {
             tree[path.basename(file, '.js')] = require(path.join(d, file))
         }
     })
-    console.log(tree);
+    // console.log(tree);
     
     return tree
 }

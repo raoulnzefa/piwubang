@@ -6,6 +6,8 @@ const router = require('koa-router')({
 })
 const controllers = require('../controllers')
 const unifiedorder = require('../wxpay/pay.js')
+const getnotification = require('../wxpay/getnotification.js')
+
 
 // 从 sdk 中取出中间件
 // 这里展示如何使用 Koa 中间件完成登录态的颁发与验证
@@ -39,7 +41,7 @@ router.post('/message', controllers.message.post)
 router.get('/prepay', validationMiddleware, unifiedorder)
 
 // !!! 小程序支付 回调
-// router.get('/wxnotify', unifiedorder)
+router.get('/getnotification',  getnotification)
 
 
 module.exports = router

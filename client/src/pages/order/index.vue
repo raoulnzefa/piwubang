@@ -73,7 +73,7 @@ export default {
         name: "智利车厘子",
         briefDesc: "智利车厘子",
         soldCount: "125",
-        currentPrice: "32",
+        currentPrice: "32.8",
         oldPrice: "59",
         stock: 456,
         marketPrice: [
@@ -100,7 +100,7 @@ export default {
   },
   computed:{
     totalfee:function(){
-      return this.count * this.goodsdetail.currentPrice
+      return (this.goodsdetail.currentPrice * 10 * 10) * this.count / 100
     }
   },
   methods: {
@@ -179,6 +179,7 @@ export default {
     },
     contact() {},
     async paynow() {
+
       wx.showLoading({
         title: 'Loading...',
       })

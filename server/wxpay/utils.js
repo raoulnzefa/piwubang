@@ -7,7 +7,11 @@ var wxpay = {
  
     //把金额转为分
     getmoney: function (money) {
-        return Math.floor(parseFloat(money) * 100);
+        console.log("money:",money);
+        console.log("parseFloatmoney:",parseFloat(money));
+        console.log(parseFloat(money) * 10 * 10);
+        
+        return parseFloat(money) * 10 * 10;
     },
  
     // 随机字符串产生函数  

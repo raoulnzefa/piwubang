@@ -35,7 +35,7 @@ const appid = 'wx88152eef614c3441';
 const appsecret = '37971006ed3baa814e0de260131788cd';
 const mchid = '1515387251' //商户号
 const mchkey = 'TVU1MO18PS9YQLW58P2SENSEW6O46JIY'; // 商户API密码
-const wxurl = 'http://www.tech997.cn/';// 下单后的通知地址
+const wxurl = 'http://www.tech997.cn:8899/getnotification';// 下单后的通知地址
 
 const unifiedorder = async (ctx, next) => {
     // console.log('ctx.query:');
@@ -57,7 +57,7 @@ const unifiedorder = async (ctx, next) => {
     // STEP2 拿到前端传过来的参数 查询商品，计算价格
     let {_id, count} = ctx.query
     console.log(`APP传过来的参数是：goodsid:${_id},count:${count}` );
-    let goodsinfo = await knex('goods').where({
+    let goodsinfo = await knex('t_product').where({
         _id
       }).select()
     console.log(goodsinfo);
@@ -80,12 +80,9 @@ const unifiedorder = async (ctx, next) => {
         return
     }
     let singleprice = goodsinfo[0].currentPrice ;
-    let total_price = singleprice * count ;
-    console.log(singleprice, total_price);
-    // console.log(parseFloat(total_price));
-    console.log(total_price*100);
-
-    console.log(Math.floor(parseFloat(total_price)*100));
+    let goodsname = goodsinfo[0].name ;
+    let total_price = (singleprice * 10 * 10) * count  ;
+    console.log(total_price);
     
     // STEP3 组装数据，签名
     // let orderid = "asc4as1cas1c3" 
@@ -124,7 +121,7 @@ const unifiedorder = async (ctx, next) => {
     let timestamp = payutil.createTimeStamp();
     let body = '测试微信支付';
     let out_trade_no = orderid;
-    let total_fee = payutil.getmoney(total_price);
+    let total_fee = total_price //payutil.getmoney(total_price);
     console.log('total_fee:' + total_fee);
     let spbill_create_ip = ctx.req.connection.remoteAddress;
     console.log('ip:' + spbill_create_ip);
@@ -181,7 +178,7 @@ const unifiedorder = async (ctx, next) => {
                 // <trade_type>JSAPI</trade_type>
                 
                 if (!err && response.statusCode == 200) {
-                    xmlreader.read(body.toString("utf-8"), function (errors, response) {
+                    xmlreader.read(body.toString("utf-8"), async function (errors, response) {
                         if (null !== errors) {
                             // xml信息读取出错
                             console.log(errors)
@@ -231,21 +228,58 @@ const unifiedorder = async (ctx, next) => {
                             })
                             return
                         }
-
-                        // 此处表示统一下单业务处理成功
-                        // 存订单号和openid到订单表
-                        knex('orders').insert({
-                            openid:openid,
-                            
-                        })
-
-
-
                         console.log('长度===', response.xml.prepay_id.text().length);
                         var prepay_id = response.xml.prepay_id.text();
                         //将预支付订单和其他信息一起签名后返回给前端
                         let paySign = payutil.paysignjsapifinal(appid, mch_id, prepay_id, nonce_str, timestamp, mchkey);
                         console.log('paySign:',paySign);
+                        
+                        // STEP5  存入订单信息
+                        // 此处表示统一下单业务处理成功
+                        // 存订单号和openid到订单表
+                        let nowstamp = new Date().getTime()
+                        console.log({
+                            openid,
+                            orderid,
+                            createtime: nowstamp,
+                            endtime: (Number(nowstamp) + 30*60*1000),
+                            goodsname,
+                            goodsid: _id ,
+                            price: singleprice,
+                            count,
+                            total_fee,
+                            status:1, //未支付
+                            prepay_id:  prepay_id, 
+                            nonce_str:  nonce_str, 
+                            timestamp: timestamp, 
+                            package:   'prepay_id='+prepay_id, 
+                            paySign:   paySign,
+                            signType: "MD5"
+                        });
+                        // return ctx.body = 111
+                        let save = await knex('orders').insert({
+                            openid,
+                            orderid,
+                            createtime: nowstamp,
+                            endtime: (nowstamp + 30*60*1000),
+                            goodsname ,
+                            goodsid: _id ,
+                            price: singleprice,
+                            count,
+                            total_fee,
+                            status:1, //未支付
+
+                            prepay_id:  prepay_id, 
+                            nonce_str:  nonce_str, 
+                            timestamp: timestamp, 
+                            package:   'prepay_id='+prepay_id, 
+                            paySign:   paySign,
+                            signType: "MD5"
+                        })
+                        console.log('save info:');
+                        console.log(save);
+                        
+                        
                         resolve({ 
                             'data':{
                                 'prepayId':  prepay_id, 
@@ -253,6 +287,7 @@ const unifiedorder = async (ctx, next) => {
                                 'timeStamp': timestamp, 
                                 'package':   'prepay_id='+prepay_id, 
                                 'paySign':   paySign,
+                                'signType':  'MD5'
                             },
                             'success':   true,
                             'code':      1,

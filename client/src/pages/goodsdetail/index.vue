@@ -93,7 +93,7 @@ export default {
         name: "智利车厘子",
         briefDesc: "智利车厘子",
         soldCount: "125",
-        currentPrice: "32",
+        currentPrice: "32.8",
         oldPrice: "59",
         stock: 456,
         marketPrice: [

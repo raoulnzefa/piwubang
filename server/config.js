@@ -1,9 +1,9 @@
 
 // [rootPathname, useQcloudLogin, cos, serverHost, tunnelServerUrl, tunnelSignatureKey, qcloudAppId, qcloudSecretId, qcloudSecretKey, wxMessageToken].
 const CONF = {
-    port: '5757',
+    serverHost: 'localhost',
+    port: '8899',
     rootPathname: '',
-
     // 微信小程序 App ID
     appId: 'wx88152eef614c3441',
     // 微信小程序 App Secret
@@ -11,11 +11,9 @@ const CONF = {
 
     // 加密token
     wxMessageToken: 'tech997.com',
-    
     // 是否使用腾讯云代理登录小程序
     useQcloudLogin: false,
     // 
-    serverHost: 'localhost',
     tunnelServerUrl: '',
     tunnelSignatureKey: '',
     // 腾讯云存储的相关信息 见：https://console.qcloud.com/cos5/bucket/setting?type=filelist&bucketName=piwubang-1257779595&path=%252Ftestupload%252F&region=ap-shanghai
@@ -28,10 +26,10 @@ const CONF = {
      * 开发环境下，MySQL 的初始密码为您的微信小程序 appid
      */
     mysql: {
-        host: 'localhost',
+        host: 'localhost',db: 'pwb',
+        // host: '111.231.78.250',db: 'pwb',
         port: 3306,
         user: 'root',
-        db: 'piwubang',
         pass: 'root',
         char: 'utf8mb4'
     },

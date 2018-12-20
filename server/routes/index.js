@@ -4,9 +4,13 @@
 const router = require('koa-router')({
     prefix: '/weapp'   // 定义所有路由的前缀都已 /weapp 开头
 })
+// const xmlParser = require('koa-xml-body');
+
 const controllers = require('../controllers')
 const unifiedorder = require('../wxpay/pay.js')
-// const getnotification = require('../wxpay/getnotification.js')
+const getnotification = require('../wxpay/getnotification.js')
+
+
 
 
 // 从 sdk 中取出中间件
@@ -37,11 +41,13 @@ router.get('/message', controllers.message.get)
 router.post('/message', controllers.message.post)
 
 
-// !!! 小程序支付
+// GET !!! 小程序支付
 router.get('/prepay', validationMiddleware, unifiedorder)
 
-// !!! 小程序支付 回调
-router.get('/getnotification',  controllers.getnotification)
+// POST !!! 小程序支付 回调
+router.post( '/getnotification',  getnotification.post )
+
+router.get( '/getnotification',  getnotification.get )
 
 
 module.exports = router

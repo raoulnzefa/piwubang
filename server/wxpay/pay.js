@@ -35,7 +35,7 @@ const appid = 'wx88152eef614c3441';
 const appsecret = '37971006ed3baa814e0de260131788cd';
 const mchid = '1515387251' //商户号
 const mchkey = 'TVU1MO18PS9YQLW58P2SENSEW6O46JIY'; // 商户API密码
-const wxurl = 'http://www.tech997.cn:8899/getnotification';// 下单后的通知地址
+const wxurl = 'http://www.tech997.cn:8899/weapp/getnotification';// 下单后的通知地址
 
 const unifiedorder = async (ctx, next) => {
     // console.log('ctx.query:');
@@ -181,7 +181,13 @@ const unifiedorder = async (ctx, next) => {
                         if (null !== errors) {
                             // xml信息读取出错
                             console.log(errors)
-                            return;
+                            resolve({
+                                code:0,
+                                success:false,
+                                data:{},
+                                msg:`统一下单接口调用失败。wx接口返回的xml数据解析失败`
+                            })
+                            return 
                         }
                         
                         // wx 返回码 String(16)

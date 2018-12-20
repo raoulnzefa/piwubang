@@ -10,8 +10,15 @@ const bodyParser = require('koa-bodyparser')
 module.exports = (opts = {}) => {
     const options = Object.assign({}, {
         detectJSON (ctx) {
+            console.log(ctx.request.type);
+            
             if (ctx.request.type === 'text/xml') {
-                return true
+                
+                // 源码：return true
+
+                // shenjie 2018年12月21日 01:06:11
+                return false
+                
             } else {
                 return false
             }

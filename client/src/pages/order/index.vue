@@ -22,9 +22,33 @@
       </div>
 
     </div>
-    <div class="main">
+    <div class="fahuo main">
       <div class="u">发货详情</div>
-      
+      <!-- 发货地 发货时间 发货方式 -->
+      <div class="m">
+        <table>
+        <tr>
+          <td>发货方式 :</td>
+          <td>{{goodsdetail.deliveryMethods}}</td>
+        </tr>
+        <tr>
+          <td>发货地 :</td>
+          <td>{{goodsdetail.deliveryArea}}</td>
+        </tr>
+        <tr>
+          <td>发货时间 :</td>
+          <td>{{goodsdetail.deliveryTime}}</td>
+        </tr>
+        <tr>
+          <td>可购区域 :</td>
+          <td>{{goodsdetail.targetArea_name}}</td>
+        </tr>
+        <tr>
+          <td>是否包邮 :</td>
+          <td>{{goodsdetail.shipping?'包邮':'不包邮'}}</td>
+        </tr>
+      </table>
+      </div>
     </div>
     <div class="main"></div>
 
@@ -229,14 +253,16 @@ $maincolor: #ce4031;
 .main{
   border-top: 20rpx solid #f5f5f5 ;
   padding: 20rpx 20rpx;
-}
-
-.header{
   .u{
     color: #b3b3b3;
     font-size: 32rpx;
+    // font-size: 13pt;
     border-bottom: 1px solid #f5f5f5;
   }
+}
+
+.header{
+  
   &>.m{
     display: flex;
     flex-direction: row;
@@ -285,6 +311,27 @@ $maincolor: #ce4031;
       line-height: 60rpx;
       text-align: center;
       font-size: 40rpx;
+    }
+  }
+}
+.fahuo{
+  .m{
+    table{
+      width: 80%;
+      margin: 0 auto;
+      font-size: 32rpx;
+      color: #000;
+      tr{
+        display: flex;
+        flex-direction: row;
+        // justify-content: space-around;
+        td:first-child{
+          width: 30%;
+        }
+        td:last-child{
+          width: 70%;
+        }
+      }
     }
   }
 }

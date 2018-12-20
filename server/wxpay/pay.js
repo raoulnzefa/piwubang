@@ -5,7 +5,7 @@
  * @author shenjie
  *
  * Created at     : 2018-12-17 16:14:34 
- * Last modified  : 2018-12-19 17:38:42
+ * Last modified  : 2018-12-20 09:05:51
  */
 var request = require('request');
 var xmlreader = require("xmlreader");
@@ -113,7 +113,6 @@ const unifiedorder = async (ctx, next) => {
      * 订单优惠标记	goods_tag	         否	String(32)	WXG
      * 指定支付方式	limit_pay	         否	String(32)	no_credit
      * 电子发票入口开放标识	receipt	      否 String(8)	Y
-     * 
      */
     //首先生成签名sign
     let mch_id = mchid;

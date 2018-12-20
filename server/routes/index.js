@@ -6,7 +6,7 @@ const router = require('koa-router')({
 })
 const controllers = require('../controllers')
 const unifiedorder = require('../wxpay/pay.js')
-const getnotification = require('../wxpay/getnotification.js')
+// const getnotification = require('../wxpay/getnotification.js')
 
 
 // 从 sdk 中取出中间件
@@ -41,7 +41,7 @@ router.post('/message', controllers.message.post)
 router.get('/prepay', validationMiddleware, unifiedorder)
 
 // !!! 小程序支付 回调
-router.get('/getnotification',  getnotification)
+router.get('/getnotification',  controllers.getnotification)
 
 
 module.exports = router

@@ -113,7 +113,8 @@ export default {
         urls: [
           "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png",
           "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E6%A8%B1%E6%A1%832.png"
-        ]
+        ],
+        deliveryMethods:['快递','自提']
       },
       count:1
     };

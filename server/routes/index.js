@@ -41,6 +41,15 @@ router.get('/message', controllers.message.get)
 router.post('/message', controllers.message.post)
 
 
+// GET !!! 小程序查询商品列表
+// router.get('/goodslist', validationMiddleware, controllers.getgoodslist)
+router.get('/goodslist', controllers.getgoodslist)
+
+
+// GET !!! 小程序查询商品详情
+// router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
+router.get('/goodsdetail', controllers.getgoodsdetail)
+
 // GET !!! 小程序支付
 router.get('/prepay', validationMiddleware, unifiedorder)
 

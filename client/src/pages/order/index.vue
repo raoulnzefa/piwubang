@@ -76,6 +76,8 @@ import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
 import wxpay from "@/wxapis/wxpay";
+import clientpaid from "@/wxapis/clientpaid";
+
 
 import qc from 'wafer2-client-sdk'
 import conf from '@/config'
@@ -204,7 +206,6 @@ export default {
     },
     contact() {},
     async paynow() {
-
       wx.showLoading({
         title: 'Loading...',
       })
@@ -218,25 +219,74 @@ export default {
           count: this.count,
           _id: this.goodsdetail._id
         },
-        success: function(res) {
+        success:async function(res) {
           wx.hideLoading();
+          console.log('统一下单返回：');
           console.log(res.data);
           if(res.data.code == 1 && res.data.success){
             console.log('支付中');
-            wxpay( res.data.data )
-            
-            
+            let payres = await wxpay( res.data.data );
+            console.log('payres', payres)
+            console.log('支付流程结束，支付成功~')
+            if(payres.errMsg == 'requestPayment:ok'){
+              // 前端订单支付完成 等待商家核验（等待微信通知回调） 
+              let clientpaidres = await clientpaid(res.data.data)
+              console.log('前端订单支付完成 等待商家核验');
+              
+              wx.showToast({
+                title: clientpaidres.msg, 
+                duration: 2000,
+                icon:'none',
+                mask:true,
+                complete:function(){
+                  wx.navigateTo({
+                    url:"/pages/orderlist/main"
+                  })
+                }
+              })
+            }else{
+              wx.showToast({
+                title: '支付失败',
+                 duration: 1000,
+                  icon:'none',
+                  mask:true ,
+                  complete:function(){
+                    wx.navigateTo({
+                      url:"/pages/orderlist/main?index=0"
+                    })
+                  }
+              })
+            }
           }else{
             wx.showToast({
               title: res.data.data.reason,
               icon: 'none',
-              duration: 2000
+              duration: 2000,
+              complete:function(){
+                wx.navigateBack({
+                  delta: 1
+                })
+              }
             })
           }
         },
         fail: function(err) {
           console.log(err);
-          wx.hideLoading();
+          console.log('支付流程结束，支付失败~')
+          // wx.hideLoading();
+          wx.showToast({
+              title: '下单失败,请先登录', 
+              duration: 1000,
+              icon:'none',
+              mask:true,
+              complete:function(){
+                wx.switchTab({
+                  url:"/pages/my/main"
+                })
+              }
+          })
+
+          
         },
         complete:function(){
           // wx.hideLoading();

@@ -23,22 +23,10 @@ const wxpay = async ( x ) => {
             signType:"MD5",
             success:function(res){
                 console.log('success');
-                wx.showToast({
-                    title: '支付成功', 
-                    duration: 1000,
-                    icon:'success',
-                    mask:true
-                })
                 resolve(res)
             },
             fail:function(err){
                 console.log('fail');
-                wx.showToast({
-                    title: '支付失败', 
-                    duration: 1000,
-                    icon:'none',
-                    mask:true
-                })
                 resolve(err)
             }
         })

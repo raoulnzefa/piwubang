@@ -19,9 +19,9 @@
       </block>
     </swiper>
     <div class="join">
-      <button class="joinbtn" hover-class="joinbtnhover">帮主招募</button>
-      <button class="joinbtn" hover-class="joinbtnhover">供应商入驻</button>
-      <button class="joinbtn" hover-class="joinbtnhover">加入帮派</button>
+      <button class="joinbtn" hover-class="joinbtnhover" @click='toBZapply'>帮主招募</button>
+      <button class="joinbtn" hover-class="joinbtnhover" @click='toGYSapply'>供应商入驻</button>
+      <button class="joinbtn" hover-class="joinbtnhover" @click='tobangpai'>加入帮派</button>
     </div>
     <div class="dailygoods">
       <goods-item v-for="(x,k) in goodslist" :key="k" :goodsinfo="x"></goods-item>
@@ -147,7 +147,6 @@ export default {
     },
     getUserInfo() {
       console.log("getuserinfo");
-
       // 调用登录接口
       wx.login({
         success: () => {
@@ -158,9 +157,6 @@ export default {
           });
         }
       });
-    },
-    clickHandle(msg, ev) {
-      console.log("clickHandle:", msg, ev);
     },
     async changelocation() {
       // 检查定位授权
@@ -208,10 +204,25 @@ export default {
         console.log(location);
         this.location = location.name;
       }
+    },
+    toBZapply(){
+      let url = `/pages/bangzhuapply/main`
+      wx.navigateTo({
+        url
+      })
+    },
+    toGYSapply(){
+      let url = `/pages/gysapply/main`
+      wx.navigateTo({
+        url
+      })
+    },
+    tobangpai(){
+
     }
   },
 
-  async created() {
+  async onShow() {
     // 调用应用实例的方法获取全局数据
     // this.getUserInfo()
     // 检查定位授权

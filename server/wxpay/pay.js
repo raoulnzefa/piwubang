@@ -1,6 +1,18 @@
 /**
  * 微信统一下单API
  *
+ * 订单状态定义：
+ * 1 : 下单，但未支付。可以做的事：支付，关闭订单
+ * 2 : 前台已支付完成，把订单设置为‘商户确认中’状态，注意只有当status=1的订单才能改 。可以做的事：不可操作
+ * (废弃)2 : 商户查询结果是未支付。可以做的事：支付
+ * (废弃)3 : 商户查询结果是已支付 处于已支付，待发货状态。可以做的事：退款
+ * 4 : 商户收到了来自微信的通知，订单已支付。可以做的事：退款，发货
+ * 5 : 卖家已发货，订单处于发货状态。可以做的事：确认收货
+ * 6 : 用户确认收货，订单完结（1）。可以做的事：退款申请，删除订单
+ * 7 : 用户发起了退款申请，且state=3/4，直接退款，订单置为7，即已退款，并且订单关闭，无法再操作，订单完结（2）。可以做的事：删除订单
+ * 8 : 用户发起了退款申请，且state=6 才可以发起退货，要求输入运单号，提交申请，处于待商家核验退货阶段
+ * 9 : 商家核验退货完成，在平台操作  给予退款 且完成，关闭订单，无法再操作，订单完结（3）。可以做的事：删除订单
+ * 
  * @summary short description for the file
  * @author shenjie
  *
@@ -15,7 +27,9 @@ var fs = require("fs");
 var payutil = require('./utils');
 var generateOrderId = require('./orderid.js');
 const errcodes = require('./errcodes.js');
-const dbconf = require('../config.js').mysql;
+const conf = require('../config.js');
+const dbconf = conf.mysql ;
+const payconf = conf.payconf ;
 const knex = require('knex')({
     client: 'mysql',
     connection: {
@@ -30,12 +44,16 @@ const knex = require('knex')({
     // useNullAsDefault: true
 });
 
-// 支付配置项
-const appid = 'wx88152eef614c3441';
-const appsecret = '37971006ed3baa814e0de260131788cd';
-const mchid = '1515387251' //商户号
-const mchkey = 'TVU1MO18PS9YQLW58P2SENSEW6O46JIY'; // 商户API密码
-const wxurl = 'http://www.tech997.cn:8899/weapp/getnotification';// 下单后的通知地址
+
+
+const { appid, appsecret, mchid, mchkey, wxurl } = payconf
+
+const stampToTime = v => {
+    let t = new Date()
+    t.setTime(v)
+    let res =  `${t.getFullYear()}-${t.getMonth()}-${t.getDate()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`
+    return res
+  }
 
 const unifiedorder = async (ctx, next) => {
     // console.log('ctx.query:');
@@ -242,38 +260,44 @@ const unifiedorder = async (ctx, next) => {
                         // STEP5  存入订单信息
                         // 此处表示统一下单业务处理成功
                         // 存订单号和openid到订单表
-                        let nowstamp = new Date().getTime()
-                        console.log({
-                            openid,
-                            orderid,
-                            createtime: nowstamp,
-                            endtime: (Number(nowstamp) + 30*60*1000),
-                            goodsname,
-                            goodsid: _id ,
-                            price: singleprice,
-                            count,
-                            total_fee,
-                            status:1, //未支付
-                            prepay_id:  prepay_id, 
-                            nonce_str:  nonce_str, 
-                            timestamp: timestamp, 
-                            package:   'prepay_id='+prepay_id, 
-                            paySign:   paySign,
-                            signType: "MD5"
-                        });
+                        let createtime = new Date().getTime()
+                        let endtime = Number(createtime) + 30*60*1000
+                        let _createtime = stampToTime(createtime)
+                        let _endtime = stampToTime(endtime)
+                        // console.log({
+                        //     openid,
+                        //     orderid,
+                        //     createtime,
+                        //     _createtime,
+                        //     endtime,
+                        //     _endtime,
+                        //     goodsname,
+                        //     goodsid: _id ,
+                        //     price: singleprice,
+                        //     count,
+                        //     total_fee,
+                        //     status:1, //未支付
+                        //     prepay_id:  prepay_id, 
+                        //     nonce_str:  nonce_str, 
+                        //     timestamp: timestamp, 
+                        //     package:   'prepay_id='+prepay_id, 
+                        //     paySign:   paySign,
+                        //     signType: "MD5"
+                        // });
                         // return ctx.body = 111
                         let save = await knex('orders').insert({
                             openid,
                             orderid,
-                            createtime: nowstamp,
-                            endtime: (nowstamp + 30*60*1000),
+                            createtime,
+                            _createtime,
+                            endtime,
+                            _endtime,
                             goodsname ,
                             goodsid: _id ,
                             price: singleprice,
                             count,
                             total_fee,
                             status:1, //未支付
-
                             prepay_id:  prepay_id, 
                             nonce_str:  nonce_str, 
                             timestamp: timestamp, 

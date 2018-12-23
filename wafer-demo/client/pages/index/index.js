@@ -12,7 +12,7 @@ var config = require('../../config');
 var showBusy = text => wx.showToast({
     title: text,
     icon: 'loading',
-    duration: 10000
+    duration: 1500
 });
 
 // 显示成功提示

@@ -1,12 +1,12 @@
 {
   "pages": [
+    "pages/index/main",
+    "pages/bangzhuapply/main",
+    "pages/my/main",
+    
+    "pages/orderlist/main",
     "pages/order/main",
     "pages/goodsdetail/main",
-    
-    "pages/index/main",
-    
-    "pages/my/main",
-  
     "pages/zutuan/main",
     "pages/near/main"
     

@@ -19,28 +19,28 @@
     <div class="mainpart mid">
       <div class="head">
         <div class="myorder">我的订单</div>
-        <div class="toall">查看全部
+        <div class="toall" @click='toorderlist(0)'>查看全部
           <i class="iconfont icon-tubiao_xiangyou"></i>
         </div>
       </div>
       <div class="list">
-        <div>
+        <div @click='toorderlist(1)'>
           <i class="iconfont icon-fukuan"></i>
           <div>待付款</div>
         </div>
-        <div>
+        <div @click='toorderlist(2)'>
           <i class="iconfont icon-icon-test"></i>
           <div>待发货</div>
         </div>
-        <div>
+        <div @click='toorderlist(3)'>
           <i class="iconfont icon-yifahuodefuben"></i>
           <div>已发货</div>
         </div>
-        <div>
+        <div @click='toorderlist(4)'>
           <i class="iconfont icon-yiwanchengdingdan"></i>
           <div>已完成</div>
         </div>
-        <div>
+        <div @click='toorderlist(5)'>
           <i class="iconfont icon-tui"></i>
           <div>退换货</div>
         </div>
@@ -63,7 +63,6 @@
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
     </div>
-    <!-- <mp-button open-type="getUserInfo" @getuserinfo="getUserInfo">123</mp-button> -->
   </div>
 </template>
 <script>
@@ -96,7 +95,7 @@ export default {
     // 授权检查
     wx.getSetting({
       success(res) {
-        // console.log(res.authSetting);
+        console.log(res.authSetting);
         // let
         if (res.authSetting["scope.userInfo"]) {
           // 已授权
@@ -104,18 +103,17 @@ export default {
           wx.getUserInfo({
             success: res => {
               self.userInfo = res.userInfo;
-              // console.log(res);
+              self.getUserInfo()
+              console.log(res);
             }
           });
         } else {
           // 未授权
         }
-        // res.authSetting = {
-        //   "scope.userInfo": true,
-        //   "scope.userLocation": true
-        // }
       }
     });
+      
+      
   },
   methods: {
     showBusy: text =>
@@ -142,12 +140,14 @@ export default {
       });
     },
     getUserInfo() {
+
       var self = this;
       // 调用登录接口
 
       this.showBusy("正在登录");
       const session = qc.Session.get();
-
+      console.log('session',session);
+      
       if (session) {
         // 第二次登录
         // 或者本地已经有登录态
@@ -190,6 +190,11 @@ export default {
       //     });
       //   }
       // });
+    },
+    toorderlist(x){
+      wx.navigateTo({
+        url:`/pages/orderlist/main?index=${x}`
+      })
     }
   }
 };

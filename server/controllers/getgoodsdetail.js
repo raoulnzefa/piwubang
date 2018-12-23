@@ -6,7 +6,10 @@ module.exports = async (ctx, next) => {
     let goodsid = ctx.query.goodsid ;
     if(goodsid){
         let res = await mysql('t_product').select().where({ _id: goodsid });
-        console.log(res[0].viewcount);
+       
+        let viewcount = res[0].viewcount
+        console.log( viewcount );
+        let update = await mysql('t_product').update({ viewcount: viewcount+1 }).where({ _id: goodsid });
         ctx.body = {
             code:1,
             success:true,

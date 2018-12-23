@@ -32,6 +32,11 @@ var config = {
         // prepay接口
         prepayUrl: `${host}/weapp/prepay`,
 
+        getOrderList: `${host}/weapp/orderlist`,
+
+        clientpaidUrl: `${host}/weapp/clientpaid`,
+
+
     }
 };
 

@@ -11,7 +11,7 @@
 // scope.camera	            <camera /> 组件	                                         摄像头
 
 const authorize = async (x,refuseFn) => {
-    return new Promise(function(resolve, reject){
+    return await new Promise(function(resolve, reject){
         wx.authorize({
             scope:x,
             success(res) {

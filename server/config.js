@@ -8,7 +8,6 @@ const CONF = {
     appId: 'wx88152eef614c3441',
     // 微信小程序 App Secret
     appSecret: '37971006ed3baa814e0de260131788cd',
-
     // 加密token
     wxMessageToken: 'tech997.com',
     // 是否使用腾讯云代理登录小程序
@@ -26,14 +25,13 @@ const CONF = {
      * 开发环境下，MySQL 的初始密码为您的微信小程序 appid
      */
     mysql: {
-        host: 'localhost',db: 'pwb',
-        // host: '111.231.78.250',db: 'pwb',
+        host: 'localhost',
+        db: 'pwb',
         port: 3306,
         user: 'root',
         pass: 'root',
         char: 'utf8mb4'
     },
-    
     cos: {
         /**
          * 区域
@@ -45,11 +43,20 @@ const CONF = {
         // 文件夹
         uploadFolder: 'testupload'
     },
+    // 支付配置项
+    payconf:{
+         appid :     'wx88152eef614c3441',
+         appsecret : '37971006ed3baa814e0de260131788cd',
+         mchid :     '1515387251',  //商户号
+         mchkey :    'TVU1MO18PS9YQLW58P2SENSEW6O46JIY', // 商户API密码
+         wxurl :     'http://www.tech997.cn:8899/weapp/getnotification', // 下单后的通知地址
+    },
 
     // 微信登录态有效期
     wxLoginExpires: 7200
 }
 // console.log(process.env.NODE_ENV);
-
 // module.exports = process.env.NODE_ENV === 'local' ? Object.assign({}, CONF, require('./config.local')) : CONF;
-module.exports = process.env.NODE_ENV === 'local' ? Object.assign({}, CONF) : CONF;
+// module.exports = process.env.NODE_ENV === 'local' ? Object.assign({}, CONF) : CONF;
+module.exports = CONF ;
+

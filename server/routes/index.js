@@ -9,8 +9,7 @@ const router = require('koa-router')({
 const controllers = require('../controllers')
 const unifiedorder = require('../wxpay/pay.js')
 const getnotification = require('../wxpay/getnotification.js')
-
-
+const clientpaid = require('../wxpay/clientpaid.js')
 
 
 // 从 sdk 中取出中间件
@@ -53,10 +52,18 @@ router.get('/goodsdetail', controllers.getgoodsdetail)
 // GET !!! 小程序支付
 router.get('/prepay', validationMiddleware, unifiedorder)
 
+// GET !!! 小程序支付完成后客户端通知
+router.get('/clientpaid', validationMiddleware, clientpaid) //validationMiddleware,
+
+
+
 // POST !!! 小程序支付 回调
 router.post( '/getnotification',  getnotification.post )
+// router.get( '/getnotification',  getnotification.get )
 
-router.get( '/getnotification',  getnotification.get )
 
+// GET !!! 小程序查询订单列表
+// router.get('/orderlist', validationMiddleware, controllers.getorderlist)
+router.get('/orderlist', validationMiddleware, controllers.getorderlist)
 
 module.exports = router

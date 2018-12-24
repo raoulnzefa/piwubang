@@ -93,31 +93,9 @@ export default {
       motto: "Hello World",
       userInfo: {},
       location: "尚未获取定位",
-
-      goodsdetail: {
-        _id: "asd13as1d",
-        name: "智利车厘子",
-        briefDesc: "智利车厘子",
-        soldCount: "125",
-        currentPrice: "32.8",
-        oldPrice: "59",
-        stock: 456,
-        marketPrice: [
-          {
-            name: "欧尚",
-            price: "44"
-          },
-          {
-            name: "大润发",
-            price: "48.5"
-          }
-        ],
-        urls: [
-          "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png",
-          "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E6%A8%B1%E6%A1%832.png"
-        ],
-        deliveryMethods:['快递','自提']
-      },
+      goodsdetail:{},
+      img:'',
+      goodsid:'',
       count:1
     };
   },
@@ -127,31 +105,10 @@ export default {
   },
   computed:{
     totalfee:function(){
-      return (this.goodsdetail.currentPrice * 10 * 10) * this.count / 100
+      return (this.currentPrice * 10 * 10) * this.count / 100
     }
   },
   methods: {
-    bindViewTap() {
-      const url = "../logs/main";
-      wx.navigateTo({ url });
-    },
-    getUserInfo() {
-      console.log("getuserinfo");
-
-      // 调用登录接口
-      wx.login({
-        success: () => {
-          wx.getUserInfo({
-            success: res => {
-              this.userInfo = res.userInfo;
-            }
-          });
-        }
-      });
-    },
-    clickHandle(msg, ev) {
-      console.log("clickHandle:", msg, ev);
-    },
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
@@ -235,13 +192,15 @@ export default {
               
               wx.showToast({
                 title: clientpaidres.msg, 
-                duration: 2000,
-                icon:'none',
+                duration: 1500,
+                icon:'success',
                 mask:true,
                 complete:function(){
-                  wx.navigateTo({
-                    url:"/pages/orderlist/main"
-                  })
+                  setTimeout(function(){
+                    wx.navigateTo({
+                      url:"/pages/orderlist/main?index=0"
+                    })
+                  },1500)
                 }
               })
             }else{
@@ -294,6 +253,21 @@ export default {
       });
 
     }
+  },
+  onShow(){
+    // this.count = 1
+    // let {goodsid, currentPrice, img} = this.$root.$mp.query
+    let {goodsdetail} = this.$root.$mp.query
+    console.log(goodsdetail);
+    this.goodsdetail = JSON.parse(goodsdetail)
+    // if(!goodsid){
+
+    // }else{
+    //   this.goodsid = goodsid
+    //   this.img = img
+    //   this.currentPrice = currentPrice
+    // }
+    
   }
 };
 </script>
@@ -324,6 +298,7 @@ $maincolor: #ce4031;
       width: 25%;
       img{
         width: 90%;
+        max-height: 150rpx;
       }
     }
     .m{

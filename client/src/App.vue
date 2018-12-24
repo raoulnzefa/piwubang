@@ -3,14 +3,23 @@ import qc from 'wafer2-client-sdk'
 import config from '@/config'
 
 export default {
-  created () {
-    // 调用API从本地缓存中获取数据
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // console.log('app created and cache logs by setStorageSync')
-    qc.setLoginUrl(config.service.loginUrl);
+  data:function(){
+    return {
+      appdata:"66666",
+      logged:false,
+      authmodalshowL:false
+    }
+  },
+  
+  methods:{
+    
+    
+  },
+  // created () {
+    
+  // },
+  onLaunch(){
+    qc.setLoginUrl(config.service.loginUrl);  
   }
 }
 </script>

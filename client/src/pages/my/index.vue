@@ -92,28 +92,41 @@ export default {
     var self = this;
     // console.log(this);
 
-    // 授权检查
-    wx.getSetting({
-      success(res) {
-        console.log(res.authSetting);
-        // let
-        if (res.authSetting["scope.userInfo"]) {
-          // 已授权
-          self.logged = true;
-          wx.getUserInfo({
-            success: res => {
-              self.userInfo = res.userInfo;
-              self.getUserInfo()
-              console.log(res);
-            }
-          });
-        } else {
-          // 未授权
-        }
-      }
-    });
+    // // 授权检查
+    // wx.getSetting({
+    //   success(res) {
+    //     console.log('authSetting',res.authSetting);
+    //     // let
+    //     if (res.authSetting["scope.userInfo"]) {
+    //       // 已授权
+    //       self.logged = true;
+    //       wx.getUserInfo({
+    //         success: res => {
+    //           self.userInfo = res.userInfo;
+    //           // self.getUserInfo()
+    //         }
+    //       });
+    //     } else {
+    //       // 未授权
+    //     console.log('未授权');
+    //     }
+    //   }
+    // });
       
       
+  },
+  onShow(){
+    
+    
+  },
+  onLoad(){
+    console.log('my onload');
+    let loginstate = this.globalData.loginstate;
+    console.log(loginstate);
+    this.logged = loginstate.state
+    if(loginstate.state === true){
+      this.userInfo = loginstate.userInfo
+    }
   },
   methods: {
     showBusy: text =>
@@ -140,7 +153,6 @@ export default {
       });
     },
     getUserInfo() {
-
       var self = this;
       // 调用登录接口
 
@@ -149,6 +161,7 @@ export default {
       console.log('session',session);
       
       if (session) {
+        console.log('二次登录');
         // 第二次登录
         // 或者本地已经有登录态
         // 可使用本函数更新登录态
@@ -165,6 +178,7 @@ export default {
         });
       } else {
         // 首次登录
+        console.log('首次登录');
         qc.login({
           success: res => {
             self.userInfo=res

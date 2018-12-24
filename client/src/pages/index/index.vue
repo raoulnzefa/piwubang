@@ -26,10 +26,14 @@
     <div class="dailygoods">
       <goods-item v-for="(x,k) in goodslist" :key="k" :goodsinfo="x"></goods-item>
     </div>
+    <auth-modal :show="authmodalshow"></auth-modal>
   </div>
 </template>
 
 <script>
+import qc from 'wafer2-client-sdk'
+import conf from '@/config'
+
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
@@ -38,15 +42,17 @@ import modal from "@/wxapis/modal";
 
 import slogan from "@/components/slogan";
 import goodsItem from "@/components/goodsitem";
+import authModal from "@/components/authmodal";
 
 import mpButton from "mpvue-weui/src/button";
 
 export default {
   data() {
     return {
-      motto: "Hello World",
+      authmodalshow: false,
+      loginstate:this.globalData.loginstate,
       userInfo: {},
-      location: "尚未获取定位",
+      location: "点击查看周边好物",
       swiperUrls: [
         {
           id: 1,
@@ -64,99 +70,55 @@ export default {
             "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%831.png"
         }
       ],
-      goodslist: [
-        {
-          _id: "asd13as1d",
-          name: "智利车厘子",
-          briefDesc: "智利车厘子",
-          soldCount: "125",
-          currentPrice: "32",
-          oldPrice: "59",
-          urls: [
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png",
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E6%A8%B1%E6%A1%832.png"
-          ]
-        },{
-          _id: "asd13wq89",
-          name: "新西兰奇异果",
-          briefDesc: "新西兰奇异果新西兰奇异果新西兰奇异果",
-          soldCount: "323",
-          currentPrice: "6.6",
-          oldPrice: "12.3",
-          urls: [
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%831.png",
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%832.png"
-          ]
-        },{
-          _id: "asd13as1d",
-          name: "智利车厘子",
-          briefDesc: "智利车厘子",
-          soldCount: "125",
-          currentPrice: "32",
-          oldPrice: "59",
-          urls: [
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png",
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E6%A8%B1%E6%A1%832.png"
-          ]
-        },{
-          _id: "asd13wq89",
-          name: "新西兰奇异果",
-          briefDesc: "新西兰奇异果新西兰奇异果新西兰奇异果",
-          soldCount: "323",
-          currentPrice: "6.6",
-          oldPrice: "12.3",
-          urls: [
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%831.png",
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%832.png"
-          ]
-        },{
-          _id: "asd13as1d",
-          name: "智利车厘子",
-          briefDesc: "智利车厘子",
-          soldCount: "125",
-          currentPrice: "32",
-          oldPrice: "59",
-          urls: [
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png",
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E6%A8%B1%E6%A1%832.png"
-          ]
-        },{
-          _id: "asd13wq89",
-          name: "新西兰奇异果",
-          briefDesc: "新西兰奇异果新西兰奇异果新西兰奇异果",
-          soldCount: "323",
-          currentPrice: "6.6",
-          oldPrice: "12.3",
-          urls: [
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%831.png",
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%832.png"
-          ]
-        }
-      ]
+      goodslist: []
     };
   },
   components: {
     slogan,
     mpButton,
-    goodsItem
+    goodsItem,authModal
   },
   methods: {
-    bindViewTap() {
-      const url = "../logs/main";
-      wx.navigateTo({ url });
-    },
-    getUserInfo() {
-      console.log("getuserinfo");
-      // 调用登录接口
-      wx.login({
-        success: () => {
-          wx.getUserInfo({
-            success: res => {
-              this.userInfo = res.userInfo;
+    
+    // 登录授权检查
+    loginCheck:async function(){
+      var self = this;
+      return new Promise(function(resolve, reject){
+        // 授权检查
+        wx.getSetting({
+          success(res) {
+            console.log('appjs authSetting:',res.authSetting);
+            // let
+            if (res.authSetting["scope.userInfo"]) {
+              // 已授权
+              wx.getUserInfo({
+                success: res => {
+                  self.globalData.userInfo = res.userInfo;
+                  console.log('已授过权');
+                  resolve({
+                    state:true,
+                    userInfo:res.userInfo
+                  })
+                }
+              });
+            } else if(res.authSetting["scope.userInfo"] === false){
+              // 拒绝过授权
+              console.log('拒绝过授权');
+              resolve({
+                    state:'rejected',
+                    userInfo:null
+                  })
+            }else{
+              // 
+              console.log('尚未授过权');
+              resolve({
+                    state:false,
+                    userInfo:null
+                  })
             }
-          });
-        }
-      });
+          }
+        });
+      })
     },
     async changelocation() {
       // 检查定位授权
@@ -168,7 +130,7 @@ export default {
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
           let location = await chooselocation();
-          console.log(location);
+          this.location = location.name;
         } else {
           // 拒绝了
           let modalres = await modal({
@@ -189,7 +151,7 @@ export default {
                 duration: 1000
               });
               let location = await chooselocation();
-              console.log(location);
+              this.location = location.name;
             } else {
               wx.showToast({
                 title: "您没有打开定位",
@@ -201,7 +163,6 @@ export default {
         }
       } else {
         let location = await chooselocation();
-        console.log(location);
         this.location = location.name;
       }
     },
@@ -219,56 +180,109 @@ export default {
     },
     tobangpai(){
 
+    },
+    getgoodslist(){
+      var self = this;
+      qc.request({
+        url: conf.service.goodslistUrl,
+        // method:"POST",
+        data:{},
+        success:function(res) {
+          console.log('getgoodslist', res.data.data);
+          
+          self.goodslist = res.data.data
+        },
+        fail(){
+          wx.showToast({
+            title:"获取商品列表失败",
+            duration:1500
+          })
+        }
+      })
     }
   },
-
-  async onShow() {
-    // 调用应用实例的方法获取全局数据
-    // this.getUserInfo()
-    // 检查定位授权
-    let locationAuth = await checkscope("scope.userLocation"); //userInfo
-    console.log(72, locationAuth);
-    if (!locationAuth) {
-      let locationAuthRes = await authorize("scope.userLocation");
-      console.log(75, locationAuthRes);
-      if (locationAuthRes.errMsg == "authorize:ok") {
-        // 同意
-        let location = await chooselocation();
-        console.log(location);
-      } else {
-        // 拒绝了
-        let modalres = await modal({
-          content: "打开定位可以看到离你最近的批发商哦",
-          cancelText: "放弃推荐",
-          confirmText: "打开定位"
-        });
-        console.log(86, modalres);
-        if (modalres) {
-          // 打开设置页面
-          let settingres = await openSetting();
-          console.log(settingres);
-          if (settingres["scope.userLocation"]) {
-            // 已打开定位
-            wx.showToast({
-              title: "定位打开成功",
-              icon: "none",
-              duration: 1000
-            });
-            let location = await chooselocation();
-            console.log(location);
-          } else {
-            wx.showToast({
-              title: "您没有打开定位",
-              icon: "none",
-              duration: 1000
-            });
-          }
+  async onLoad(){
+    this.getgoodslist()
+    console.log('index onLoad',this.globalData);
+    // 调用API从本地缓存中获取数据
+    // const logs = wx.getStorageSync('logs') || []
+    // logs.unshift(Date.now())
+    // wx.setStorageSync('logs', logs)
+    // console.log('app created and cache logs by setStorageSync')
+    
+    let loginstate = await this.loginCheck()
+    this.globalData.loginstate = loginstate
+    if(loginstate.state !== true){
+      // 弹窗强制授权
+      console.log('woyao 弹窗强制授权');
+      wx.showToast({
+        title:"请先登录哦",
+        icon:"none",
+        mask:true,
+        duration:12500,
+        success(){
+          setTimeout(function(){
+            wx.switchTab({url:"/pages/my/main"})
+          },1500)
         }
-      }
-    } else {
-      // let location = await chooselocation()
-      // console.log(location);
+      })
+    }else{
+      this.globalData.userInfo = loginstate.userInfo
     }
+    
+  },
+  async onShow() {
+    console.log('index show');
+  //   console.log('appdata onShow',this.globalData);
+    
+  //   // 调用应用实例的方法获取全局数据
+  //   // 检查定位授权
+  //   let locationAuth = await checkscope("scope.userLocation"); //userInfo
+  //   console.log(72, locationAuth);
+  //   if (!locationAuth) {
+  //     let locationAuthRes = await authorize("scope.userLocation");
+  //     console.log(75, locationAuthRes);
+  //     if (locationAuthRes.errMsg == "authorize:ok") {
+  //       // 同意
+  //       let location = await chooselocation();
+  //       console.log(location);
+  //     } else {
+  //       // 拒绝了
+  //       let modalres = await modal({
+  //         content: "打开定位可以看到离你最近的批发商哦",
+  //         cancelText: "放弃推荐",
+  //         confirmText: "打开定位"
+  //       });
+  //       console.log(86, modalres);
+  //       if (modalres) {
+  //         // 打开设置页面
+  //         let settingres = await openSetting();
+  //         console.log(settingres);
+  //         if (settingres["scope.userLocation"]) {
+  //           // 已打开定位
+  //           wx.showToast({
+  //             title: "定位打开成功",
+  //             icon: "none",
+  //             duration: 1000
+  //           });
+  //           let location = await chooselocation();
+  //           console.log(location);
+  //         } else {
+  //           wx.showToast({
+  //             title: "您没有打开定位",
+  //             icon: "none",
+  //             duration: 1000
+  //           });
+  //         }
+  //       }
+  //     }
+  //   } else {
+  //     // let location = await chooselocation()
+  //     // console.log(location);
+  //   }
+  },
+  onPullDownRefresh(){
+
   }
 };
 </script>

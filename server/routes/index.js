@@ -39,31 +39,45 @@ router.get('/message', controllers.message.get)
 // POST 用来处理微信转发过来的客服消息
 router.post('/message', controllers.message.post)
 
-
 // GET !!! 小程序查询商品列表
 // router.get('/goodslist', validationMiddleware, controllers.getgoodslist)
 router.get('/goodslist', controllers.getgoodslist)
-
 
 // GET !!! 小程序查询商品详情
 // router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
 router.get('/goodsdetail', controllers.getgoodsdetail)
 
-// GET !!! 小程序支付
+// GET !!! 小程序统一下单
 router.get('/prepay', validationMiddleware, unifiedorder)
 
-// GET !!! 小程序支付完成后客户端通知
+// GET !!! 小程序获取收货地址列表
+router.get('/addresslist', validationMiddleware, controllers.addresslist)
+
+// GET !!! 小程序编辑收货地址
+router.get('/addressedit', validationMiddleware, controllers.addressedit)
+
+// GET !!! 小程序支付完成后客户端通知服务器支付结果
 router.get('/clientpaid', validationMiddleware, clientpaid) //validationMiddleware,
 
-
-
-// POST !!! 小程序支付 回调
+// POST !!! 小程序支付后，微信服务器回调通知
 router.post( '/getnotification',  getnotification.post )
-// router.get( '/getnotification',  getnotification.get )
 
-
-// GET !!! 小程序查询订单列表
-// router.get('/orderlist', validationMiddleware, controllers.getorderlist)
+// GET !!! 小程序获取订单列表
 router.get('/orderlist', validationMiddleware, controllers.getorderlist)
+
+// GET !!! 小程序确认收货
+router.get('/confirmship', validationMiddleware, controllers.confirmship)
+
+// GET !!! 小程序获退款退货
+router.get('/refund', validationMiddleware, controllers.refund)
+
+// GET !!! 小程序删除订单
+router.get('/deleteorder', validationMiddleware, controllers.deleteorder)
+
+// GET !!! 小程序帮主申请
+router.get('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
+
+// GET !!! 小程序供应商、厂商申请
+router.get('/makerapply', validationMiddleware, controllers.makerapply)
 
 module.exports = router

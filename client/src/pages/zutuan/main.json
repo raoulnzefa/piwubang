@@ -1,0 +1,8 @@
+{
+    "navigationBarBackgroundColor": "#CE4031",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "组团批发",
+    "backgroundColor": "#eeeeee",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": true
+}

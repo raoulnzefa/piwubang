@@ -127,13 +127,14 @@ $maincolor: #ce4031;
 
 swiper {
   width: 750rpx;
-  height: 450rpx;
+  height: 562.5rpx;
   swiper-item {
     width: 750rpx;
+    height: 562.5rpx;
     img {
       display: flex;
       width: 750rpx;
-      height: 100%;
+      height: 562.5rpx;
     }
   }
 }

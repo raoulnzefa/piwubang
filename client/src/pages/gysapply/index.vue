@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <slogan type='bangzhu'></slogan>
+    <!-- <slogan type='bangzhu'></slogan> -->
     <div class="container">
       <form report-submit=true @submit="formSubmit">
     <div class="item line">
@@ -17,33 +17,20 @@
         <input type="number" name='phone' v-model="form.phone" placeholder="请输入手机号" confirm-type='next' maxlength='11'>
       </span>
     </div>
-    <div class="item block place">
-      <span class="l">*</span>
-      <span class="m">帮主地盘：</span>
-      <div class="r">
-        <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
-        <div>
-          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='citycode' disabled v-model="citycode" hidden>
-
-        </div>
-        <div>
-          <textarea name="citylabel2" id="" placeholder="你能管理的详细区域(如九龙仓小区、湖景社区等)..." v-model="citylabel2" confirm-type='next'></textarea>
-        </div>
-      </div>
-    </div>
     <div class="item line">
       <span class="l">*</span>
-      <span class="m">是否能全职：</span>
+      <span class="m">供应商类型：</span>
       <span class="r">
-        <switch name='fulltime' checked="form.fulltime"></switch>
-      </span>
-    </div>
-    <div class="item line">
-      <span class="l">*</span>
-      <span class="m">目前职业：</span>
-      <span class="r">
-        <input type="text" name='job' v-model="form.currentjob" placeholder="请输入职业" confirm-type='next' maxlength='10'>
+        <radio-group name='whoami' class="radio-group" @change="radioChange">
+          <label class="radio" >
+            <radio value="生产商" name='whoami' />
+            生产商
+          </label>
+          <label class="radio">
+            <radio value="批发商" name='whoami' />
+            批发商
+          </label>
+        </radio-group>
       </span>
     </div>
     <div class="item line">
@@ -52,6 +39,34 @@
       <span class="r">
         <input type="idcard" name='idno' v-model="form.idno" placeholder="请输入身份证号" confirm-type='next' maxlength='18'>
       </span>
+    </div>
+    <div class="item line">
+      <span class="l">*</span>
+      <span class="m">字号：</span>
+      <span class="r">
+        <input type="idcard" name='makername' v-model="form.makername" placeholder="如：xx公司，xx批发部" confirm-type='next' maxlength='18'>
+      </span>
+    </div>
+    <div class="item line code">
+      <span class="l">*</span>
+      <span class="m">企业信用标识码：<br>(营业执照编号)  </span>
+      <span class="r">
+        <input type="idcard" name='yyzhizhaocode' v-model="form.yyzhizhaocode" placeholder="请输入企业信用标识码" confirm-type='next' maxlength='18'>
+      </span>
+    </div>
+    <div class="item block place">
+      <span class="l">*</span>
+      <span class="m">所在地：</span>
+      <div class="r">
+        <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
+        <div>
+          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
+          <input type="text" name='citycode' disabled v-model="citycode" hidden>
+        </div>
+        <div>
+          <textarea name="citylabel2" id="" placeholder="详细地址（精确到门牌号）" v-model="citylabel2" confirm-type='next'></textarea>
+        </div>
+      </div>
     </div>
     <div class="item block">
       <span class="l">*</span>
@@ -77,11 +92,19 @@
         <input type="text" name='idcard3' disabled v-model="imgurls['3']" hidden>
       </div>
     </div>
+    <div class="item block">
+      <span class="l">*</span>
+      <span class="m">营业执照：</span>
+      <div class="r">
+        <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail3" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='4'></mp-uploader>
+        <input type="text" name='yyzhizhao' disabled v-model="imgurls['4']" hidden>
+      </div>
+    </div>
     <div class="textarea">
       <span class="l">*</span>
-      <span class="m">申请说明：</span>
+      <span class="m">商品说明：</span>
       <span class="r">
-        <textarea name='applydesc' type="text" v-model="form.desc" placeholder="说说你作为帮主的优势..."></textarea>
+        <textarea name='applydesc' type="text" v-model="form.desc" class="desc" placeholder="简单描述一下你的商品种类"></textarea>
       </span>
     </div>
     <button class="submit" form-type='submit' hover-class='btn-hover'>提交申请</button>
@@ -126,7 +149,10 @@ export default {
         idcardurl3:'',
         desc:'',
         phone:'',
+        makername:'',
+        yyzhizhaocode:''
       },
+      whoami:'',
       // uploader配置项
       piccount:1,
       showtip:true,
@@ -140,7 +166,8 @@ export default {
       imgurls:{
         1:'',
         2:'',
-        3:''
+        3:'',
+        4:''
       }
 
     };
@@ -155,7 +182,6 @@ export default {
     icon: 'loading',
     duration: 1500
     }),
-
     // 显示成功提示
     showSuccess: text => wx.showToast({
     title: text,
@@ -170,10 +196,6 @@ export default {
         content: JSON.stringify(content),
         showCancel: false
         })
-    },
-    bindViewTap() {
-      const url = "../logs/main";
-      wx.navigateTo({ url });
     },
     getUserInfo() {
       console.log("getuserinfo");
@@ -288,7 +310,6 @@ export default {
             self.imgurls[which]= ''
             self.showModel('提示','图片上传失败')
           }
-          
         },
         fail: function(e) {
           console.error(e)
@@ -300,23 +321,29 @@ export default {
     },
     formSubmit(data){
       console.log(data);
+      let obj = data.mp.detail
+      // data.value.for
+      for (const key in obj.value) {
+        if (obj.value.hasOwnProperty(key)) {
+          const element = obj.value[key];
+          if( !element || !element.trim()){
+            return wx.showToast({
+              title: '信息不完整！',
+              mask:true,
+              icon:'none',
+              duration:1000
+            })
+          }
+        }
+      }
       
+      // 数据校验
       wx.showLoading({
         title: '提交中...',
         mask:true,
-        success(){
-
-        },
-        fail(){
-
-        },
-        complete(){
-          
-        }
       })
       var self = this
-      console.log(data);
-      let {formId, value} = data.mp.detail
+      let {formId, value} = obj
       console.log(formId , value);
       qc.request({
         login:true,
@@ -335,7 +362,11 @@ export default {
         }
       })
 
-    }
+    },
+    radioChange(e) {
+      console.log("whoami:", e.mp.detail.value);
+      this.whoami = e.mp.detail.value
+    },
     
   },
 
@@ -375,6 +406,13 @@ $maincolor: #ce4031;
       width: 450rpx;
       display: felx;
       flex-direction: row;
+    }
+  }
+  .code{
+    .m{
+      
+      font-size: 26rpx;
+      
     }
   }
   .place{
@@ -422,6 +460,9 @@ $maincolor: #ce4031;
       min-height: 180rpx;
       padding: 8rpx;
     }
+  }
+  .desc{
+    height: 160rpx;width: 100%;
   }
   .submit{
     background-color: $maincolor;

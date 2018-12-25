@@ -56,18 +56,18 @@ $maincolor: #ce4031;
   flex-direction: row;
   border-bottom: 1px solid #f1f1f1;
   .l {
-    width: 35%;
+    width: 250rpx;
     // padding: 20rpx;
     overflow: hidden;
     display: flex;
     align-items: center;
-
     img {
-      width: 100%;
+      width: 250rpx;
+      height: 187.5rpx;
     }
   }
   .r {
-    width: 65%;
+    width: 460rpx;
     margin-left: 20rpx;
     & > div {
       overflow: hidden;

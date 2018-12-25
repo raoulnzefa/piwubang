@@ -51,9 +51,6 @@
       </div>
     </div>
     <div class="main"></div>
-
-
-    <!--  -->
     <div class="foot">
       <div class="item s part1">
         <div @click="routeToHome">
@@ -78,14 +75,11 @@ import modal from "@/wxapis/modal";
 import wxpay from "@/wxapis/wxpay";
 import clientpaid from "@/wxapis/clientpaid";
 
-
 import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 import slogan from "@/components/slogan";
 import goodsItem from "@/components/goodsitem";
-
-// import mpButton from "mpvue-weui/src/button";
 
 export default {
   data() {

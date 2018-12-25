@@ -2,7 +2,6 @@
     "navigationBarBackgroundColor": "#CE4031",
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "周边商家",
-    "backgroundColor": "#eeeeee",
     "backgroundTextStyle": "light",
     "enablePullDownRefresh": true
 }

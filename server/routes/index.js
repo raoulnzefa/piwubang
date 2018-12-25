@@ -75,9 +75,9 @@ router.get('/refund', validationMiddleware, controllers.refund)
 router.get('/deleteorder', validationMiddleware, controllers.deleteorder)
 
 // GET !!! 小程序帮主申请
-router.get('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
+router.post('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
 
 // GET !!! 小程序供应商、厂商申请
-router.get('/makerapply', validationMiddleware, controllers.makerapply)
+router.post('/makerapply', validationMiddleware, controllers.makerapply)
 
 module.exports = router

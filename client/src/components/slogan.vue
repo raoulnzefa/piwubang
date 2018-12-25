@@ -1,17 +1,27 @@
 <template>
   <div v-show='show'>
-    <img src="/static/img/slogan.jpg" mode='widthFix' alt="">
+    <img :src="src" mode='widthFix' alt="">
     <i class="iconfont icon-tubiao_guanbi off" @click='hide'></i>
   </div>
 </template>
 
 <script>
 export default {
+    props:['type'],
     data: function(){
       return {
         show: true
       }
     },
+    computed: {
+    src: function(){
+      if(this.type == 'index'){
+        return '/static/img/slogan.jpg'
+      }else if(this.type == 'bangzhu'){
+        return '/static/img/slogan1.jpg'
+      }
+    }
+  },
     methods:{
       hide(){
         this.show = false

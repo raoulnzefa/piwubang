@@ -25,23 +25,23 @@
       </div>
       <div class="list">
         <div @click='toorderlist(1)'>
-          <i class="iconfont icon-fukuan"></i>
+          <i class="iconfont icon-fukuan i1"></i>
           <div>待付款</div>
         </div>
         <div @click='toorderlist(2)'>
-          <i class="iconfont icon-icon-test"></i>
+          <i class="iconfont icon-icon-test i2"></i>
           <div>待发货</div>
         </div>
         <div @click='toorderlist(3)'>
-          <i class="iconfont icon-yifahuodefuben"></i>
+          <i class="iconfont icon-yifahuodefuben i3"></i>
           <div>已发货</div>
         </div>
         <div @click='toorderlist(4)'>
-          <i class="iconfont icon-yiwanchengdingdan"></i>
+          <i class="iconfont icon-yiwanchengdingdan i4"></i>
           <div>已完成</div>
         </div>
         <div @click='toorderlist(5)'>
-          <i class="iconfont icon-tui"></i>
+          <i class="iconfont icon-tui i5"></i>
           <div>退换货</div>
         </div>
       </div>
@@ -276,9 +276,24 @@ $maincolor: #ce4031;
       & > div {
         text-align: center;
         i {
+          height: 75rpx;
           font-size: 75rpx;
+          line-height: 75rpx;
           // color: rgb(166,166,166);
           color: $maincolor;
+        }
+        .i2{
+          font-size: 65rpx;
+        }
+        .i3{
+          font-size: 85rpx;
+          
+        }
+        .i4{
+          font-size: 60rpx;
+        }
+        .i5{
+          font-size: 62rpx;
         }
         div {
           font-size: 32rpx;

@@ -1,7 +1,7 @@
 <template>
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
-    <slogan></slogan>
+    <slogan type='index'></slogan>
 
     <!-- 打开授权设置页面 -->
     <!-- <mp-button @click='opensetting'>opensetting</mp-button> -->
@@ -26,6 +26,7 @@
     <div class="dailygoods">
       <goods-item v-for="(x,k) in goodslist" :key="k" :goodsinfo="x"></goods-item>
     </div>
+    <div class='onbottom'>{{onbottom}}</div>
     <auth-modal :show="authmodalshow"></auth-modal>
   </div>
 </template>
@@ -50,6 +51,7 @@ export default {
   data() {
     return {
       authmodalshow: false,
+      onbottom: '上划加载更多',
       loginstate:this.globalData.loginstate,
       userInfo: {},
       location: "点击查看周边好物",
@@ -179,9 +181,16 @@ export default {
       })
     },
     tobangpai(){
-
+      let url = `/pages/zutuan/main`
+      wx.switchTab({
+        url
+      })
     },
     getgoodslist(){
+      wx.showLoading({
+        title:"卖力加载中...",
+        icon:'loding'
+      })
       var self = this;
       qc.request({
         url: conf.service.goodslistUrl,
@@ -189,7 +198,9 @@ export default {
         data:{},
         success:function(res) {
           console.log('getgoodslist', res.data.data);
-          
+          if(res.data.data == []){
+            self.onbottom = '已经到底啦！'
+          }
           self.goodslist = res.data.data
         },
         fail(){
@@ -197,6 +208,9 @@ export default {
             title:"获取商品列表失败",
             duration:1500
           })
+        },
+        complete(){
+          wx.hideLoading()
         }
       })
     }
@@ -232,6 +246,9 @@ export default {
     
   },
   async onShow() {
+    wx.setTopBarText({
+      text:'asdasd1asd1as1d3'
+    })
     console.log('index show');
   //   console.log('appdata onShow',this.globalData);
     
@@ -282,8 +299,11 @@ export default {
   //   }
   },
   onPullDownRefresh(){
-
-  }
+    this.getgoodslist()
+  },
+  onReachBottom(){
+    this.getgoodslist()
+  },
 };
 </script>
 
@@ -319,6 +339,8 @@ swiper {
   swiper-item {
     overflow: hidden;
     border-radius: 20rpx;
+    display: flex;
+    align-items: center;
     img {
       width: 100%;
       border: none;
@@ -343,5 +365,11 @@ swiper {
   .joinbtnhover {
     background-color: #eee;
   }
+}
+.onbottom{
+  background-color: #fff;
+  text-align: center;
+  font-size: 20rpx;
+  color: #aaa;
 }
 </style>

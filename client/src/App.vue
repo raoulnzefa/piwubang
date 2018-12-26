@@ -15,12 +15,14 @@ export default {
     
     
   },
-  // created () {
-    
-  // },
+  
   onLaunch(){
     console.log('app onlunch');
     qc.setLoginUrl(config.service.loginUrl);  
+    
+  },
+  onError(err){
+    console.log('app onerror:', err);
   }
 }
 </script>

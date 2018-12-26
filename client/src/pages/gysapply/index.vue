@@ -301,14 +301,15 @@ export default {
         filePath: filePath,
         name: 'file',
         success: function(res){
-          console.log(data);
+          console.log(res);
           
+          let format = JSON.parse(res.data)
           
-          console.log(data.data);
-          console.log(data.data.imgUrl);
+          console.log(format.data);
+          console.log(format.data.imgUrl);
           
-          if(data.data.imgUrl){
-            self.imgurls[which]= data.data.imgUrl
+          if(format.data.imgUrl){
+            self.imgurls[which]= format.data.imgUrl
             self.showSuccess('图片上传成功')
           }else{
             self.imgurls[which]= ''

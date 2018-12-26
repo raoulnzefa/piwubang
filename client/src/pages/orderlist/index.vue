@@ -88,6 +88,7 @@ export default {
           state : 'all'
         },
         success:function(res) {
+          wx.hideLoading();
           console.log(res.data.data);
           self.all = res.data.data
           self.unpay = res.data.data.filter(function(v, i){
@@ -109,6 +110,8 @@ export default {
           
         },
         fail: function(err) {
+          wx.hideLoading();
+          
           console.log(err);
           wx.showToast({
               title: '请先登录', 
@@ -123,7 +126,6 @@ export default {
           })
         },
         complete:function(){
-          wx.hideLoading();
           wx.stopPullDownRefresh()
         }
       });

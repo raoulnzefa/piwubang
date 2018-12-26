@@ -1,11 +1,11 @@
 {
   "pages": [
     "pages/myaddress/main",
-
     "pages/index/main",
+    "pages/my/main",
+
     "pages/gysapply/main",
     "pages/bangzhuapply/main",
-    "pages/my/main",
     "pages/orderlist/main",
     "pages/order/main",
     "pages/goodsdetail/main",
@@ -13,6 +13,11 @@
     "pages/near/main"
     
   ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "推荐附近好物"
+    }
+  },
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#CE4031",

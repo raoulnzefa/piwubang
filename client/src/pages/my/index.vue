@@ -6,9 +6,9 @@
       <div class="l">
         <img :src="userInfo.avatarUrl" alt="原始头像" mode="widthFix">
       </div>
+      <!--  -->
       <div class="m1 m" v-if="!logged">
         <button class="loginbtn" open-type="getUserInfo" @getuserinfo="getUserInfo">立即登录</button>
-        <!-- <mp-button class="loginbtn" open-type="getUserInfo" @getuserinfo="getUserInfo">立即登录</mp-button> -->
       </div>
       <div class="m2 m" v-if="logged">
         <span>{{userInfo.nickName}}</span>
@@ -68,10 +68,12 @@
 <script>
 import qc from 'wafer2-client-sdk'
 import config from '@/config'
-import mpButton from "mpvue-weui/src/button";
+
+import checkscope from '@/wxapis/check_scope'
+
 export default {
   components: {
-    mpButton
+    
   },
   data: function() {
     return {
@@ -94,10 +96,10 @@ export default {
   },
   onShow(){},
   onLoad(){
+    // this.getUserInfo()
     console.log('my onload');
     let loginstate = this.globalData.loginstate;
     console.log(loginstate);
-    
     if(loginstate === true){
       this.userInfo = this.globalData.userInfo
       this.logged = true
@@ -129,15 +131,17 @@ export default {
         showCancel: false
       });
     },
-    getUserInfo() {
+    async getUserInfo() {
       var self = this;
       // 调用登录接口
-
-      this.showBusy("正在登录");
+      
       const session = qc.Session.get();
       console.log('session：',session);
 
-      if (session) {
+      let checkscoperes = await checkscope('scope.userInfo')
+      console.log( 'my checkscoperes' ,checkscoperes);
+      
+      if ( session ){
         console.log('二次登录');
         // 第二次登录
         // 或者本地已经有登录态
@@ -145,24 +149,31 @@ export default {
         qc.loginWithCode({
           success: res => {
             self.userInfo=res
-            self.logged=true 
+
+            self.logged=true
+
             self.globalData.loginstate = true
             self.globalData.userInfo = res
 
-            self.showSuccess("登录成功");
+            // self.showSuccess("登录成功");
           },
           fail: err => {
             // console.error(err);
-            self.showModel("登录错误", err.message);
+            self.globalData.loginstate = false
+            self.globalData.userInfo = {}
+            self.showModel("登录提示", err.message);
           }
         });
       } else {
-        // 首次登录
+      //   // 首次登录
+        this.showBusy("正在登录");
         console.log('首次登录');
         qc.login({
           success: res => {
-            self.userInfo=res
-            self.logged=true 
+            self.userInfo = res
+
+            self.logged = true 
+            
             self.globalData.loginstate = true
             self.globalData.userInfo = res
             self.showSuccess("登录成功");
@@ -170,7 +181,7 @@ export default {
           fail: err => {
             // console.error(err);
             // self.showModel("登录错误", err.message);
-            self.showModel("登录错误", '登录失败啦');
+            self.showModel("登录提示", '点击登录按钮以登录');
           }
         });
       }

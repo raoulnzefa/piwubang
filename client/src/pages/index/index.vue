@@ -2,7 +2,6 @@
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
     <slogan type='index'></slogan>
-    <button @click='authcheck'>查看auth</button>
     <!-- 打开授权设置页面 -->
     <!-- <mp-button @click='opensetting'>opensetting</mp-button> -->
     <div class="location" @click="changelocation">
@@ -100,10 +99,7 @@ export default {
     goodsItem,authModal
   },
   methods: {
-    authcheck(){
-      console.log(this.globalData);
-      
-    },
+    
     // 登录授权检查
     loginCheck:async function(){
       var self = this;
@@ -111,7 +107,7 @@ export default {
         // 授权检查
         wx.getSetting({
           success(res) {
-            console.log('appjs authSetting:',res.authSetting);
+            // console.log('appjs authSetting:',res.authSetting);
             // let
             if (res.authSetting["scope.userInfo"]) {
               // 已授权
@@ -135,9 +131,9 @@ export default {
               // 
               console.log('尚未授过权');
               resolve({
-                    loginstate:false,
-                    userInfo:{}
-                  })
+                loginstate:false,
+                userInfo:{}
+              })
             }
           }
         });
@@ -146,10 +142,10 @@ export default {
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(66, locationAuth);
+      // console.log(66, locationAuth);
       if (!locationAuth) {
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(75, locationAuthRes);
+        // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
           let location = await chooselocation();
@@ -161,11 +157,11 @@ export default {
             cancelText: "放弃推荐",
             confirmText: "打开定位"
           });
-          console.log(86, modalres);
+          // console.log(86, modalres);
           if (modalres) {
             // 打开设置页面
             let settingres = await openSetting();
-            console.log(settingres);
+            // console.log(settingres);
             if (settingres["scope.userLocation"]) {
               // 已打开定位
               wx.showToast({
@@ -218,7 +214,7 @@ export default {
         // method:"POST",
         data:{},
         success:function(res) {
-          console.log('getgoodslist', res.data.data);
+          // console.log('getgoodslist', res.data.data);
           if(res.data.data == []){
             self.onbottom = '已经到底啦！'
           }
@@ -237,34 +233,81 @@ export default {
     }
   },
   async onLoad(){
+    console.log('index onload');
+    
     this.getgoodslist()
-    console.log('index 242 onLoad',this.globalData);
+    // console.log('index 242 onLoad',this.globalData);
+    console.log('index globalData:',this.globalData );
+
+    console.log('index globalData.loginstate:',this.globalData.loginstate, this.globalData.loginstate == true );
     
-    let logininfo = await this.loginCheck()
-    console.log('index 245',logininfo);
+    // let logininfo = await this.loginCheck()
+    // console.log('index 245',logininfo);
     
-    this.globalData.loginstate = logininfo.loginstate
-    this.globalData.userInfo = logininfo.userInfo
-console.log('index 248',this.globalData);
-    if(logininfo.loginstate !== true){
-      // 弹窗强制授权
-      console.log('woyao 弹窗强制授权');
-      wx.showToast({
-        title:"请先登录哦",
-        icon:"none",
-        mask:true,
-        duration:12500,
-        success(){
-          setTimeout(function(){
-            wx.switchTab({url:"/pages/my/main"})
-          },1500)
-        }
-      })
-    }
+    // this.globalData.loginstate = logininfo.loginstate
+    // this.globalData.userInfo = logininfo.userInfo
+    // console.log('index 248',this.globalData);
+    // if(this.globalData.loginstate !== true){
+    //   // 弹窗强制授权
+    //   // console.log('woyao 弹窗强制授权');
+    //   wx.showToast({
+    //     title:"请先登录哦",
+    //     icon:"none",
+    //     mask:true,
+    //     duration:12500,
+    //     success(){
+    //       setTimeout(function(){
+    //         wx.switchTab({url:"/pages/my/main"})
+    //       },1500)
+    //     }
+    //   })
+    // }
     
   },
   async onShow() {
-    console.log('index show');
+    // console.log('index show');
+  },
+  created () {
+    console.log('index created');
+    var self = this;
+      // 调用登录接口
+    const session = qc.Session.get();
+    console.log('app session：', session);
+    // if ( session ){
+      console.log('二次登录@app.vue');
+      // 第二次登录
+      // 或者本地已经有登录态
+      // 可使用本函数更新登录态
+      qc.loginWithCode({
+        success: res => {
+          console.log('app res', res);
+          self.globalData.loginstate = true
+          self.globalData.userInfo = res
+        },
+        fail: err => {
+          // console.error(err);
+          self.globalData.loginstate = false
+          self.globalData.userInfo = {}
+          // self.showModel("登录错误", err.message);
+          // if(this.globalData.loginstate !== true){
+            // 弹窗强制授权
+            // console.log('woyao 弹窗强制授权');
+            wx.showToast({
+              title:"请先登录哦",
+              icon:"none",
+              mask:true,
+              duration:12500,
+              success(){
+                setTimeout(function(){
+                  wx.switchTab({url:"/pages/my/main"})
+                },1500)
+              }
+            })
+          // }
+        }
+      });
+    // }
+
   },
   onPullDownRefresh(){
     this.getgoodslist()

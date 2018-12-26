@@ -10,8 +10,8 @@
 // scope.writePhotosAlbum	wx.saveImageToPhotosAlbum, wx.saveVideoToPhotosAlbum	保存到相册
 // scope.camera	            <camera /> 组件	                                         摄像头
 
-const authorize = async (x,refuseFn) => {
-    return await new Promise(function(resolve, reject){
+const authorize =  (x,refuseFn) => {
+    return  new Promise(function(resolve, reject){
         wx.authorize({
             scope:x,
             success(res) {

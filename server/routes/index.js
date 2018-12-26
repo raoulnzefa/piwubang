@@ -40,12 +40,10 @@ router.get('/message', controllers.message.get)
 router.post('/message', controllers.message.post)
 
 // GET !!! 小程序查询商品列表
-// router.get('/goodslist', validationMiddleware, controllers.getgoodslist)
 router.get('/goodslist', controllers.getgoodslist)
 
 // GET !!! 小程序查询商品详情
-// router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
-router.get('/goodsdetail', controllers.getgoodsdetail)
+router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
 
 // GET !!! 小程序统一下单
 router.get('/prepay', validationMiddleware, unifiedorder)
@@ -57,7 +55,7 @@ router.get('/addresslist', validationMiddleware, controllers.addresslist)
 router.get('/addressedit', validationMiddleware, controllers.addressedit)
 
 // GET !!! 小程序支付完成后客户端通知服务器支付结果
-router.get('/clientpaid', validationMiddleware, clientpaid) //validationMiddleware,
+router.get('/clientpaid', validationMiddleware, clientpaid) 
 
 // POST !!! 小程序支付后，微信服务器回调通知
 router.post( '/getnotification',  getnotification.post )

@@ -1,8 +1,9 @@
 {
   "pages": [
+    "pages/myaddress/main",
+
     "pages/index/main",
     "pages/gysapply/main",
-    
     "pages/bangzhuapply/main",
     "pages/my/main",
     "pages/orderlist/main",
@@ -17,7 +18,9 @@
     "navigationBarBackgroundColor": "#CE4031",
     "navigationBarTitleText": "批物帮",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#CE4031"
+    "backgroundColor": "#CE4031",
+    "backgroundColorBottom": "#eeeeee",
+    "onReachBottomDistance":50
   },
   "tabBar": {
     "color":"#8a8a8a",

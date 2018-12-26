@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="mainpart btm">
-      <div class="list">收货地址
+      <div class="list" @click="toaddress">收货地址
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
       <div class="list">联系我们
@@ -90,42 +90,19 @@ export default {
   created() {
     //
     var self = this;
-    // console.log(this);
-
-    // // 授权检查
-    // wx.getSetting({
-    //   success(res) {
-    //     console.log('authSetting',res.authSetting);
-    //     // let
-    //     if (res.authSetting["scope.userInfo"]) {
-    //       // 已授权
-    //       self.logged = true;
-    //       wx.getUserInfo({
-    //         success: res => {
-    //           self.userInfo = res.userInfo;
-    //           // self.getUserInfo()
-    //         }
-    //       });
-    //     } else {
-    //       // 未授权
-    //     console.log('未授权');
-    //     }
-    //   }
-    // });
-      
-      
-  },
-  onShow(){
-    
     
   },
+  onShow(){},
   onLoad(){
     console.log('my onload');
     let loginstate = this.globalData.loginstate;
     console.log(loginstate);
-    this.logged = loginstate.state
-    if(loginstate.state === true){
-      this.userInfo = loginstate.userInfo
+    
+    if(loginstate === true){
+      this.userInfo = this.globalData.userInfo
+      this.logged = true
+    }else{
+      this.logged = false
     }
   },
   methods: {
@@ -158,8 +135,8 @@ export default {
 
       this.showBusy("正在登录");
       const session = qc.Session.get();
-      console.log('session',session);
-      
+      console.log('session：',session);
+
       if (session) {
         console.log('二次登录');
         // 第二次登录
@@ -169,6 +146,9 @@ export default {
           success: res => {
             self.userInfo=res
             self.logged=true 
+            self.globalData.loginstate = true
+            self.globalData.userInfo = res
+
             self.showSuccess("登录成功");
           },
           fail: err => {
@@ -183,31 +163,27 @@ export default {
           success: res => {
             self.userInfo=res
             self.logged=true 
+            self.globalData.loginstate = true
+            self.globalData.userInfo = res
             self.showSuccess("登录成功");
           },
           fail: err => {
             // console.error(err);
-            self.showModel("登录错误", err.message);
+            // self.showModel("登录错误", err.message);
+            self.showModel("登录错误", '登录失败啦');
           }
         });
       }
 
-      // wx.login({
-      //   success: () => {
-      //     wx.getUserInfo({
-      //       success: res => {
-      //         self.logged = true;
-
-      //         self.userInfo = res.userInfo;
-      //         console.log(res);
-      //       }
-      //     });
-      //   }
-      // });
     },
     toorderlist(x){
       wx.navigateTo({
         url:`/pages/orderlist/main?index=${x}`
+      })
+    },
+    toaddress(){
+      wx.navigateTo({
+        url:"/pages/myaddress/main"
       })
     }
   }

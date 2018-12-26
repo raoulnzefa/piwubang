@@ -8,6 +8,7 @@ import './assets/font.css'
 Vue.config.productionTip = false
 
 
+
 Vue.prototype.globalData = {
     loginstate: {},
     userInfo:{}

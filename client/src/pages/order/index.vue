@@ -99,7 +99,7 @@ export default {
   },
   computed:{
     totalfee:function(){
-      return (this.currentPrice * 10 * 10) * this.count / 100
+      return (this.goodsdetail.currentPrice * 10 * 10) * this.count / 100
     }
   },
   methods: {
@@ -163,7 +163,7 @@ export default {
       // 统一下单 生成订单号
       // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
       qc.request({
-        login:true,
+        // login:true,
         url: conf.service.prepayUrl,
         // method:"POST",
         data:{
@@ -249,7 +249,7 @@ export default {
     }
   },
   onShow(){
-    // this.count = 1
+    this.count = 1
     // let {goodsid, currentPrice, img} = this.$root.$mp.query
     let {goodsdetail} = this.$root.$mp.query
     console.log(goodsdetail);
@@ -364,6 +364,7 @@ $maincolor: #ce4031;
   display: flex;
   flex-direction: row;
   z-index: 9999;
+  background-color: #fff;
   .s {
     width: 24%;
     display: flex;

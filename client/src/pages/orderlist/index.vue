@@ -67,16 +67,21 @@ export default {
     console.log(routeParam);
     this.index = parseInt(routeParam.index)
   },
-  onShow() {
-    wx.showToast({
-        title: 'Loading', 
-        duration: 1000,
-        icon:'loading',
-        mask:true
-    })
+  methods: {
+    tabClick:function(x){
+      console.log(x);
+      this.index = x
+      this.which = this[this.tabstate[x]]
+      console.log('which:',this.which);
+    },
+    getorderlist(){
+      wx.showLoading({
+          title: '订单加载中...', 
+          mask:true
+      })
     var self = this
     qc.request({
-        login:true,
+        // login:true,
         url: conf.service.getOrderList,
         // method:"POST",
         data:{
@@ -101,7 +106,7 @@ export default {
             return v.status == 7 || v.status == 8 || v.status == 9
           })
           self.which = self[self.tabstate[self.index]]
-          wx.hideToast()
+          
         },
         fail: function(err) {
           console.log(err);
@@ -118,18 +123,18 @@ export default {
           })
         },
         complete:function(){
-          // wx.hideLoading();
+          wx.hideLoading();
+          wx.stopPullDownRefresh()
         }
       });
-  },
-  methods: {
-    tabClick:function(x){
-      console.log(x);
-      this.index = x
-      this.which = this[this.tabstate[x]]
-      console.log('which:',this.which);
     }
     
+  },
+  onShow() {
+    this.getorderlist()
+  },
+  onPullDownRefresh(){
+    this.getorderlist()
   }
 };
 </script>

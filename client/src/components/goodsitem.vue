@@ -7,7 +7,7 @@
       <div class="part1">{{goodsinfo.name}}</div>
       <div class="part2">{{goodsinfo.briefDesc}}</div>
       <div class="part3">
-        <span>已售{{goodsinfo.soldCount}}件</span>
+        <span>已售{{goodsinfo.salescount}}件</span>
       </div>
       <div class="part4">
         <div class="l">

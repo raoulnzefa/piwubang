@@ -319,7 +319,7 @@ export default {
       let {formId, value} = data.mp.detail
       console.log(formId , value);
       qc.request({
-        login:true,
+        // login:true,
         method:"POST",
         data:{formId , value},
         url: conf.service.bangzhuapplyUrl,

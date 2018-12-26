@@ -4,7 +4,7 @@
 //   "scope.userLocation": true
 // }
 
-const checkscope = async x => {
+const checkscope = x => {
     return new Promise(function(resolve, reject){
         wx.getSetting({
             success(res) {

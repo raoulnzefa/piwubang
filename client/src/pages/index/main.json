@@ -5,5 +5,5 @@
     "backgroundColor": "#CE4031",
     "backgroundTextStyle": "light",
     "onReachBottomDistance":10,
-    "enablePullDownRefresh": true
+    "enablePullDownRefresh": false
 }

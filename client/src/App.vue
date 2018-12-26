@@ -19,6 +19,7 @@ export default {
     
   // },
   onLaunch(){
+    console.log('app onlunch');
     qc.setLoginUrl(config.service.loginUrl);  
   }
 }

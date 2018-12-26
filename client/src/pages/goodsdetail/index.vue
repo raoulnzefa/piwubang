@@ -239,6 +239,7 @@ swiper {
   display: flex;
   flex-direction: row;
   z-index: 9999;
+  background-color: #fff;
   .s {
     width: 40%;
     display: flex;

@@ -2,7 +2,7 @@
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
     <slogan type='index'></slogan>
-
+    <button @click='authcheck'>查看auth</button>
     <!-- 打开授权设置页面 -->
     <!-- <mp-button @click='opensetting'>opensetting</mp-button> -->
     <div class="location" @click="changelocation">
@@ -19,9 +19,28 @@
       </block>
     </swiper>
     <div class="join">
-      <button class="joinbtn" hover-class="joinbtnhover" @click='toBZapply'>帮主招募</button>
+      <!-- <button class="joinbtn" hover-class="joinbtnhover" @click='toBZapply'>帮主招募</button>
       <button class="joinbtn" hover-class="joinbtnhover" @click='toGYSapply'>供应商入驻</button>
-      <button class="joinbtn" hover-class="joinbtnhover" @click='tobangpai'>加入帮派</button>
+      <button class="joinbtn" hover-class="joinbtnhover" @click='tobangpai'>加入帮派</button> -->
+      <div @click='toBZapply'> 
+        <!-- widthFix -->
+        <div class="bzzm imgcon">
+          <img src="/static/img/bzzm.png" alt="" mode="">
+        </div>
+        <div>帮主招募</div>
+      </div>
+      <div @click='toGYSapply' >
+        <div class="gysrz imgcon">
+          <img src="/static/img/gysrz.png" alt="" mode="">
+        </div>
+        <div>供应商入驻</div>
+      </div>
+      <div @click='tobangpai'>
+        <div class="jrbp imgcon">
+          <img src="/static/img/jrbp.png" alt="" mode="">
+        </div>
+        <div>加入帮派</div>
+      </div>
     </div>
     <div class="dailygoods">
       <goods-item v-for="(x,k) in goodslist" :key="k" :goodsinfo="x"></goods-item>
@@ -81,7 +100,10 @@ export default {
     goodsItem,authModal
   },
   methods: {
-    
+    authcheck(){
+      console.log(this.globalData);
+      
+    },
     // 登录授权检查
     loginCheck:async function(){
       var self = this;
@@ -95,10 +117,9 @@ export default {
               // 已授权
               wx.getUserInfo({
                 success: res => {
-                  self.globalData.userInfo = res.userInfo;
                   console.log('已授过权');
                   resolve({
-                    state:true,
+                    loginstate:true,
                     userInfo:res.userInfo
                   })
                 }
@@ -107,15 +128,15 @@ export default {
               // 拒绝过授权
               console.log('拒绝过授权');
               resolve({
-                    state:'rejected',
-                    userInfo:null
+                    loginstate:'rejected',
+                    userInfo:{}
                   })
             }else{
               // 
               console.log('尚未授过权');
               resolve({
-                    state:false,
-                    userInfo:null
+                    loginstate:false,
+                    userInfo:{}
                   })
             }
           }
@@ -188,7 +209,7 @@ export default {
     },
     getgoodslist(){
       wx.showLoading({
-        title:"卖力加载中...",
+        title:"商品加载中...",
         icon:'loding'
       })
       var self = this;
@@ -217,16 +238,15 @@ export default {
   },
   async onLoad(){
     this.getgoodslist()
-    console.log('index onLoad',this.globalData);
-    // 调用API从本地缓存中获取数据
-    // const logs = wx.getStorageSync('logs') || []
-    // logs.unshift(Date.now())
-    // wx.setStorageSync('logs', logs)
-    // console.log('app created and cache logs by setStorageSync')
+    console.log('index 242 onLoad',this.globalData);
     
-    let loginstate = await this.loginCheck()
-    this.globalData.loginstate = loginstate
-    if(loginstate.state !== true){
+    let logininfo = await this.loginCheck()
+    console.log('index 245',logininfo);
+    
+    this.globalData.loginstate = logininfo.loginstate
+    this.globalData.userInfo = logininfo.userInfo
+console.log('index 248',this.globalData);
+    if(logininfo.loginstate !== true){
       // 弹窗强制授权
       console.log('woyao 弹窗强制授权');
       wx.showToast({
@@ -240,63 +260,11 @@ export default {
           },1500)
         }
       })
-    }else{
-      this.globalData.userInfo = loginstate.userInfo
     }
     
   },
   async onShow() {
-    wx.setTopBarText({
-      text:'asdasd1asd1as1d3'
-    })
     console.log('index show');
-  //   console.log('appdata onShow',this.globalData);
-    
-  //   // 调用应用实例的方法获取全局数据
-  //   // 检查定位授权
-  //   let locationAuth = await checkscope("scope.userLocation"); //userInfo
-  //   console.log(72, locationAuth);
-  //   if (!locationAuth) {
-  //     let locationAuthRes = await authorize("scope.userLocation");
-  //     console.log(75, locationAuthRes);
-  //     if (locationAuthRes.errMsg == "authorize:ok") {
-  //       // 同意
-  //       let location = await chooselocation();
-  //       console.log(location);
-  //     } else {
-  //       // 拒绝了
-  //       let modalres = await modal({
-  //         content: "打开定位可以看到离你最近的批发商哦",
-  //         cancelText: "放弃推荐",
-  //         confirmText: "打开定位"
-  //       });
-  //       console.log(86, modalres);
-  //       if (modalres) {
-  //         // 打开设置页面
-  //         let settingres = await openSetting();
-  //         console.log(settingres);
-  //         if (settingres["scope.userLocation"]) {
-  //           // 已打开定位
-  //           wx.showToast({
-  //             title: "定位打开成功",
-  //             icon: "none",
-  //             duration: 1000
-  //           });
-  //           let location = await chooselocation();
-  //           console.log(location);
-  //         } else {
-  //           wx.showToast({
-  //             title: "您没有打开定位",
-  //             icon: "none",
-  //             duration: 1000
-  //           });
-  //         }
-  //       }
-  //     }
-  //   } else {
-  //     // let location = await chooselocation()
-  //     // console.log(location);
-  //   }
   },
   onPullDownRefresh(){
     this.getgoodslist()
@@ -353,7 +321,7 @@ swiper {
   padding: 10rpx 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   .joinbtn {
     background-color: #fff;
@@ -364,6 +332,33 @@ swiper {
   }
   .joinbtnhover {
     background-color: #eee;
+  }
+  .imgcon{
+    // width: 150rpx;
+    // height: 127.5rpx;
+    width: 120rpx;
+    height: 102rpx;
+    // background-color: pink;
+    overflow: hidden;
+    margin: 0 auto;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .bzzm{
+    text-align: center;
+    img{
+      width: 96%;
+      height: 100%;
+    }
+  }
+  .gysrz{
+    text-align: center;
+    img{
+      width: 85%;
+      height: 100%;
+    }
   }
 }
 .onbottom{

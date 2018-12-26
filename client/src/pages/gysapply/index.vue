@@ -22,13 +22,8 @@
       <span class="m">供应商类型：</span>
       <span class="r">
         <radio-group name='whoami' class="radio-group" @change="radioChange">
-          <label class="radio" >
-            <radio value="生产商" name='whoami' />
-            生产商
-          </label>
-          <label class="radio">
-            <radio value="批发商" name='whoami' />
-            批发商
+          <label class="radio" v-for="(item,i) in radios" :key="i">
+            <radio :value="item.name" >{{item.value}}</radio>
           </label>
         </radio-group>
       </span>
@@ -152,6 +147,14 @@ export default {
         makername:'',
         yyzhizhaocode:''
       },
+      radios:[{
+        name:"scs",
+        value:'生产商',
+        checked:true
+      },{
+        name:"pfs",
+        value:'批发商'
+      }],
       whoami:'',
       // uploader配置项
       piccount:1,
@@ -298,7 +301,8 @@ export default {
         filePath: filePath,
         name: 'file',
         success: function(res){
-          let data = JSON.parse(res.data)
+          console.log(data);
+          
           
           console.log(data.data);
           console.log(data.data.imgUrl);
@@ -320,9 +324,10 @@ export default {
       this.imgurls[which] = ''
     },
     formSubmit(data){
-      console.log(data);
       let obj = data.mp.detail
-      // data.value.for
+      console.log(obj.value);
+      
+      // 数据校验
       for (const key in obj.value) {
         if (obj.value.hasOwnProperty(key)) {
           const element = obj.value[key];
@@ -337,16 +342,31 @@ export default {
         }
       }
       
-      // 数据校验
+      var self = this
+      let {formId, value} = obj
+      console.log(formId , value);
+      if(self.globalData.loginstate !== true){
+        return wx.showToast({
+          title:'请先登录',
+          icon:"none",
+          duration:1000,
+          success(){
+            setTimeout(function(){
+              wx.navigateTo({
+                url:'/pages/my/main'
+              })
+            },1000)
+          }
+        })
+      }
+
       wx.showLoading({
         title: '提交中...',
         mask:true,
       })
-      var self = this
-      let {formId, value} = obj
-      console.log(formId , value);
+
       qc.request({
-        login:true,
+        // login:true,
         method:"POST",
         data:{formId , value},
         url: conf.service.bangzhuapplyUrl,
@@ -479,5 +499,7 @@ $maincolor: #ce4031;
     color: #ccc;
   }
 }
-
+label:nth-child(2){
+  padding-left: 12rpx;
+}
 </style>

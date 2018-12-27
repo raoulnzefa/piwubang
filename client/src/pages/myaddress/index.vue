@@ -4,8 +4,8 @@
       <!-- <address-card v-for='(x,i) in list' :key='i' :info.sync='x' :index='i' @setdefault='setdefault'></address-card> -->
       <div class="card" v-for='(x,i) in list' :key='i'>
         <div class="t main">
-          <span>收件人：{{x.userName}}</span>
-          <span>联系方式：{{x.telNumber}}</span>
+          <span>收件人：{{x.userName}} </span>
+          <span>&nbsp;&nbsp; 手机号：{{x.telNumber}}</span>
         </div>
         <div class="m main">
           地址：{{x.provinceName}} {{x.cityName}} {{x.countyName}}
@@ -17,7 +17,7 @@
             <div class="btn1" ></div>
             <span>{{x.isdefault?'默认地址':'设为默认'}}</span>
           </div>
-          <div class="btn-edit">编辑</div>
+          <div class="btn-edit" @click='edit(i)'>编辑</div>
           <div class="btn-edit" @click='del(i)'>删除</div>
         </div>
       </div>
@@ -26,8 +26,8 @@
       </div>
     <!-- </div> -->
     <div class="importwx">
-      <button  @click="getwxaddress">微信导入</button>
-      <button  @click="addaddress">手动添加</button>
+      <button  @click="getwxaddress" hover-class='btn-hover'>微信导入</button>
+      <button  @click="addaddress" hover-class='btn-hover'>手动添加</button>
     </div>
   </div>
 </template>
@@ -153,6 +153,10 @@ export default {
     },
     del(x){
       this.list.splice(x,1)
+    },
+    edit(x){
+      
+
     }
   },
   onShow() {
@@ -242,13 +246,16 @@ $maincolor: #ce4031;
     button{
       width: 40%;
       background-color: $maincolor;
-      height: 60rpx;
-      line-height: 60rpx;
+      height: 80rpx;
+      line-height: 80rpx;
       color: #fff;
       border: none;
-      border-radius: 30rpx;
+      border-radius: 40rpx;
       margin: 0;
       display: block;
+    }
+    .btn-hover{
+      background-color: rgb(161, 0, 0);
     }
   }
   .btm{

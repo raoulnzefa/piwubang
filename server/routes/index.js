@@ -45,6 +45,13 @@ router.get('/goodslist', controllers.getgoodslist)
 // GET !!! 小程序查询商品详情
 router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
 
+
+// GET !!! 小程序查询购物车
+router.get('/cartgoods', validationMiddleware, controllers.getcartgoods)
+
+// GET !!! 小程序添加到购物车
+router.get('/addtocart', validationMiddleware, controllers.addtocart)
+
 // GET !!! 小程序统一下单
 router.get('/prepay', validationMiddleware, unifiedorder)
 

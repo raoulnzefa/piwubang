@@ -49,8 +49,8 @@
           联系商家
         </div>
       </div>
-      <div class="item b part4">
-        <!-- 加入购物车 -->
+      <div class="item b part4" hover-class="hoverbtn" @click="jointocart">
+        加入购物车
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="buynow">立即购买</div>
     </div>
@@ -73,7 +73,6 @@ import goodsItem from "@/components/goodsitem";
 export default {
   data() {
     return {
-      motto: "Hello World",
       userInfo: {},
       location: "尚未获取定位",
       goodsdetail: {},
@@ -94,6 +93,47 @@ export default {
       console.log("buynow");
       let url = `/pages/order/main?goodsdetail=${JSON.stringify(this.goodsdetail)}`
       wx.navigateTo({url})
+    },
+    jointocart(){
+      console.log("goodsdetail jointocart");
+      var self = this;
+      wx.showLoading({
+        title:'Loading',
+        mask:true,
+      })
+      qc.request({
+        url: conf.service.addtocartUrl,
+        data:{
+          goodsid:self.goodsdetail._id
+        },
+        success:function(res) {
+          console.log('addtocart res', res.data.data);
+          if(res.data.success){
+            wx.showToast({
+              title:"添加成功",
+              duration:1500,
+              icon:'success'
+            })
+          }else{
+            wx.showToast({
+              title:res.data.msg ,
+              duration:1500,
+              icon:'none'
+            })
+          }
+          
+        },
+        fail(){
+          wx.showToast({
+            title:"请求失败",
+            duration:1500,
+            icon:'none'
+          })
+        },
+        complete(){
+          wx.hideLoading()
+        }
+      })
     }
   },
   onShow(){
@@ -261,9 +301,10 @@ swiper {
     width: 30%;
   }
   .part4 {
-    // background-color: #ffe900;
+    background-color: #fdb51b;
     color: #000;
     font-size: 40rpx;
+    text-align: center;
   }
   .part5 {
     background-color: $maincolor;

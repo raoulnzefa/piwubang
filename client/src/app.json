@@ -1,7 +1,8 @@
 {
   "pages": [
-    "pages/myaddress/main",
+    "pages/cart/main",
     "pages/index/main",
+    "pages/myaddress/main",
     "pages/my/main",
 
     "pages/gysapply/main",
@@ -48,6 +49,11 @@
       "text":"周边",
       "iconPath":"/static/icon/near.png",
       "selectedIconPath":"/static/icon/near1.png"
+    },{
+      "pagePath":"pages/cart/main",
+      "text":"购物车",
+      "iconPath":"/static/icon/cart.png",
+      "selectedIconPath":"/static/icon/cart1.png"
     },{
       "pagePath":"pages/my/main",
       "text":"我的",

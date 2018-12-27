@@ -42,6 +42,12 @@ var config = {
         // 收货地址修改
         addresseditUrl: `${host}/weapp/addressedit`,
 
+        // 加入购物车
+        addtocartUrl:`${host}/weapp/addtocart`,
+
+        // 查询购物车
+        cartgoodsUrl:`${host}/weapp/cartgoods`,
+
         // 通过后端调统一下单接口
         prepayUrl: `${host}/weapp/prepay`,
 

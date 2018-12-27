@@ -27,7 +27,7 @@ module.exports = async (ctx, next) => {
                     }
                 }
                 // 根据goodsid查询商品信息 过期否 存在否
-                let searchgoods = await mysql('t_product').select('currentPrice','briefDesc','remaining','thumbnail','sxtype','targetArea_name','deliveryMethods').where({_id:goodsid})
+                let searchgoods = await mysql('t_product').select('name','currentPrice','briefDesc','remaining','thumbnail','sxtype','targetArea_name','deliveryMethods').where({_id:goodsid})
                 if(searchgoods.length == 1){
                     let goodsinfo = searchgoods[0]
                 
@@ -38,7 +38,7 @@ module.exports = async (ctx, next) => {
                         // 更新购物车信息
                         cartgoods.unshift({
                             goodsid,
-                            goodsname: goodsinfo.goodsname,
+                            goodsname: goodsinfo.name,
                             thumbnail: goodsinfo.thumbnail,
                             price: goodsinfo.currentPrice,
                             count: 1,
@@ -79,13 +79,13 @@ module.exports = async (ctx, next) => {
                 // 根据goodsid查询商品信息 过期否 存在否
                 console.log('没有购物车信息  直接插入');
                 console.log('goodsid:',goodsid);
-                let goodsinfos = await mysql('t_product').select('currentPrice','briefDesc','remaining','thumbnail','sxtype','targetArea_name','deliveryMethods').where({_id:goodsid})
+                let goodsinfos = await mysql('t_product').select('name','currentPrice','briefDesc','remaining','thumbnail','sxtype','targetArea_name','deliveryMethods').where({_id:goodsid})
                 let goodsinfo = goodsinfos[0]
                 console.log('goodsinfo:',goodsinfo);
                 if(goodsinfo && !goodsinfo.expired && goodsinfo.remaining > 0){
                     let cartgoods = [{
                         goodsid,
-                        goodsname: goodsinfo.goodsname,
+                        goodsname: goodsinfo.name,
                         thumbnail: goodsinfo.thumbnail,
                         price: goodsinfo.currentPrice,
                         count: 1,

@@ -107,6 +107,7 @@ export default {
           goodsid:self.goodsdetail._id
         },
         success:function(res) {
+          wx.hideLoading()
           console.log('addtocart res', res.data.data);
           if(res.data.success){
             wx.showToast({
@@ -124,6 +125,7 @@ export default {
           
         },
         fail(){
+          wx.hideLoading()
           wx.showToast({
             title:"请求失败",
             duration:1500,
@@ -131,7 +133,7 @@ export default {
           })
         },
         complete(){
-          wx.hideLoading()
+          
         }
       })
     }

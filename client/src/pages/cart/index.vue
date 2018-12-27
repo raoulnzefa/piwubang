@@ -62,6 +62,10 @@
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="paynow">确认付款</div>
     </div> -->
+    <div class="none" v-if="shownone">
+      <i class="iconfont icon-tubiao_gouwuche-copy"></i>
+      <div>购物车空空如也~</div>
+    </div>
   </div>
 </template>
 
@@ -84,6 +88,7 @@ export default {
   data() {
     return {
       cartgoods:[],
+      shownone:false,
       userInfo: {},
       location: "尚未获取定位",
       img:'',
@@ -294,6 +299,7 @@ export default {
           console.log(res);
           if(res.data.success){
             self.cartgoods = res.data.data
+            self.shownone = res.data.data.length == 0?true:false
           }else{
             wx.showToast({
               title: '购物车读取失败',
@@ -304,12 +310,16 @@ export default {
           console.log(err);
         },
         complete:function(){
+          wx.stopPullDownRefresh()
           wx.hideLoading();
         }
       });
     }
   },
   onShow(){
+    this.getcartgoods()
+  },
+  onPullDownRefresh(){
     this.getcartgoods()
   }
 };
@@ -485,5 +495,21 @@ $maincolor: #ce4031;
   .hoverbtn {
     background-color: #9c2518;
   }
+}
+.none{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  i.iconfont{
+    font-size: 200rpx;
+    color: #b3b3b3;
+    text-align: center;
+  }
+  div{
+    font-size: 50rpx;
+    text-align: center;
+    color: #b3b3b3;
+  }
+
 }
 </style>

@@ -1,7 +1,7 @@
 {
     "navigationBarBackgroundColor": "#CE4031",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "订单详情",
+    "navigationBarTitleText": "购物车",
     "backgroundTextStyle": "light",
-    "enablePullDownRefresh": false
+    "enablePullDownRefresh": true
 }

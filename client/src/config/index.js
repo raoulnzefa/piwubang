@@ -70,7 +70,7 @@ var config = {
         bangzhuapplyUrl: `${host}/weapp/bangzhuapply`,
 
         // 供应商、厂商申请
-        makerapplyUrl: `${host}/weapp/makerapply`
+        gysapplyUrl: `${host}/weapp/gysapply`
         
 
     }

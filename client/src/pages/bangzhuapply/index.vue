@@ -24,7 +24,7 @@
         <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
         <div>
           <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='citycode' disabled v-model="citycode" hidden>
+          <input type="text" name='code' disabled v-model="code" hidden>
 
         </div>
         <div>
@@ -135,7 +135,7 @@ export default {
       pickerValueDefault:[0,0,0],
       citylabel1:'',
       citylabel2:'',
-      citycode:'',
+      code:'',
       // 上传的三张照片
       imgurls:{
         1:'',
@@ -243,7 +243,7 @@ export default {
     cityconfirm({label, value, cityCode}){
       console.log(label, value, cityCode);
       this.citylabel1 = label
-      this.citycode = cityCode
+      this.code = cityCode
     },
     citycancel({label, value, cityCode}){
       console.log(label, value, cityCode);
@@ -299,7 +299,6 @@ export default {
       this.imgurls[which] = ''
     },
     formSubmit(data){
-      console.log(data);
       
       wx.showLoading({
         title: '提交中...',
@@ -315,23 +314,64 @@ export default {
         }
       })
       var self = this
-      console.log(data);
+
+
       let {formId, value} = data.mp.detail
+      
+      console.log(value);
+      
+      // 数据校验
+      for (const key in value) {
+        if (value.hasOwnProperty(key)) {
+          const element = value[key];
+          if(!element.toString().trim()){
+            return wx.showToast({
+              title: '信息不完整！',
+              mask:true,
+              icon:'none',
+              duration:1000
+            })
+          }
+        }
+      }
+      let arr = value.code.split('')     // 110201
+      value.provincecode = arr[0]+arr[1] // 11
+      value.citycode = arr[2]+arr[3]     // 02
+      value.countrycode = arr[4]+arr[5]  // 01
       console.log(formId , value);
       qc.request({
         // login:true,
         method:"POST",
-        data:{formId , value},
+        data:{formId , ...value},
         url: conf.service.bangzhuapplyUrl,
         success(res){
           console.log(res);
-          
+
+          // if(res.data.code == ){
+
+          // }
+          wx.hideLoading()
+          wx.showToast({
+            title:res.data.msg,
+            icon:'none',
+            duration:1400
+          })
+          setTimeout(function(){
+            wx.hideToast()
+            wx.switchTab({
+              url:'/pages/index/main'
+            })
+          },1600)
         },
         fail(){
-          
+          wx.hideLoading()
+          wx.showToast({
+            title:'网络连接失败',
+            icon:'none',
+            duration:1400
+          })
         },
         complete(){
-          wx.hideLoading()
         }
       })
 

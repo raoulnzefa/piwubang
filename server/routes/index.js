@@ -83,6 +83,6 @@ router.get('/deleteorder', validationMiddleware, controllers.deleteorder)
 router.post('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
 
 // GET !!! 小程序供应商、厂商申请
-router.post('/makerapply', validationMiddleware, controllers.makerapply)
+router.post('/gysapply', validationMiddleware, controllers.gysapply)
 
 module.exports = router

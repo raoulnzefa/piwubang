@@ -23,7 +23,7 @@ module.exports = async (ctx, next) => {
                             success:false,
                             data:{},
                             msg:"该商品已在购物车"
-                        } 
+                        }
                     }
                 }
                 // 根据goodsid查询商品信息 过期否 存在否

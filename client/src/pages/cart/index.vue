@@ -336,6 +336,19 @@ export default {
     }
   },
   onShow(){
+    if(!this.globalData.loginstate){
+        return wx.showToast({
+            title:"请先登录哦",
+            icon:"none",
+            mask:true,
+            duration:1500,
+            success(){
+            setTimeout(function(){
+                wx.switchTab({url:"/pages/my/main"})
+            },1500)
+            }
+        })
+    }
     this.getcartgoods()
   },
   onLoad(){

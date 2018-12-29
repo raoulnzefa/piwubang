@@ -12,8 +12,8 @@
       </div>
       <div class="m2 m" v-if="logged">
         <span>{{userInfo.nickName}}</span>
+        <span>{{userInfo.rolename || '普通会员'}}</span>
       </div>
-
       <div class="r"></div>
     </div>
     <div class="mainpart mid">
@@ -108,6 +108,7 @@ export default {
       this.logged = true
     }else{
       this.logged = false
+      this.userInfo = {}
     }
   },
   methods: {
@@ -152,19 +153,21 @@ export default {
         qc.loginWithCode({
           success: res => {
             self.userInfo=res
-
             self.logged=true
 
             self.globalData.loginstate = true
             self.globalData.userInfo = res
 
-            // self.showSuccess("登录成功");
+            self.showSuccess("登录成功");
           },
-          fail: err => {
-            // console.error(err);
+          fail: err => {            
+            console.error('二次登录失败');
+            self.userInfo = {}
+            self.logged = false
+
             self.globalData.loginstate = false
             self.globalData.userInfo = {}
-            self.showModel("登录提示", err.message);
+            self.showModel("登录提示", '登录失败，请检查网络');
           }
         });
       } else {
@@ -174,17 +177,24 @@ export default {
         qc.login({
           success: res => {
             self.userInfo = res
-
             self.logged = true 
-            
+
             self.globalData.loginstate = true
             self.globalData.userInfo = res
+
             self.showSuccess("登录成功");
           },
           fail: err => {
-            // console.error(err);
+            console.error('一次登录失败');
+
+            self.userInfo = {}
+            self.logged = false 
+
+            self.globalData.loginstate = false
+            self.globalData.userInfo = {}
+
             // self.showModel("登录错误", err.message);
-            self.showModel("登录提示", '点击登录按钮以登录');
+            self.showModel("登录提示", '登录失败，请检查网络');
           }
         });
       }

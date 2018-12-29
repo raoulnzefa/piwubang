@@ -1,15 +1,14 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/order/main",
+    "pages/myaddress/main",
     "pages/goodsdetail/main",
     "pages/cart/main",
-    "pages/myaddress/main",
     "pages/my/main",
-
     "pages/gysapply/main",
     "pages/bangzhuapply/main",
     "pages/orderlist/main",
-    "pages/order/main",
     "pages/zutuan/main",
     "pages/near/main"
     

@@ -51,7 +51,7 @@ $maincolor: #ce4031;
   height: 280rpx;
   overflow: hidden;
   margin: 0 auto;
-  padding: 16rpx 0 30rpx;
+  padding: 5rpx 0 0rpx;
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid #f1f1f1;

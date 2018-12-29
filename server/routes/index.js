@@ -59,7 +59,7 @@ router.get('/prepay', validationMiddleware, unifiedorder)
 router.get('/addresslist', validationMiddleware, controllers.addresslist)
 
 // GET !!! 小程序编辑收货地址
-router.get('/addressedit', validationMiddleware, controllers.addressedit)
+router.post('/addressedit', validationMiddleware, controllers.addressedit)
 
 // GET !!! 小程序支付完成后客户端通知服务器支付结果
 router.get('/clientpaid', validationMiddleware, clientpaid) 

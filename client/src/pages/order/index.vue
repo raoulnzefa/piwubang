@@ -61,7 +61,29 @@
       <div class="item b part4">
         总计:￥{{totalfee || 0}}
       </div>
-      <div class="item b part5" hover-class="hoverbtn" @click="paynow">确认付款</div>
+      <div class="item b part5" hover-class="hoverbtn" @click="beforepay">确认付款</div>
+    </div>
+    <div class="modalcon" v-if="showedit">
+      <div class="title">选择收货地址</div>
+      <div>
+        <radio-group class="radio-group" @change="radioChange">
+          <label class="radio" v-for="(x,i) in address" :key="i">
+            <radio :value="i" :checked="x.checked" >
+            <div>
+              <div>
+                {{x.userName}}-{{x.telNumber}}
+              </div>
+              <div>
+                {{x.provinceName}}-{{x.cityName}}-{{x.countyName}}-{{x.detailInfo}}
+              </div>
+            </div>
+            </radio>
+          </label>
+        </radio-group>
+      </div>
+      <div>
+        <button class="closeedit" @click='paynow'>确认</button>
+      </div>
     </div>
   </div>
 </template>
@@ -84,13 +106,15 @@ import goodsItem from "@/components/goodsitem";
 export default {
   data() {
     return {
-      motto: "Hello World",
       userInfo: {},
       location: "尚未获取定位",
       goodsdetail:{},
       img:'',
       goodsid:'',
-      count:1
+      count:1,
+      showedit: false ,
+      address:[],
+      which: ''
     };
   },
   components: {
@@ -156,7 +180,59 @@ export default {
       wx.switchTab({ url });
     },
     contact() {},
+    async getstorage(x){
+      let res = await Promise(function(resolve, reject){
+        wx.getStorage({
+        key: x,
+        success(res) {
+          console.log(res);
+          
+          if(res && res.length){
+            resolve(res.data)
+          }else{
+            resolve(false)
+          }
+         
+        },
+        fail(){
+          resolve(false)
+        }
+      })
+      })
+      return res
+    },
+    beforepay(){
+      console.log(666);
+      let address = wx.getStorageSync('address')
+      console.log(address);
+      if(!address || address.length == 0){
+        return wx.showModal({
+          title:"提示",
+          content:"请先添加收货地址",
+          success(res){
+            if(res){
+              wx.navigateTo({
+                url:"/pages/myaddress/main"
+              })
+            }else{
+
+            }
+          }
+        })
+      }
+      this.address = address
+      this.showedit = true
+    },
     async paynow() {
+      if(!this.which ){
+        return wx.showToast({
+          title:'请选择收货地址',
+          icon:'none',
+          duration:1500
+        })
+      }
+      // return console.log(this.which);
+      
       wx.showLoading({
         title: 'Loading...',
       })
@@ -168,7 +244,8 @@ export default {
         // method:"POST",
         data:{
           count: this.count,
-          _id: this.goodsdetail._id
+          _id: this.goodsdetail._id,
+          receipt: this.which
         },
         success:async function(res) {
           wx.hideLoading();
@@ -246,21 +323,22 @@ export default {
         }
       });
 
+    },
+    radioChange(x){
+      console.log(x.mp.detail.value);
+      let k = parseInt(x.mp.detail.value)
+      console.log(k,this.address[k] );
+      let xx = JSON.stringify(this.address[k])
+      console.log(xx);
+      this.which = xx
     }
   },
   onShow(){
     this.count = 1
-    // let {goodsid, currentPrice, img} = this.$root.$mp.query
     let {goodsdetail} = this.$root.$mp.query
     console.log(goodsdetail);
     this.goodsdetail = JSON.parse(goodsdetail)
-    // if(!goodsid){
-
-    // }else{
-    //   this.goodsid = goodsid
-    //   this.img = img
-    //   this.currentPrice = currentPrice
-    // }
+   
     
   }
 };
@@ -404,4 +482,41 @@ $maincolor: #ce4031;
     background-color: #9c2518;
   }
 }
+.modalcon {
+    // height: 40vh;
+    width: 650rpx;
+    background-color: #fff;
+    position: fixed;
+    top: 25%;
+    left: 30rpx;
+    z-index: 2;
+    border-radius: 20rpx;
+    border: 1px solid #ccc;
+    padding: 0 20rpx;
+    font-size: 32rpx;
+    transition: 0.3s;
+    .title {
+      padding: 8rpx 0 12rpx;
+      border-bottom: 1px solid #e5e5e5;
+      text-align: center;
+      height: 40rpx;
+      line-height: 40rpx;
+      font-size: 30rpx;
+    }
+    label{
+      display: flex;
+      flex-direction: row;
+      font-size: 30rpx;
+    }
+
+    .closeedit{
+      background-color: $maincolor;
+      height: 50rpx;
+      line-height: 50rpx;
+      font-size: 32rpx;
+      color: #fff;
+      width: 30%;
+      margin: 20rpx auto;
+    }
+  }
 </style>

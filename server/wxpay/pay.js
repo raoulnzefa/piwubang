@@ -73,8 +73,8 @@ const unifiedorder = async (ctx, next) => {
         return
     }
     // STEP2 拿到前端传过来的参数 查询商品，计算价格
-    let {_id, count} = ctx.query
-    console.log(`APP传过来的参数是：goodsid:${_id},count:${count}` );
+    let {_id, count , receipt} = ctx.query
+    console.log(`APP传过来的参数是：goodsid:${_id},count:${count},receipt:${receipt}` );
     let goodsinfo = await knex('t_product').where({
         _id
       }).select()
@@ -295,7 +295,7 @@ const unifiedorder = async (ctx, next) => {
                             goodsname ,
                             goodsid: _id ,
                             price: singleprice,
-                            count,
+                            count,receipt,
                             total_fee,
                             status:1, //未支付
                             prepay_id:  prepay_id, 

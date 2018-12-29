@@ -242,32 +242,24 @@ export default {
     console.log('index globalData:',this.globalData );
 
     console.log('index globalData.loginstate:',this.globalData.loginstate, this.globalData.loginstate == true );
-    
-    // let logininfo = await this.loginCheck()
-    // console.log('index 245',logininfo);
-    
-    // this.globalData.loginstate = logininfo.loginstate
-    // this.globalData.userInfo = logininfo.userInfo
-    // console.log('index 248',this.globalData);
-    // if(this.globalData.loginstate !== true){
-    //   // 弹窗强制授权
-    //   // console.log('woyao 弹窗强制授权');
-    //   wx.showToast({
-    //     title:"请先登录哦",
-    //     icon:"none",
-    //     mask:true,
-    //     duration:12500,
-    //     success(){
-    //       setTimeout(function(){
-    //         wx.switchTab({url:"/pages/my/main"})
-    //       },1500)
-    //     }
-    //   })
-    // }
+
     
   },
-  async onShow() {
+  onShow() {
     // console.log('index show');
+    if(!this.globalData.loginstate){
+      wx.showToast({
+        title:"请先登录哦",
+        icon:"none",
+        mask:true,
+        duration:1500,
+        success(){
+          setTimeout(function(){
+            wx.switchTab({url:"/pages/my/main"})
+          },1500)
+        }
+      })
+    }
   },
   created () {
     console.log('index created');
@@ -298,7 +290,7 @@ export default {
               title:"请先登录哦",
               icon:"none",
               mask:true,
-              duration:12500,
+              duration:1500,
               success(){
                 setTimeout(function(){
                   wx.switchTab({url:"/pages/my/main"})

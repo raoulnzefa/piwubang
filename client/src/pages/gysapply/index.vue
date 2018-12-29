@@ -39,14 +39,14 @@
       <span class="l">*</span>
       <span class="m">字号：</span>
       <span class="r">
-        <input type="idcard" name='makername' v-model="form.makername" placeholder="如：xx公司，xx批发部" confirm-type='next' maxlength='18'>
+        <input type="text" name='makername' v-model="form.makername" placeholder="如：xx公司，xx批发部" confirm-type='next' maxlength='18'>
       </span>
     </div>
     <div class="item line code">
       <span class="l">*</span>
       <span class="m">企业信用标识码：<br>(营业执照编号)  </span>
       <span class="r">
-        <input type="idcard" name='yyzhizhaocode' v-model="form.yyzhizhaocode" placeholder="请输入企业信用标识码" confirm-type='next' maxlength='18'>
+        <input type="text" name='yyzhizhaocode' v-model="form.yyzhizhaocode" placeholder="请输入企业信用标识码" confirm-type='next' maxlength='18'>
       </span>
     </div>
     <div class="item block place">
@@ -56,7 +56,7 @@
         <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
         <div>
           <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='citycode' disabled v-model="citycode" hidden>
+          <input type="text" name='code' disabled v-model="code" hidden>
         </div>
         <div>
           <textarea name="citylabel2" id="" placeholder="详细地址（精确到门牌号）" v-model="citylabel2" confirm-type='next'></textarea>
@@ -148,11 +148,11 @@ export default {
         yyzhizhaocode:''
       },
       radios:[{
-        name:"scs",
-        value:'生产商',
+        name:"制造商",
+        value:'制造商',
         checked:true
       },{
-        name:"pfs",
+        name:"批发商",
         value:'批发商'
       }],
       whoami:'',
@@ -164,7 +164,7 @@ export default {
       pickerValueDefault:[0,0,0],
       citylabel1:'',
       citylabel2:'',
-      citycode:'',
+      code:'',
       // 上传的三张照片
       imgurls:{
         1:'',
@@ -268,7 +268,7 @@ export default {
     cityconfirm({label, value, cityCode}){
       console.log(label, value, cityCode);
       this.citylabel1 = label
-      this.citycode = cityCode
+      this.code = cityCode
     },
     citycancel({label, value, cityCode}){
       console.log(label, value, cityCode);
@@ -327,12 +327,12 @@ export default {
     formSubmit(data){
       let obj = data.mp.detail
       console.log(obj.value);
-      
+      var self = this
       // 数据校验
       for (const key in obj.value) {
         if (obj.value.hasOwnProperty(key)) {
           const element = obj.value[key];
-          if( !element || !element.trim()){
+          if(!element.toString().trim()){
             return wx.showToast({
               title: '信息不完整！',
               mask:true,
@@ -342,9 +342,15 @@ export default {
           }
         }
       }
-      
-      var self = this
+
       let {formId, value} = obj
+      let arr = value.code.split('')     // 110201
+      value.provincecode = arr[0]+arr[1] // 11
+      value.citycode = arr[2]+arr[3]     // 02
+      value.countrycode = arr[4]+arr[5]  // 01
+
+
+      
       console.log(formId , value);
       if(self.globalData.loginstate !== true){
         return wx.showToast({
@@ -369,17 +375,28 @@ export default {
       qc.request({
         // login:true,
         method:"POST",
-        data:{formId , value},
-        url: conf.service.bangzhuapplyUrl,
+        data:{formId , ...value},
+        url: conf.service.gysapplyUrl,
         success(res){
           console.log(res);
-          
+          wx.hideLoading()
+          wx.showToast({
+            title:res.data.msg,
+            icon:'none',
+            duration:1400
+          })
+          setTimeout(function(){
+            wx.hideToast()
+            wx.switchTab({
+              url:'/pages/index/main'
+            })
+          },1600)
         },
         fail(){
           
         },
         complete(){
-          wx.hideLoading()
+          
         }
       })
 

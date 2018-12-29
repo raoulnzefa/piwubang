@@ -5,10 +5,10 @@
       <div class="header">
       <div class="u">商品详情</div>
       <div class="m">
-        <div class="l">
+        <div class="l" @click="todetail(x)">
           <img :src="x.thumbnail" mode='widthFix' alt="">
         </div>
-        <div class="m">
+        <div class="m" @click="todetail(x)">
           <div>{{x.goodsname}}</div>
           <div class='desc'>{{x.desc}}</div>          
         </div>
@@ -299,25 +299,49 @@ export default {
           console.log(res);
           if(res.data.success){
             self.cartgoods = res.data.data
-            self.shownone = res.data.data.length == 0?true:false
+            let length = res.data.data.length
+            self.shownone = length == 0?true:false
+            wx.setTabBarBadge({
+              index: 3,
+              text: length + ''
+            })
           }else{
             wx.showToast({
               title: '购物车读取失败',
+            })
+            wx.removeTabBarBadge({
+              index : 3
             })
           }
         },
         fail: function(err) {
           console.log(err);
+          wx.removeTabBarBadge({
+            index : 3
+          })
         },
         complete:function(){
           wx.stopPullDownRefresh()
           wx.hideLoading();
+          
         }
       });
+    },
+    todetail(x){
+      if(x.goodsid){
+        wx.navigateTo({
+          url:`/pages/goodsdetail/main?goodsid=${x.goodsid}`
+        })
+      }
     }
   },
   onShow(){
     this.getcartgoods()
+  },
+  onLoad(){
+    wx.showShareMenu({
+      withShareTicket: true
+    })
   },
   onPullDownRefresh(){
     this.getcartgoods()

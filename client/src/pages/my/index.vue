@@ -96,6 +96,9 @@ export default {
   },
   onShow(){},
   onLoad(){
+    wx.showShareMenu({
+      withShareTicket: true
+    })
     // this.getUserInfo()
     console.log('my onload');
     let loginstate = this.globalData.loginstate;

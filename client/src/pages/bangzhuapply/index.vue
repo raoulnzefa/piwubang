@@ -24,7 +24,7 @@
         <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
         <div>
           <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='citycode' disabled v-model="citycode" hidden>
+          <input type="text" name='code' disabled v-model="citycode" hidden>
 
         </div>
         <div>
@@ -318,14 +318,17 @@ export default {
       console.log(data);
       let {formId, value} = data.mp.detail
       console.log(formId , value);
+      let arr = value.code.split('')
+      value.provincecode = arr[0]+arr[1]
+      value.citycode = arr[2]+arr[3]
+      value.countrycode = arr[4]+arr[5]
       qc.request({
         // login:true,
         method:"POST",
-        data:{formId , value},
+        data:{formId , ...value},
         url: conf.service.bangzhuapplyUrl,
         success(res){
           console.log(res);
-          
         },
         fail(){
           

@@ -20,6 +20,25 @@ export default {
     console.log('app onlunch');
     qc.setLoginUrl(config.service.loginUrl);  
   },
+  onShow(obj){
+    let shareTicket = obj.shareTicket || ''
+    console.log('shareTicket:',shareTicket);
+    if(!shareTicket)return ;
+    
+    wx.getShareInfo({
+      shareTicket,
+      timeout: 1000,
+      success(res){
+        console.log(res);
+      } ,
+      fail(err){
+
+      } ,
+      complete(){
+
+      } ,
+    }) 
+  },
   onError(err){
     console.log('app onerror:', err);
   }

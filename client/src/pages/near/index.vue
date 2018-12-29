@@ -5,7 +5,11 @@
 </template>
 <script>
     export default {
-        
+        onLoad(){
+            wx.showShareMenu({
+            withShareTicket: true
+            })
+        },
     }
 </script>
 <style lang="scss" scoped>

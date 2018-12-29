@@ -38,6 +38,43 @@
         商品库存{{goodsdetail.stock}}件
       </div>
     </div>
+    <div class="dtdesc">
+      商品描述：
+      <div>{{goodsdetail.detailDesc}}</div>
+    </div>
+    <div class="fahuo">
+      <div class="u">[注意事项]</div>
+      <!-- 发货地 发货时间 发货方式 -->
+      <div class="m">
+        <div class="table">
+        <div class="tr">
+          <div>发货方式 :</div>
+          <div class="tips">{{goodsdetail.deliveryMethods || '商家未注明'}}</div>
+          <div>发货地 :</div>
+          <div>{{goodsdetail.deliveryArea || '商家未注明'}}</div>
+        </div>
+        <div class="tr">
+          <div>发货时间 :</div>
+          <div>{{goodsdetail.deliveryTime || '商家未注明'}}</div>
+          <div>可购区域 :</div>
+          <div class="tips">{{goodsdetail.targetArea_name || '商家未注明'}}</div>
+        </div>
+        <div class="tr">
+          <div>是否包邮 :</div>
+          <div>{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="dtimgs">
+      <div>商品详情：</div>
+      <div>
+        <img v-for='(x,i) in goodsdetail.dtimgs' :key='i' :src="x" alt="">
+      </div>
+    </div>
+    <div class="spacing">
+
+    </div>
     <div class="foot">
       <div class="item s part1">
         <div @click="routeToHome">
@@ -54,6 +91,9 @@
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="buynow">立即购买</div>
     </div>
+    <button class="share" open-type="share">
+      <i class="iconfont icon-fenxiang"></i>
+    </button>
   </div>
 </template>
 
@@ -76,7 +116,8 @@ export default {
       userInfo: {},
       location: "尚未获取定位",
       goodsdetail: {},
-      count:1
+      count:1,
+      goodsid:''
     };
   },
   components: {
@@ -138,8 +179,14 @@ export default {
       })
     }
   },
+  onLoad(){
+    wx.showShareMenu({
+      withShareTicket: true
+    })
+  },
   onShow(){
     let goodsid = this.$root.$mp.query.goodsid
+    this.goodsid = goodsid
     console.log('goodsid:',goodsid);
     
     var self = this;
@@ -151,7 +198,12 @@ export default {
         },
         success:function(res) {
           console.log('goodsdetail', res.data.data);
-          self.goodsdetail = res.data.data
+          let goodsinfo = res.data.data
+          goodsinfo.dtimgs = []
+          goodsinfo.detailImg.map(function(v,i){
+            goodsinfo.dtimgs.push(v.url)
+          })
+          self.goodsdetail = goodsinfo
         },
         fail(){
           wx.showToast({
@@ -160,6 +212,21 @@ export default {
           })
         }
       })
+  },
+  onShareAppMessage(){
+    var self = this
+    console.log('share');
+    return {
+      title: `${self.goodsdetail.name}`,
+      path: `/pages/goodsdetail/main?goodsid=${self.goodsid}`,
+      imageUrl: `${self.goodsdetail.urls[0]}`,
+      success: (res) => {
+        console.log("转发成功", res);
+      },
+      fail: (res) => {
+        console.log("转发失败", res);
+      }
+    }
   }
 };
 </script>
@@ -272,6 +339,58 @@ swiper {
       font-size: 40rpx;
     }
   }
+  .spacing{
+    height: 100rpx;
+  }
+.dtdesc{
+  word-break: break-all;
+  
+  padding: 0rpx 20rpx 20rpx;
+  font-size: 32rpx;
+  border-bottom:1px solid #e5e5e5; 
+  div{
+    text-indent: 2em;
+  }
+}
+.fahuo{
+  padding: 0rpx 20rpx 20rpx;
+  border-bottom:1px solid #e5e5e5; 
+  font-size: 32rpx;
+  .u{
+    font-weight: 700;
+  }
+  .m{
+    .table{
+      width: 100%;
+      margin: 0 auto;
+      font-size: 28rpx;
+      color: #000;
+      .tr{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        div{
+          width: 20%;
+        }
+        div:nth-child(3){
+          margin-left: 40rpx;
+        }
+        .tips{
+          color: $maincolor;
+        }
+      }
+      
+    }
+  }
+}
+.dtimgs{
+  font-size: 32rpx;
+  border-bottom:1px solid #e5e5e5; 
+  padding: 0rpx 20rpx 20rpx;
+  img{
+    width: 100%;
+  }
+}
 .foot {
   position: fixed;
   bottom: 0;
@@ -316,6 +435,23 @@ swiper {
   }
   .hoverbtn {
     background-color: #9c2518;
+  }
+}
+.share{
+  position: fixed;
+  right: 6rpx;
+  top:563rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, .5);
+  i{
+    color: rgba(0, 0, 0, .9);
+    font-size: 60rpx;
   }
 }
 </style>

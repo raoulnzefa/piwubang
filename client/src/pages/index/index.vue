@@ -234,7 +234,9 @@ export default {
   },
   async onLoad(){
     console.log('index onload');
-    
+    wx.showShareMenu({
+      withShareTicket: true
+    })
     this.getgoodslist()
     // console.log('index 242 onLoad',this.globalData);
     console.log('index globalData:',this.globalData );

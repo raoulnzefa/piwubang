@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/goodsdetail/main",
     "pages/cart/main",
     "pages/myaddress/main",
     "pages/my/main",
@@ -9,7 +10,6 @@
     "pages/bangzhuapply/main",
     "pages/orderlist/main",
     "pages/order/main",
-    "pages/goodsdetail/main",
     "pages/zutuan/main",
     "pages/near/main"
     

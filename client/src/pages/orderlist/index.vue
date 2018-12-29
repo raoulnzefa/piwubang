@@ -6,7 +6,7 @@
     <div class="main">
       <orderlist-item v-for='(x,i) in which' :key="i" :orderinfo="x"></orderlist-item>  
     </div>
-    <div class="nothing">
+    <div class="nothing" v-if='!which.length'>
       <i class="iconfont icon-quanbudingdan01"></i>
       <div>您还没有相关订单</div>
     </div>

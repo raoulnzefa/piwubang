@@ -12,7 +12,11 @@
       </div>
       <div class="m2 m" v-if="logged">
         <span>{{userInfo.nickName}}</span>
-        <span>{{userInfo.rolename || '普通会员'}}</span>
+        <span class="label" v-if="userInfo.rolename=='普通会员'">{{userInfo.rolename || '普通会员'}}</span>
+        <span class="label" v-if="userInfo.rolename=='普通会员'">{{userInfo.rolename || '普通会员'}}</span>
+        <span class="label" v-if="userInfo.rolename=='普通会员'">{{userInfo.rolename || '普通会员'}}</span>
+        <span class="label" v-if="userInfo.rolename=='普通会员'">{{userInfo.rolename || '普通会员'}}</span>
+
       </div>
       <div class="r"></div>
     </div>
@@ -53,15 +57,15 @@
       <div class="list">联系我们
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">供应商入驻
+      <div class="list" @click="tomymoney">我的余额
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">我的邀请
+      <!-- <div class="list">我的邀请
         <i class="iconfont icon-tubiao_xiangyou"></i>
-      </div>
-      <div class="list">联系我们
+      </div> -->
+      <!-- <div class="list">联系我们
         <i class="iconfont icon-tubiao_xiangyou"></i>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -108,7 +112,9 @@ export default {
       this.logged = true
     }else{
       this.logged = false
-      this.userInfo = {}
+      this.userInfo = {
+        avatarUrl: "/static/img/initialAvatar.png",
+      }
     }
   },
   methods: {
@@ -162,11 +168,11 @@ export default {
           },
           fail: err => {            
             console.error('二次登录失败');
-            self.userInfo = {}
+            self.userInfo = {avatarUrl: "/static/img/initialAvatar.png",}
             self.logged = false
 
             self.globalData.loginstate = false
-            self.globalData.userInfo = {}
+            self.globalData.userInfo = {avatarUrl: "/static/img/initialAvatar.png",}
             self.showModel("登录提示", '登录失败，请检查网络');
           }
         });
@@ -187,11 +193,11 @@ export default {
           fail: err => {
             console.error('一次登录失败');
 
-            self.userInfo = {}
+            self.userInfo = {avatarUrl: "/static/img/initialAvatar.png",}
             self.logged = false 
 
             self.globalData.loginstate = false
-            self.globalData.userInfo = {}
+            self.globalData.userInfo = {avatarUrl: "/static/img/initialAvatar.png",}
 
             // self.showModel("登录错误", err.message);
             self.showModel("登录提示", '登录失败，请检查网络');
@@ -208,6 +214,11 @@ export default {
     toaddress(){
       wx.navigateTo({
         url:"/pages/myaddress/main"
+      })
+    },
+    tomymoney(){
+      wx.navigateTo({
+        url:"/pages/mymoney/main"
       })
     }
   }

@@ -223,6 +223,7 @@ export default {
         fail(){
           wx.showToast({
             title:"获取商品列表失败",
+            icon:"none",
             duration:1500
           })
         },

@@ -1,0 +1,654 @@
+<template>
+  <div class>
+    <!-- <slogan type='bangzhu'></slogan> -->
+    <div class="container">
+      <form report-submit="true" @submit="formSubmit">
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">手机号：</span>
+          <span class="r">
+            <input
+              type="number"
+              name="phone"
+              v-model="form.phone"
+              placeholder="请输入手机号"
+              confirm-type="next"
+              maxlength="11"
+              focus="true"
+            >
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">商品名称：</span>
+          <span class="r">
+            <input
+              type="text"
+              name="name"
+              v-model="form.name"
+              placeholder="请输入品名"
+              confirm-type="next"
+              maxlength="20"
+            >
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">商品组团价：</span>
+          <span class="r">
+            <input
+              type="number"
+              name="currentPrice"
+              v-model="form.currentPrice"
+              placeholder="请输入价格，单位：元"
+              confirm-type="next"
+              maxlength="10"
+            >
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">商品市场价：</span>
+          <span class="r">
+            <input
+              type="number"
+              name="oldPrice"
+              v-model="form.oldPrice"
+              placeholder="需高于组团价，单位：元"
+              confirm-type="next"
+              maxlength="10"
+            >
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">取货方式：</span>
+          <span class="r">
+            <radio-group name="deliveryMethods" class="radio-group" @change="radioChange">
+              <label class="radio" v-for="(item,i) in radios" :key="i">
+                <radio :value="item.name">{{item.value}}</radio>
+              </label>
+            </radio-group>
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">提货点：</span>
+          <span class="r">
+            <input
+              type="text"
+              name="deliveryArea"
+              v-model="form.deliveryArea"
+              placeholder="若是快递运输请选择发货地"
+              confirm-type="next"
+              disabled
+              @click="deliveryAreachange"
+            >
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">组团开始时间：</span>
+          <span class="r">
+            <picker mode='date' value='2019-01-01' start='2019-01-01' end='2029-12-31' @change='pickerchange' @cancel='pickercancel1'>
+              <input
+                type="text"
+                name="_start"
+                v-model="form._start"
+                placeholder="点击选择"
+                confirm-type="next"
+                disabled
+              >
+            </picker>
+          </span>
+        </div>
+        <!-- <mp-datepicker ref="mpDatePicker" mode='date' defaultDate='2019-01-01' start='2019-01-01' end='2029-12-31' @onChange='pickerchange' @cancel='pickercancel'></mp-datepicker> -->
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">组团结束时间：</span>
+          <span class="r">
+            <picker mode='date' value='2019-01-01' start='2019-01-01' end='2029-12-31' @change='pickerchange1' @cancel='pickercancel1'>
+              <input
+                type="text"
+                name="_end"
+                v-model="form._end"
+                placeholder="点击选择"
+                confirm-type="next"
+                disabled
+              >
+            </picker>
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">提货发货时间：</span>
+          <span class="r">
+            <picker mode='date' value='2019-01-01' start='2019-01-01' end='2029-12-31' @change='pickerchange2' @cancel='pickercancel2'>
+              <input
+                type="text"
+                name="deliveryTime"
+                v-model="form.deliveryTime"
+                placeholder="点击选择"
+                confirm-type="next"
+              >
+            </picker>
+          </span>
+        </div>
+        <div class="item block">
+          <span class="l">*</span>
+          <span class="m">商品实物图1：</span>
+          <div class="r">
+            <mp-uploader
+              @upLoadSuccess="upLoadSuccess"
+              @upLoadFail="upLoadFail0"
+              @uploadDelete="uploadDelete"
+              :showTip="showtip"
+              :count="piccount"
+              :maxLength="maxlength"
+              :which="0"
+            ></mp-uploader>
+            <input type="text" name="urls0" disabled v-model="form.urls[0]" hidden>
+          </div>
+        </div>
+        <div class="item block">
+          <span class="l">*</span>
+          <span class="m">商品实物图2：</span>
+          <div class="r">
+            <mp-uploader
+              @upLoadSuccess="upLoadSuccess"
+              @upLoadFail="upLoadFail1"
+              @uploadDelete="uploadDelete"
+              :showTip="showtip"
+              :count="piccount"
+              :maxLength="maxlength"
+              :which="1"
+            ></mp-uploader>
+            <input type="text" name="urls1" disabled v-model="form.urls[1]" hidden>
+          </div>
+        </div>
+        <div class="item block">
+          <span class="l">*</span>
+          <span class="m">商品实物图3：
+          </span>
+          <div class="r">
+            <mp-uploader
+              @upLoadSuccess="upLoadSuccess"
+              @upLoadFail="upLoadFail2"
+              @uploadDelete="uploadDelete"
+              :showTip="showtip"
+              :count="piccount"
+              :maxLength="maxlength"
+              :which="2"
+            ></mp-uploader>
+            <input type="text" name="urls2" disabled v-model="form.urls[2]" hidden>
+          </div>
+        </div>
+        <div class="textarea">
+          <span class="l">*</span>
+          <span class="m">商品描述：</span>
+          <span class="r">
+            <textarea
+              name="detailDesc"
+              type="text"
+              v-model="form.detailDesc"
+              class="desc"
+              placeholder="描述一下你的商品，尽可能详细并循循善诱"
+            ></textarea>
+          </span>
+        </div>
+        <div class="textarea">
+          <span class="l">*</span>
+          <span class="m">卖家提示：</span>
+          <span class="r">
+            <textarea
+              name="tips"
+              type="text"
+              v-model="form.tips"
+              class="desc"
+              placeholder="简述购买注意点，例如提货时间，提货方式，哪些区域允许购买等..."
+            ></textarea>
+          </span>
+        </div>
+        <button class="submit" form-type="submit" hover-class="btn-hover">确认发布</button>
+      </form>
+      <mp-citypicker
+        ref="mpCityPicker"
+        :pickerValueDefault="pickerValueDefault"
+        @onChange="citychange"
+        @onCancel="citycancel"
+        @onConfirm="cityconfirm"
+      ></mp-citypicker>
+    </div>
+  </div>
+</template>
+
+<script>
+import qc from "wafer2-client-sdk";
+import conf from "@/config";
+
+import checkscope from "@/wxapis/check_scope";
+import authorize from "@/wxapis/authorize";
+import openSetting from "@/wxapis/openSetting";
+import modal from "@/wxapis/modal";
+
+import mpDatepicker from '@/components/datePicker';
+import mpCitypicker from "mpvue-weui/src/city-picker";
+import mpUploader from "@/components/mpuploader.vue";
+
+
+export default {
+  data() {
+    return {
+      userInfo: {},
+      location: "尚未获取定位",
+      pickershow:false,
+      form: {
+        name: "",
+        phone: "",
+        deliveryArea: "",
+        deliveryTime: "",
+        _start:"",
+        _end:'',
+        urls:[],
+        detailDesc: "",
+        tips: "",
+        oldPrice:'',
+        curentPrice:''
+      },
+      radios: [
+        {
+          name: "定点自提",
+          value: "定点自提",
+          checked: true
+        },
+        {
+          name: "卖家配送",
+          value: "卖家配送"
+        },
+        {
+          name: "快递运输",
+          value: "快递运输"
+        }
+      ],
+      deliveryMethods: "",
+      // uploader配置项
+      piccount: 1,
+      showtip: true,
+      maxlength: 1,
+      // city picker 配置项
+      pickerValueDefault: [0, 0, 0],
+      citylabel1: "",
+      citylabel2: "",
+      code: "",
+      // 上传的三张照片
+      imgurls: {
+        1: "",
+        2: "",
+        3: "",
+        4: ""
+      }
+    };
+  },
+  components: {
+    mpUploader,
+    mpCitypicker,
+    mpDatepicker
+  },
+  methods: {
+    // 显示繁忙提示
+    showBusy : text => wx.showToast({
+    title: text,
+    icon: 'loading',
+    duration: 1500
+    }),
+
+    // 显示成功提示
+    showSuccess: text => wx.showToast({
+    title: text,
+    icon: 'success'
+    }),
+
+    // 显示失败提示
+    showModel : (title, content) => {
+    wx.hideToast()
+    wx.showModal({
+        title,
+        content: JSON.stringify(content),
+        showCancel: false
+        })
+    },
+    pickerchange(x){
+      let date = x.mp.detail.value
+      console.log(date);
+      this.form._start = date
+    },
+    pickerchange1(x){
+      let date = x.mp.detail.value
+      console.log(date);
+      this.form._end = date
+    },
+    pickerchange2(x){
+      let date = x.mp.detail.value
+      console.log(date);
+      this.form.deliveryTime = date
+    },
+    pickercancel(x){
+      let date = x.mp.detail.value
+      console.log(date);
+    },
+    pickercancel1(x){
+      let date = x.mp.detail.value
+      console.log(date);
+    },
+    pickercancel2(x){
+      let date = x.mp.detail.value
+      console.log(date);
+    },
+    async changelocation() {
+      // 检查定位授权
+      let locationAuth = await checkscope("scope.userLocation"); //userInfo
+      console.log(66, locationAuth);
+      if (!locationAuth) {
+        let locationAuthRes = await authorize("scope.userLocation");
+        console.log(75, locationAuthRes);
+        if (locationAuthRes.errMsg == "authorize:ok") {
+          // 同意
+          let location = await chooselocation();
+          console.log(location);
+        } else {
+          // 拒绝了
+          let modalres = await modal({
+            content: "打开定位可以看到离你最近的批发商哦",
+            cancelText: "放弃推荐",
+            confirmText: "打开定位"
+          });
+          console.log(86, modalres);
+          if (modalres) {
+            // 打开设置页面
+            let settingres = await openSetting();
+            console.log(settingres);
+            if (settingres["scope.userLocation"]) {
+              // 已打开定位
+              wx.showToast({
+                title: "定位打开成功",
+                icon: "none",
+                duration: 1000
+              });
+              let location = await chooselocation();
+              console.log(location);
+            } else {
+              wx.showToast({
+                title: "您没有打开定位",
+                icon: "none",
+                duration: 1000
+              });
+            }
+          }
+        }
+      } else {
+        let location = await chooselocation();
+        console.log(location);
+        this.location = location.name;
+      }
+    },
+    citychange({ label, value, cityCode }) {
+      console.log(label, value, cityCode);
+    },
+    cityconfirm({ label, value, cityCode }) {
+      console.log(label, value, cityCode);
+      this.citylabel1 = label;
+      this.code = cityCode;
+    },
+    citycancel({ label, value, cityCode }) {
+      console.log(label, value, cityCode);
+    },
+    showcitypicker() {
+      this.$refs.mpCityPicker.show();
+    },
+    upLoadSuccess(res, which) {
+      var self = this;
+      // console.log(which);
+      var keys = wx.getStorageInfoSync().keys;
+      // console.log('keys: %s',keys);
+      var skey = "";
+      keys.map(function(v, i) {
+        if (v.indexOf("session") != -1) {
+          // console.log(v);
+          skey = wx.getStorageSync(v).skey;
+        }
+      });
+      // console.log(skey);
+
+      var filePath = res.tempFilePaths[0];
+      // console.log(filePath)
+      wx.uploadFile({
+        url: conf.service.uploadUrl,
+        header: {
+          "X-WX-Skey": skey
+        },
+        filePath: filePath,
+        name: "file",
+        success: function(res) {
+          console.log(res);
+
+          let format = JSON.parse(res.data);
+
+          console.log(format.data);
+          console.log(format.data.imgUrl);
+
+          if (format.data.imgUrl) {
+            self.form.urls[which] = format.data.imgUrl;
+            self.showSuccess("图片上传成功");
+          } else {
+            self.form.urls[which] = "";
+            self.showModel("提示", "图片上传失败");
+          }
+        },
+        fail: function(e) {
+          console.error(e);
+        }
+      });
+    },
+    uploadDelete(which) {
+      this.form.urls[which] = "";
+    },
+    formSubmit(data) {
+      let obj = data.mp.detail;
+
+      let { formId} = obj;
+      let formvalue = obj.value
+      console.log(formvalue);
+      var self = this;
+      // 数据校验
+      // for (const key in formvalue) {
+      //   if (formvalue.hasOwnProperty(key)) {
+      //     const element = formvalue[key];
+      //     if (!element.toString().trim()) {
+      //       return wx.showToast({
+      //         title: "信息不完整！",
+      //         mask: true,
+      //         icon: "none",
+      //         duration: 1000
+      //       });
+      //     }
+      //   }
+      // }
+
+      formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
+
+      
+      // let arr = value.code.split(""); // 110201
+      // value.provincecode = arr[0] + arr[1]; // 11
+      // value.citycode = arr[2] + arr[3]; // 02
+      // value.countrycode = arr[4] + arr[5]; // 01
+
+      if (self.globalData.loginstate !== true) {
+        return wx.showToast({
+          title: "请先登录",
+          icon: "none",
+          duration: 1000,
+          success() {
+            setTimeout(function() {
+              wx.navigateTo({
+                url: "/pages/my/main"
+              });
+            }, 1000);
+          }
+        });
+      }
+
+      wx.showLoading({
+        title: "提交中...",
+        mask: true
+      });
+
+      qc.request({
+        // login:true,
+        method: "POST",
+        data: { formId, ...formvalue },
+        url: conf.service.bangzhugoodsuploadUrl,
+        success(res) {
+          console.log(res);
+          wx.hideLoading();
+          wx.showToast({
+            title: res.data.msg,
+            icon: "none",
+            duration: 1400
+          });
+          // setTimeout(function() {
+          //   wx.hideToast();
+          //   wx.switchTab({
+          //     url: "/pages/index/main"
+          //   });
+          // }, 1600);
+        },
+        fail() {},
+        complete() {}
+      });
+    },
+    radioChange(e) {
+      console.log("deliveryMethods:", e.mp.detail.value);
+      this.deliveryMethods = e.mp.detail.value;
+    }
+  },
+
+  async onShow() {}
+};
+</script>
+
+<style scoped lang='scss'>
+$maincolor: #ce4031;
+.container {
+  padding: 0 20rpx 20rpx;
+  .item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20rpx 0;
+    font-size: 32rpx;
+    border-bottom: 1px solid #f5f5f5;
+    .l {
+      display: inline-block;
+      color: $maincolor;
+      padding-right: 6rpx;
+    }
+    .m {
+      // background-color: yellowgreen;
+      width: 220rpx;
+      // text-align: right;
+    }
+    .r {
+      // background-color: pink;
+      display: inline-block;
+      input{
+        width: 450rpx;
+
+      }
+      radio-group{
+        display: flex;
+        flex-direction: row;
+        font-size: 25rpx;
+      }
+    }
+  }
+  .block {
+    .r {
+      width: 450rpx;
+      display: felx;
+      flex-direction: row;
+    }
+  }
+  .code {
+    .m {
+      font-size: 26rpx;
+    }
+  }
+  .place {
+    .r {
+      button {
+        display: inline-block;
+        height: 44rpx;
+        color: $maincolor;
+        font-size: 30rpx;
+        line-height: 40rpx;
+        border-color: $maincolor !important;
+        border: 1px solid $maincolor !important;
+        padding: 0 10rpx;
+        background: #fff;
+      }
+      .btnhover {
+        background: #ccc;
+      }
+      input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      textarea {
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        height: 130rpx;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 12rpx;
+      }
+    }
+  }
+  .textarea {
+    font-size: 32rpx;
+    .l {
+      display: inline-block;
+      color: $maincolor;
+      padding-right: 6rpx;
+    }
+    .r {
+      display: block;
+      // width: 90%;
+      border: 1px solid #ccc;
+      border-radius: 15rpx;
+      min-height: 180rpx;
+      padding: 8rpx;
+    }
+  }
+  .desc {
+    height: 160rpx;
+    width: 100%;
+  }
+  .submit {
+    background-color: $maincolor;
+    width: 50%;
+    height: 80rpx;
+    line-height: 80rpx;
+    color: #fff;
+    border: none;
+    margin-top: 20rpx;
+    border-radius: 40rpx;
+  }
+  .btn-hover {
+    background-color: rgb(172, 0, 0);
+    color: #ccc;
+  }
+}
+label:nth-child(2) {
+  padding-left: 12rpx;
+}
+</style>

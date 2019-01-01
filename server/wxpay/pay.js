@@ -1,17 +1,31 @@
 /**
  * 微信统一下单API
- *
  * 订单状态定义：
- * 1 : 下单，但未支付。可以做的事：支付，关闭订单
- * 2 : 前台已支付完成，把订单设置为‘商户确认中’状态，注意只有当status=1的订单才能改 。可以做的事：不可操作
+ * 下单 但取消支付
+ * 1 : 下单，但未支付。可以做的事：删除订单（没支付的订单等同于作废，只能进行删除操作）
+ * 下单 且支付了
+ * 2 : 前台已支付完成，把订单设置为‘商户确认中’状态，注意只有当status=1的订单才能改 。可以做的事：啥都不可操作
  * (废弃)2 : 商户查询结果是未支付。可以做的事：支付
  * (废弃)3 : 商户查询结果是已支付 处于已支付，待发货状态。可以做的事：退款
- * 4 : 商户收到了来自微信的通知，订单已支付。可以做的事：退款，发货
- * 5 : 卖家已发货，订单处于发货状态。可以做的事：确认收货
+ * 4 : 后台服务器收到了来自微信的订单通知，订单确实已支付。需要判断订单是否已发货，处于已发货，则不改写订单status；如果处于未发货则修改为4。可以做的事：退款。（最新的讨论结果是：只要状态走到4，给用户显示已发货【其实可能尚未发货】）   
+ * 5 : 卖家发货，通过后台系统操作订单状态，订单变更为发货状态。可以做的事：确认收货
  * 6 : 用户确认收货，订单完结（1）。可以做的事：退款申请，删除订单
- * 7 : 用户发起了退款申请，且state=3/4，直接退款，订单置为7，即已退款，并且订单关闭，无法再操作，订单完结（2）。可以做的事：删除订单
- * 8 : 用户发起了退款申请，且state=6 才可以发起退货，要求输入运单号，提交申请，处于待商家核验退货阶段
- * 9 : 商家核验退货完成，在平台操作  给予退款 且完成，关闭订单，无法再操作，订单完结（3）。可以做的事：删除订单
+ * 7 : 用户发起了退款申请，且status=3/4，
+ * 8 : (接着7) 后台确认订单，如果没问题，退虚拟金到其余额，订单置为8，即已退虚拟金，并且订单关闭，除了删除无法再操作，订单完结（2）。可以做的事：删除订单
+ * 9 : 用户发起了退款申请，且是status=6时发起退款申请的。要求输入退货运单号，然后提交申请，商家进入待收退货阶段，
+ * 10：(接着9)收到退货后通过后台退虚拟金到其余额，并修改订单状态为10，表明已退，关闭订单，无法再操作，订单完结（3）。可以做的事：删除订单
+ * 11 : 该订单的钱已通过提现 真正的返还到他账户中
+ * 特别注意：cSessionInfo表中将加入refund字段，值是一个数组，格式是字符串,例如：
+ * [{
+ *   orderid:"adasdas8a7s9d87",
+ *   money:56
+ * },{
+ *   orderid:"5asda7sd7a5s76d",
+ *   money:21.5
+ * }]
+ * 一旦有某笔订单的虚拟金退到某人账户上，就在这个数组里面加上一个对象，对象属性1是订单编号，2是订单总金额
+ * 如果用户在小程序对某个订单发起提现，后台就确认并给他退钱，退钱成功就在这个数组里把相应的对象的删除，并把那个订单状态置为11，
+ * 退款的流水记录和相关信息 也要保存在那条订单数据中，以备追溯。
  * 
  * @summary short description for the file
  * @author shenjie
@@ -44,14 +58,12 @@ const knex = require('knex')({
     // useNullAsDefault: true
 });
 
-
-
 const { appid, appsecret, mchid, mchkey, wxurl } = payconf
 
 const stampToTime = v => {
     let t = new Date()
     t.setTime(v)
-    let res =  `${t.getFullYear()}-${t.getMonth()}-${t.getDate()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`
+    let res =  `${t.getFullYear()}-${(t.getMonth() + 1)}-${t.getDate()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`
     return res
   }
 
@@ -73,39 +85,36 @@ const unifiedorder = async (ctx, next) => {
         return
     }
     // STEP2 拿到前端传过来的参数 查询商品，计算价格
-    let {_id, count , receipt} = ctx.query
-    console.log(`APP传过来的参数是：goodsid:${_id},count:${count},receipt:${receipt}` );
-    let goodsinfo = await knex('t_product').where({
+    let {_id, count , receipt, beizhu, provincecode, citycode, countrycode, origin} = ctx.query
+    console.log(`APP传过来的参数是：goodsid:${_id},count:${count},receipt:${receipt},beizhu:${beizhu},provincecode:${provincecode},citycode:${citycode},countrycode:${countrycode},origin:${origin}` );
+    if(origin === 'platform'){
+        var table = 't_product'
+    }else if(origin === 'bangzhu'){
+        var table = 't_product_zutuan'
+    }
+    let goodsinfo = await knex(table).where({
         _id
-      }).select()
-    console.log(goodsinfo);
-    if(goodsinfo.length<1){
-        ctx.body = {
+      }).first()
+    console.log('goodsinfo:', goodsinfo);
+    if(!goodsinfo || goodsinfo == {}){
+        return ctx.body = {
             code:0,
             success:false,
             data:{},
             msg:"该商品不存在"
         }
-        return
+        
     }
-    if(goodsinfo.length>1){
-        ctx.body = {
-            code:0,
-            success:false,
-            data:{},
-            msg:"商品信息有误，暂无法购买"
-        }
-        return
-    }
-    let singleprice = goodsinfo[0].currentPrice ;
-    let goodsname = goodsinfo[0].name ;
+    let singleprice = goodsinfo.currentPrice ;
+    let goodsname = goodsinfo.name ;
+    let uploadUser = goodsinfo.uploadUser || 'platform' ;
     let total_price = (singleprice * 10 * 10) * count  ;
-    console.log(total_price);
+    console.log('total_price:',total_price);
     
     // STEP3 组装数据，签名
     // let orderid = "asc4as1cas1c3" 
     let orderid = generateOrderId(); 
-    let money =  0.39   //ctx.query.money;
+    // let money =  0.39   //ctx.query.money;
     let openid = ctx.state.$wxInfo.userinfo.openId // oxw_15Ul35xC40YCRmCxSgzl1trQ
     /**
      * 小程序ID     appid                是  String(32)
@@ -295,7 +304,15 @@ const unifiedorder = async (ctx, next) => {
                             goodsname ,
                             goodsid: _id ,
                             price: singleprice,
-                            count,receipt,
+                            count,
+                            receipt,
+                            beizhu,
+                            provincecode,
+                            citycode,
+                            countrycode,
+                            origin,
+                            bangzhuid:uploadUser,
+
                             total_fee,
                             status:1, //未支付
                             prepay_id:  prepay_id, 
@@ -303,7 +320,8 @@ const unifiedorder = async (ctx, next) => {
                             timestamp: timestamp, 
                             package:   'prepay_id='+prepay_id, 
                             paySign:   paySign,
-                            signType: "MD5"
+                            signType: "MD5",
+                            
                         })
                         console.log('save info:');
                         console.log(save);

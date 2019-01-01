@@ -23,8 +23,8 @@
 
     </div>
     <div class="fahuo main">
-      <div class="u">发货详情</div>
-      <!-- 发货地 发货时间 发货方式 -->
+      <div class="u">注意事项</div>
+      
       <div class="m">
         <table>
         <tr>
@@ -50,24 +50,15 @@
       </table>
       </div>
     </div>
-    <div class="main"></div>
-    <div class="foot">
-      <div class="item s part1">
-        <div @click="routeToHome">
-          <i class="iconfont icon-shouye"></i>
-          返回首页
-        </div>
+    <div class="main shouhuo">
+      <div class="u">
+        <span>收货地址</span>
+        <span class="add" @click='toaddress'>添加收货地址></span>
       </div>
-      <div class="item b part4">
-        总计:￥{{totalfee || 0}}
-      </div>
-      <div class="item b part5" hover-class="hoverbtn" @click="beforepay">确认付款</div>
-    </div>
-    <div class="modalcon" v-if="showedit">
-      <div class="title">选择收货地址</div>
-      <div>
-        <radio-group class="radio-group" @change="radioChange">
-          <label class="radio" v-for="(x,i) in address" :key="i">
+      <div class="m">
+        <!-- @change="radioChange" -->
+        <radio-group class="radio-group" >
+          <label class="radio" v-for="(x,i) in address" :key="i" @click="radioChange1(i)">
             <radio :value="i" :checked="x.checked" >
             <div>
               <div>
@@ -81,10 +72,27 @@
           </label>
         </radio-group>
       </div>
-      <div>
-        <button class="closeedit" @click='paynow'>确认</button>
+    </div>
+    <div class="main beizhu">
+      <div class="u">订单备注</div>
+      <div class="m">
+        <textarea v-model="beizhu" name="beizhu" id=""></textarea>
       </div>
     </div>
+    <div class="spacing"></div>
+    <div class="foot">
+      <div class="item s part1">
+        <div @click="routeToHome">
+          <i class="iconfont icon-shouye"></i>
+          返回首页
+        </div>
+      </div>
+      <div class="item b part4">
+        总计:￥{{totalfee || 0}}
+      </div>
+      <div class="item b part5" hover-class="hoverbtn" @click="paynow">确认付款</div>
+    </div>
+    
   </div>
 </template>
 
@@ -112,9 +120,13 @@ export default {
       img:'',
       goodsid:'',
       count:1,
-      showedit: false ,
       address:[],
-      which: ''
+      which: '',
+      beizhu:'',
+      provincecode: '',
+      citycode: '',
+      countrycode: '',
+      origin:''
     };
   },
   components: {
@@ -127,6 +139,11 @@ export default {
     }
   },
   methods: {
+    toaddress(){
+      wx.navigateTo({
+        url:'/pages/myaddress/main'
+      })
+    },
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
@@ -201,11 +218,10 @@ export default {
       })
       return res
     },
-    beforepay(){
-      console.log(666);
+    selectaddress(){
       let address = wx.getStorageSync('address')
       console.log(address);
-      if(!address || address.length == 0){
+      if(!address || address.length == 0 || address.length == {} ){
         return wx.showModal({
           title:"提示",
           content:"请先添加收货地址",
@@ -221,12 +237,23 @@ export default {
         })
       }
       this.address = address
-      this.showedit = true
+      // this.address[0].checked = true
+      // this.which
+      // this.showedit = true
     },
     async paynow() {
+      console.log(this.which);
+      var self = this
       if(!this.which ){
         return wx.showToast({
           title:'请选择收货地址',
+          icon:'none',
+          duration:1500
+        })
+      }
+      if(!this.origin ){
+        return wx.showToast({
+          title:'订单错误，请重新下单',
           icon:'none',
           duration:1500
         })
@@ -243,9 +270,14 @@ export default {
         url: conf.service.prepayUrl,
         // method:"POST",
         data:{
-          count: this.count,
-          _id: this.goodsdetail._id,
-          receipt: this.which
+          count: self.count,
+          _id: self.goodsdetail._id,
+          receipt: self.which,
+          beizhu:self.beizhu,
+          provincecode: self.provincecode,
+          citycode: self.citycode,
+          countrycode: self.countrycode,
+          origin: self.origin
         },
         success:async function(res) {
           wx.hideLoading();
@@ -328,17 +360,51 @@ export default {
       console.log(x.mp.detail.value);
       let k = parseInt(x.mp.detail.value)
       console.log(k,this.address[k] );
-      let xx = JSON.stringify(this.address[k])
-      console.log(xx);
-      this.which = xx
+
+      let xx = this.address[k]
+      let arr = xx.nationalCode.split('')
+      this.provincecode = arr[0] + arr[1]
+      this.citycode = arr[2] + arr[3]
+      this.countrycode = arr[4] + arr[5]
+
+      let yy = JSON.stringify(this.address[k])
+      console.log(yy);
+      
+      this.which = yy
+    },
+    radioChange1(k){
+      console.log(k);
+      console.log(k,this.address[k] );
+      
+      this.address.map(function(v,i){
+        delete v.checked
+      })
+
+      this.address[k].checked = true
+
+      let xx = this.address[k]
+
+      let arr = xx.nationalCode.split('')
+      this.provincecode = arr[0] + arr[1]
+      this.citycode = arr[2] + arr[3]
+      this.countrycode = arr[4] + arr[5]
+
+      let yy = JSON.stringify(this.address[k])
+      console.log(yy);
+      
+      this.which = yy
+      
     }
   },
   onShow(){
     this.count = 1
-    let {goodsdetail} = this.$root.$mp.query
+    let {goodsdetail, origin} = this.$root.$mp.query
     console.log(goodsdetail);
     this.goodsdetail = JSON.parse(goodsdetail)
-   
+    this.origin = origin
+
+    this.selectaddress()
+
     
   }
 };
@@ -349,7 +415,7 @@ $maincolor: #ce4031;
 
 .main{
   border-top: 20rpx solid #f5f5f5 ;
-  padding: 20rpx 20rpx;
+  padding: 00rpx 20rpx 10rpx;
   .u{
     color: #b3b3b3;
     font-size: 32rpx;
@@ -357,14 +423,39 @@ $maincolor: #ce4031;
     border-bottom: 1px solid #f5f5f5;
   }
 }
-
+.shouhuo{
+  .u{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .m{
+    font-size: 30rpx;
+  }
+}
+.beizhu{
+  .m{
+    padding-top: 10rpx;
+    font-size: 30rpx;
+    textarea{
+      border: 1rpx solid #e5e5e5;
+      width: 690rpx;
+      height: 200rpx;
+      border-radius: 12rpx;
+      padding: 10rpx;
+    }
+  }
+}
+.spacing{
+  height: 120rpx;
+}
 .header{
   
   &>.m{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    padding: 20rpx 0;
+    padding: 10rpx 0 0;
     border-bottom: 1px solid #f5f5f5;
     .l{
       width: 25%;
@@ -392,7 +483,7 @@ $maincolor: #ce4031;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    padding: 20rpx 0 0;
+    padding: 10rpx 0 0;
     button{
       width: 60rpx;
       height: 60rpx;
@@ -413,6 +504,10 @@ $maincolor: #ce4031;
   }
 }
 .fahuo{
+  .u{
+    color: $maincolor;
+    font-weight: 700;
+  }
   .m{
     table{
       width: 80%;
@@ -508,15 +603,28 @@ $maincolor: #ce4031;
       flex-direction: row;
       font-size: 30rpx;
     }
-
-    .closeedit{
-      background-color: $maincolor;
-      height: 50rpx;
-      line-height: 50rpx;
-      font-size: 32rpx;
-      color: #fff;
-      width: 30%;
-      margin: 20rpx auto;
+    .modalfoot{
+      display: flex;
+      flex-direction: row;
+      .closemodal{
+        background-color: #fff;
+        border:1rpx solid $maincolor;
+        height: 48rpx;
+        line-height: 48rpx;
+        font-size: 32rpx;
+        color: $maincolor;
+        width: 30%;
+        margin: 20rpx auto;
+      }
+      .closeedit{
+        background-color: $maincolor;
+        height: 50rpx;
+        line-height: 50rpx;
+        font-size: 32rpx;
+        color: #fff;
+        width: 30%;
+        margin: 20rpx auto;
+      }
     }
   }
 </style>

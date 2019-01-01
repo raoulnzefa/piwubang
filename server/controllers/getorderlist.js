@@ -9,13 +9,13 @@ console.log(ctx.state.$wxInfo);
 
 
     if(!ctx.state.$wxInfo || ctx.state.$wxInfo.loginState !== 1 ){
-        ctx.body = {
+        return ctx.body = {
             code:0,
-            data:{},
+            data:[],
             success:false,
             msg:"用户尚未登录"
         }
-        return
+        
     }
     // STEP2 订单类别提取
     let param = ctx.query.state ;
@@ -29,17 +29,26 @@ console.log(ctx.state.$wxInfo);
             break;
     }
     // STEP3 查询+返回
-    if(status=='all'){
-        var res = await mysql('orders').select().where({ openid }).orderBy('id', 'desc') ;
-        
-    }else{
-        var res = await mysql('orders').select().where({ status, openid }).orderBy('id', 'desc');
-    }
-    ctx.body = {
-        code:1,
-        success:true,
-        msg:"订单列表获取成功",
-        data:res
+    try {
+        if(status=='all'){
+            var res = await mysql('orders').select().where({ openid }).orderBy('id', 'desc') ;
+            
+        }else{
+            var res = await mysql('orders').select().where({ status, openid }).orderBy('id', 'desc');
+        }
+        ctx.body = {
+            code:1,
+            success:true,
+            msg:"订单列表获取成功",
+            data:res
+        }
+    } catch (error) {
+        return ctx.body = {
+            code:0,
+            data:[],
+            success:false,
+            msg:"订单列表获取失败"
+        }
     }
     
 }

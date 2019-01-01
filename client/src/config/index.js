@@ -70,9 +70,17 @@ var config = {
         bangzhuapplyUrl: `${host}/weapp/bangzhuapply`,
 
         // 供应商、厂商申请
-        gysapplyUrl: `${host}/weapp/gysapply`
+        gysapplyUrl: `${host}/weapp/gysapply`,
         
+        // 帮主搜索
+        searchbangzhuUrl: `${host}/weapp/searchbangzhu`,
+        
+        // 帮主商品搜索
+        searchbangzhugoodsUrl: `${host}/weapp/searchbangzhugoods`,
 
+        // 帮主商品上传
+        bangzhugoodsuploadUrl: `${host}/weapp/bangzhugoodsupload`,
+        
     }
 };
 

@@ -85,4 +85,13 @@ router.post('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
 // GET !!! 小程序供应商、厂商申请
 router.post('/gysapply', validationMiddleware, controllers.gysapply)
 
+// GET !!! 小程序搜索附近帮主
+router.get('/searchbangzhu', validationMiddleware, controllers.searchbangzhu)
+
+// GET !!! 小程序搜索附近帮主发布的商品
+router.get('/searchbangzhugoods', validationMiddleware, controllers.searchbangzhugoods)
+
+// GET !!! 小程序帮主/用户发布商品
+router.post('/bangzhugoodsupload', validationMiddleware, controllers.bangzhugoodsupload)
+
 module.exports = router

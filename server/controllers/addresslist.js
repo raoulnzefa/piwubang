@@ -6,8 +6,12 @@ module.exports = async (ctx, next) => {
     try {
         let searchs = await mysql('cSessionInfo').select('receipt').where({open_id})
         console.log(searchs);
-        
-        let search = JSON.parse(searchs[0].receipt)
+        console.log(searchs[0].receipt);
+        if(searchs.length>0 && searchs[0].receipt){
+            var search = JSON.parse(searchs[0].receipt)
+        }else{
+            var search = []
+        }
         return ctx.body = {
             code:'USER_ADDRESS_QUERY_SUCCESS',
             data:search,
@@ -18,7 +22,7 @@ module.exports = async (ctx, next) => {
         
         return ctx.body = {
             code:'USER_ADDRESS_QUERY_FAILED',
-            data:{},
+            data:[],
             msg:"地址查询失败"
         }
     }

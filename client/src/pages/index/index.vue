@@ -99,46 +99,6 @@ export default {
     goodsItem,authModal
   },
   methods: {
-    
-    // 登录授权检查
-    loginCheck:async function(){
-      var self = this;
-      return new Promise(function(resolve, reject){
-        // 授权检查
-        wx.getSetting({
-          success(res) {
-            // console.log('appjs authSetting:',res.authSetting);
-            // let
-            if (res.authSetting["scope.userInfo"]) {
-              // 已授权
-              wx.getUserInfo({
-                success: res => {
-                  console.log('已授过权');
-                  resolve({
-                    loginstate:true,
-                    userInfo:res.userInfo
-                  })
-                }
-              });
-            } else if(res.authSetting["scope.userInfo"] === false){
-              // 拒绝过授权
-              console.log('拒绝过授权');
-              resolve({
-                    loginstate:'rejected',
-                    userInfo:{}
-                  })
-            }else{
-              // 
-              console.log('尚未授过权');
-              resolve({
-                loginstate:false,
-                userInfo:{}
-              })
-            }
-          }
-        });
-      })
-    },
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
@@ -148,8 +108,10 @@ export default {
         // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
-          let location = await chooselocation();
-          this.location = location.name;
+          let location = await chooselocation() || {};
+          this.location = location.name || '切换位置';
+          console.log(location);
+          
         } else {
           // 拒绝了
           let modalres = await modal({
@@ -169,8 +131,9 @@ export default {
                 icon: "none",
                 duration: 1000
               });
-              let location = await chooselocation();
-              this.location = location.name;
+              let location = await chooselocation() || {};
+              this.location = location.name || '切换位置';
+              console.log(location);
             } else {
               wx.showToast({
                 title: "您没有打开定位",
@@ -181,8 +144,9 @@ export default {
           }
         }
       } else {
-        let location = await chooselocation();
-        this.location = location.name;
+        let location = await chooselocation() || {};
+        this.location = location.name || '切换位置';
+        console.log(location);
       }
     },
     toBZapply(){

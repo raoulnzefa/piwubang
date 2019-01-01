@@ -37,7 +37,7 @@ export default {
   methods: {
     routeTo(x) {
       wx.navigateTo({
-        url: "/pages/goodsdetail/main?goodsid="+x
+        url: `/pages/goodsdetail/main?goodsid=${x}&origin=platform`
       });
     }
   }

@@ -31,6 +31,19 @@
         </div>
       </div>
     </div>
+    <!-- <div class="item block place">
+      <span class="l">*</span>
+      <span class="m">常驻小区：</span>
+      <div class="r">
+        <div>
+          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
+          <input type="text" name='code' disabled v-model="code" hidden>
+        </div>
+        <div>
+          <textarea name="citylabel2" id="" placeholder="你能管理的详细区域(如九龙仓小区、湖景社区等)..." v-model="citylabel2" confirm-type='next'></textarea>
+        </div>
+      </div>
+    </div> -->
     <div class="item line">
       <span class="l">*</span>
       <span class="m">是否能全职：</span>
@@ -96,13 +109,13 @@
 
 <script>
 import qc from 'wafer2-client-sdk'
-
+import conf from '@/config'
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import modal from "@/wxapis/modal";
 
-import conf from '@/config'
+
 import mpSwitch from 'mpvue-weui/src/switch';
 import mpCitypicker from 'mpvue-weui/src/city-picker';
 import mpUploader from '@/components/mpuploader.vue';

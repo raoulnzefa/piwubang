@@ -1,5 +1,8 @@
 {
   "pages": [
+    "pages/goodsupload/main",
+    "pages/zutuan/main",
+    "pages/bangzhugoods/main",
     "pages/index/main",
     "pages/mymoney/main",
     "pages/order/main",
@@ -10,10 +13,20 @@
     "pages/gysapply/main",
     "pages/bangzhuapply/main",
     "pages/orderlist/main",
-    "pages/zutuan/main",
     "pages/near/main"
     
   ],
+  "usingComponents": {
+    "i-button":       "/static/iview/button/index",
+      "i-card":       "/static/iview/card/index",
+      "i-modal":      "/static/iview/modal/index",
+      "i-tab":        "/static/iview/tab/index",
+      "i-tabs":       "/static/iview/tabs/index",
+      "i-grid":       "/static/iview/grid/index",
+      "i-grid-item":  "/static/iview/grid-item/index",
+      "i-grid-icon":  "/static/iview/grid-icon/index",
+      "i-grid-label": "/static/iview/grid-label/index"
+  },
   "permission": {
     "scope.userLocation": {
       "desc": "推荐附近好物"

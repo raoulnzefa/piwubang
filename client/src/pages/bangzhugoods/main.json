@@ -1,0 +1,7 @@
+{
+    "navigationBarBackgroundColor": "#CE4031",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "他的发布",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": true
+}

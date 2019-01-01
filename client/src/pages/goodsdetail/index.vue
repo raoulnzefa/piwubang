@@ -24,7 +24,7 @@
             <div class="oldmoney">￥{{goodsdetail.oldPrice}}</div>
           </div>
         </div>
-        <div class="r">
+        <div class="r" v-if="origin == 'paltform'">
           <div class="tag">各大商超价</div>
           <div
             class="marketprice"
@@ -66,14 +66,13 @@
       </div>
       </div>
     </div>
-    <div class="dtimgs">
+    <div class="dtimgs" v-if="origin == 'paltform'">
       <div>商品详情：</div>
       <div>
         <img v-for='(x,i) in goodsdetail.dtimgs' :key='i' :src="x" alt="">
       </div>
     </div>
     <div class="spacing">
-
     </div>
     <div class="foot">
       <div class="item s part1">
@@ -86,17 +85,18 @@
           联系商家
         </div>
       </div>
-      <div class="item b part4" hover-class="hoverbtn" @click="jointocart">
+      <div class="item b part6" v-if="origin != 'paltform'">
+      </div>
+      <div class="item b part4" v-if="origin == 'paltform'" hover-class="hoverbtn" @click="jointocart">
         加入购物车
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="buynow">立即购买</div>
     </div>
     <button class="share" open-type="share">
-      <i class="iconfont icon-fenxiang"></i>
+      <i class="iconfont icon-fenxiang-copy"></i>
     </button>
   </div>
 </template>
-
 <script>
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
@@ -117,7 +117,8 @@ export default {
       location: "尚未获取定位",
       goodsdetail: {},
       count:1,
-      goodsid:''
+      goodsid:'',
+      origin:''
     };
   },
   components: {
@@ -132,7 +133,7 @@ export default {
     contact() {},
     buynow() {
       console.log("buynow");
-      let url = `/pages/order/main?goodsdetail=${JSON.stringify(this.goodsdetail)}`
+      let url = `/pages/order/main?goodsdetail=${JSON.stringify(this.goodsdetail)}&origin=${this.origin}`
       wx.navigateTo({url})
     },
     jointocart(){
@@ -186,7 +187,11 @@ export default {
   },
   onShow(){
     let goodsid = this.$root.$mp.query.goodsid
+    let origin = this.$root.$mp.query.origin
+
     this.goodsid = goodsid
+    this.origin = origin
+
     console.log('goodsid:',goodsid);
     
     var self = this;
@@ -194,7 +199,7 @@ export default {
         url: conf.service.goodsdetailUrl,
         // method:"POST",
         data:{
-          goodsid
+          goodsid, origin
         },
         success:function(res) {
           console.log('goodsdetail', res.data.data);
@@ -358,6 +363,7 @@ swiper {
   font-size: 32rpx;
   .u{
     font-weight: 700;
+    color: #ce4031;
   }
   .m{
     .table{
@@ -427,12 +433,19 @@ swiper {
     font-size: 40rpx;
     text-align: center;
   }
+  .part6 {
+    background-color: #fff;
+    color: #fff;
+    font-size: 40rpx;
+    text-align: center;
+  }
   .part5 {
     background-color: $maincolor;
     color: #fff;
     font-size: 40rpx;
     text-align: center;
   }
+
   .hoverbtn {
     background-color: #9c2518;
   }

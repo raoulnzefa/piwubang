@@ -308,6 +308,7 @@ export default {
           }else{
             wx.showToast({
               title: '购物车读取失败',
+              icon:'none'
             })
             wx.removeTabBarBadge({
               index : 3

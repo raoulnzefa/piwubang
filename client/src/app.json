@@ -13,7 +13,9 @@
     "pages/gysapply/main",
     "pages/bangzhuapply/main",
     "pages/orderlist/main",
-    "pages/near/main"
+    "pages/near/main",
+    "pages/qqmap/main"
+
     
   ],
   "usingComponents": {

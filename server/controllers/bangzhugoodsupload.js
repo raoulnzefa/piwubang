@@ -4,8 +4,9 @@ const { mysql } = qcloud
 module.exports = async (ctx, next) => {
     let params = ctx.request.body;
     let openid = ctx.state.$wxInfo.userinfo.openId ;
+    let userinfo = JSON.stringify(ctx.state.$wxInfo.userinfo)
     console.log('@bangzhuapply  params:',params);
-
+    let thumbnail = params.urls[0]
     params.deliveryArea = params.deliveryArea + ' ' + params.deliveryArea1
     params.urls = JSON.stringify(params.urls)
     delete params.deliveryArea1
@@ -37,7 +38,11 @@ module.exports = async (ctx, next) => {
                 }
             }
             // <=10的话：更新goodslist字段，并向帮主商品表插入新商品
+            console.log('旧数组：',goodslist);
+            console.log('插入的新id：', _id);
             goodslist.unshift(_id)
+            console.log('新数组：',goodslist);
+            
             goodslist = JSON.stringify(goodslist)
             await mysql('bangzhu').update({goodslist}).limit(1).where({openid}) 
             await mysql('t_product_zutuan').insert({
@@ -45,7 +50,9 @@ module.exports = async (ctx, next) => {
                 ...params,
                 uploadUser:openid,
                 origin:'bangzhu',
-                uploaderRole:'bangzhu'
+                uploaderRole:'bangzhu',
+                thumbnail,
+                userinfo
             })
             return ctx.body = {
                 code:"ZUTUAN_UPLOAD_SUCCESS",
@@ -76,7 +83,9 @@ module.exports = async (ctx, next) => {
                     ...params,
                     uploadUser: openid,
                     origin:'user',
-                    uploaderRole:'user'
+                    uploaderRole:'user',
+                    thumbnail,
+                    userinfo
                 })
                 return ctx.body = {
                     code:"ZUTUAN_UPLOAD_SUCCESS",

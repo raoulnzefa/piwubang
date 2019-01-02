@@ -9,7 +9,7 @@
     </swiper>
     <div class="head">
       <div class="title">{{goodsdetail.name}}</div>
-      <div class="brdesc">{{goodsdetail.briefDesc}}</div>
+      <div class="brdesc" v-if="goodsdetail.origin == 'paltform'">{{goodsdetail.briefDesc}}</div>
     </div>
     <!-- #f9ffea -->
     <div class="price">
@@ -46,24 +46,15 @@
       <div class="u">[注意事项]</div>
       <!-- 发货地 发货时间 发货方式 -->
       <div class="m">
-        <div class="table">
-          <div class="tr">
-            <div>发货方式 :</div>
-            <div class="tips">{{goodsdetail.deliveryMethods || '商家未注明'}}</div>
-            <div>发货地 :</div>
-            <div>{{goodsdetail.deliveryArea || '商家未注明'}}</div>
+          <div>发货方式 : <span>{{goodsdetail.deliveryMethods || '商家未注明'}}</span></div>
+          <div @click='toqqmap'>发货/提货位置 : 
+            <span class='iconfont icon-round position'></span>
+            <span class='position'>{{goodsdetail.deliveryArea || '商家未注明'}}</span>
           </div>
-          <div class="tr">
-            <div>发货时间 :</div>
-            <div>{{goodsdetail.deliveryTime || '商家未注明'}}</div>
-            <div>可购区域 :</div>
-            <div class="tips">{{goodsdetail.targetArea_name || '商家未注明'}}</div>
-          </div>
-          <div class="tr">
-            <div>是否包邮 :</div>
-            <div>{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
-          </div>
-      </div>
+          <div>发货时间 :{{goodsdetail.deliveryTime || '商家未注明'}}</div>
+          <div>可购区域 :<span>{{goodsdetail.targetArea_name || '商家未注明'}}</span> </div>
+          <div class="tips"></div>
+          <div>是否包邮 :{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
       </div>
     </div>
     <div class="dtimgs" v-if="origin == 'paltform'">
@@ -130,7 +121,18 @@ export default {
       let url = "/pages/index/main";
       wx.switchTab({ url });
     },
-    contact() {},
+    toqqmap() {
+      if(!this.goodsdetail.longitude || !this.goodsdetail.latitude){
+        return wx.showToast({
+          title:'该商品未添加定位',
+          duration: 1500,
+          icon:'none'
+        })
+      }
+      wx.navigateTo({
+        url:`/pages/qqmap/main?longitude=${this.goodsdetail.longitude}&latitude=${this.goodsdetail.latitude}`
+      })
+    },
     buynow() {
       console.log("buynow");
       let url = `/pages/order/main?goodsdetail=${JSON.stringify(this.goodsdetail)}&origin=${this.origin}`
@@ -222,8 +224,8 @@ export default {
     var self = this
     console.log('share');
     return {
-      title: `${self.goodsdetail.name}`,
-      path: `/pages/goodsdetail/main?goodsid=${self.goodsid}`,
+      title: `【批物帮-买啥都是批发价!】${self.goodsdetail.name}`,
+      path: `/pages/goodsdetail/main?goodsid=${self.goodsid}&origin=${self.origin}`,
       imageUrl: `${self.goodsdetail.urls[0]}`,
       success: (res) => {
         console.log("转发成功", res);
@@ -366,26 +368,13 @@ swiper {
     color: #ce4031;
   }
   .m{
-    .table{
-      width: 100%;
-      margin: 0 auto;
-      font-size: 28rpx;
-      color: #000;
-      .tr{
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        div{
-          width: 20%;
-        }
-        div:nth-child(3){
-          margin-left: 40rpx;
-        }
-        .tips{
-          color: $maincolor;
-        }
-      }
-      
+    padding: 0 0 0 20rpx;
+    span{
+      font-weight: 600;
+    }
+    .position{
+      color: #24a94e;
+      text-decoration:underline;
     }
   }
 }

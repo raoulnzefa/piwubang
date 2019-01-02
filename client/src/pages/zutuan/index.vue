@@ -11,21 +11,7 @@
       <i-tab key="tab2" title="附近用户"></i-tab>
     </i-tabs>
     <div class="tab1con tabcon" v-if="current == 'tab1'">
-      <div class="mapcon">
-        <!-- <map
-          id="map1"
-          v-if="map1.mapshow"
-          name
-          :longitude="map1.longitude"
-          :latitude="map1.latitude"
-          :scale="map1.scale"
-          :markers="map1.markers"
-          :circles="map1.circles"
-          @markertap="markertap"
-          enable-zoom="true"
-          enable-scroll="true"
-        ></map> -->
-      </div>
+      
       <div>
         <i-card
           v-for='(x,i) in bangzhulist'
@@ -46,27 +32,15 @@
     </div>
 
     <div class="tab2con tabcon" v-if="current == 'tab2'">
-      <div class="mapcon">
-        <!-- <map
-          id="map2"
-          v-if="map2.mapshow"
-          name
-          :longitude="map2.longitude"
-          :latitude="map2.latitude"
-          :scale="map2.scale"
-          :markers="map2.markers"
-          :circles="map2.circles"
-          @markertap="markertap"
-          enable-zoom="true"
-          enable-scroll="true"
-        ></map> -->
-      </div>
+      
       <div>
-        <i-card
+        <i-card 
+          v-for='(x,i) in nearuserlist'
+          :key="i"
           full
-          title="卡片标题"
-          extra="额外内容"
-          thumb="https://i.loli.net/2017/08/21/599a521472424.jpg"
+          :title="x.userinfo.nickName"
+          extra="点击查看他的商品"
+          thumb="x.thumbnail"
         >
           <view slot="content">内容不错</view>
           <view slot="footer">尾部内容</view>
@@ -79,14 +53,16 @@
   </div>
 </template>
 <script>
-import qqmap from "@/wxapis/qqmap.js";
-// var qqmap = require('@/wxapis/qqmap.js');
-var mymap = new qqmap({
-  // 地图开发秘钥
-  key: "HOOBZ-FGYRX-3SC4H-ZDMLM-6ZJG6-V7BJD" // 必填
-});
+
 import qc from 'wafer2-client-sdk'
 import conf from '@/config'
+
+import qqmap from "@/wxapis/qqmap.js";
+var mymap = new qqmap({
+  // 地图开发秘钥
+  key: conf.mapkey // 必填
+});
+
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
@@ -101,46 +77,47 @@ export default {
       location: "点击切换定位",
       mypositioncode: "",
       bangzhulist:[],
-      map1: {
-        mapshow: true,
-        showopensettingbtn: true,
-        longitude: "longitude",
-        latitude: "latitude",
-        scale: 17,
-        markers: [],
-        circles: [],
-        controls: [
-          {
-            position: {
-              left: 0,
-              top: 0,
-              width: 32,
-              height: 32
-            },
-            iconPath: "/static/img/initialAvatar.png"
-          }
-        ]
-      },
-      map2: {
-        mapshow: true,
-        showopensettingbtn: false,
-        longitude: "longitude",
-        latitude: "latitude",
-        scale: 17,
-        markers: [],
-        circles: [],
-        controls: [
-          {
-            position: {
-              left: 0,
-              top: 0,
-              width: 32,
-              height: 32
-            },
-            iconPath: "/static/img/initialAvatar.png"
-          }
-        ]
-      }
+      nearuserlist: []
+      // map1: {
+      //   mapshow: true,
+      //   showopensettingbtn: true,
+      //   longitude: "longitude",
+      //   latitude: "latitude",
+      //   scale: 17,
+      //   markers: [],
+      //   circles: [],
+      //   controls: [
+      //     {
+      //       position: {
+      //         left: 0,
+      //         top: 0,
+      //         width: 32,
+      //         height: 32
+      //       },
+      //       iconPath: "/static/img/initialAvatar.png"
+      //     }
+      //   ]
+      // },
+      // map2: {
+      //   mapshow: true,
+      //   showopensettingbtn: false,
+      //   longitude: "longitude",
+      //   latitude: "latitude",
+      //   scale: 17,
+      //   markers: [],
+      //   circles: [],
+      //   controls: [
+      //     {
+      //       position: {
+      //         left: 0,
+      //         top: 0,
+      //         width: 32,
+      //         height: 32
+      //       },
+      //       iconPath: "/static/img/initialAvatar.png"
+      //     }
+      //   ]
+      // }
     };
   },
   methods: {
@@ -155,13 +132,14 @@ export default {
         );
         console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
-        console.log("this.mypositioncode:", this.mypositioncode);
+        // console.log("this.mypositioncode:", this.mypositioncode);
         this.searchbangzhu()
-        this.map1.longitude = location.longitude;
-        this.map1.latitude = location.latitude;
-        this.map2.longitude = location.longitude;
-        this.map2.latitude = location.latitude;
-        console.log(location.latitude, location.longitude);
+        this.searchzutuanuser()
+        // this.map1.longitude = location.longitude;
+        // this.map1.latitude = location.latitude;
+        // this.map2.longitude = location.longitude;
+        // this.map2.latitude = location.latitude;
+        // console.log(location.latitude, location.longitude);
         // {
         //   latitude: 31.24924,
         //   longitude: 120.68966,
@@ -169,44 +147,44 @@ export default {
         //   color : "#ff0000ff",
         //   fillColor	: "#60caf566",
         // }
-        this.map1.circles = [
-          {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            radius: 500,
-            color: "#ff0000ff",
-            fillColor: "#60caf566"
-          }
-        ];
-        this.map2.circles = [
-          {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            radius: 500,
-            color: "#ff0000ff",
-            fillColor: "#60caf566"
-          }
-        ];
-        this.map1.markers = [
-          {
-            id: "myself",
-            latitude: location.latitude,
-            longitude: location.longitude
-          }
-        ];
-        this.map2.markers = [
-          {
-            id: "myself",
-            latitude: location.latitude,
-            longitude: location.longitude
-          }
-        ];
-        console.log(this.map1, this.map2);
+        // this.map1.circles = [
+        //   {
+        //     latitude: location.latitude,
+        //     longitude: location.longitude,
+        //     radius: 500,
+        //     color: "#ff0000ff",
+        //     fillColor: "#60caf566"
+        //   }
+        // ];
+        // this.map2.circles = [
+        //   {
+        //     latitude: location.latitude,
+        //     longitude: location.longitude,
+        //     radius: 500,
+        //     color: "#ff0000ff",
+        //     fillColor: "#60caf566"
+        //   }
+        // ];
+        // this.map1.markers = [
+        //   {
+        //     id: "myself",
+        //     latitude: location.latitude,
+        //     longitude: location.longitude
+        //   }
+        // ];
+        // this.map2.markers = [
+        //   {
+        //     id: "myself",
+        //     latitude: location.latitude,
+        //     longitude: location.longitude
+        //   }
+        // ];
+        // console.log(this.map1, this.map2);
 
         wx.setStorageSync("zutuanposition", location);
       } catch (error) {
         wx.showToast({
-          title: error,
+          title: '您没有选择定位',
           duration: 1500,
           icon: "none"
         });
@@ -233,44 +211,45 @@ export default {
           this.mypositioncode = querycode.result.ad_info.adcode;
           console.log("this.mypositioncode:", this.mypositioncode);
           this.searchbangzhu()
+          this.searchzutuanuser()
           this.location = location.name || "切换位置";
-          console.log(location);
-          this.map1.longitude = location.longitude;
-          this.map1.latitude = location.latitude;
-          this.map2.longitude = location.longitude;
-          this.map2.latitude = location.latitude;
-          this.map1.circles = [
-            {
-              latitude: location.latitude,
-              longitude: location.longitude,
-              radius: 500,
-              color: "#ff0000ff",
-              fillColor: "#60caf566"
-            }
-          ];
-          this.map2.circles = [
-            {
-              latitude: location.latitude,
-              longitude: location.longitude,
-              radius: 500,
-              color: "#ff0000ff",
-              fillColor: "#60caf566"
-            }
-          ];
-          this.map1.markers = [
-            {
-              id: "myself",
-              latitude: location.latitude,
-              longitude: location.longitude
-            }
-          ];
-          this.map2.markers = [
-            {
-              id: "myself",
-              latitude: location.latitude,
-              longitude: location.longitude
-            }
-          ];
+          // console.log(location);
+          // this.map1.longitude = location.longitude;
+          // this.map1.latitude = location.latitude;
+          // this.map2.longitude = location.longitude;
+          // this.map2.latitude = location.latitude;
+          // this.map1.circles = [
+          //   {
+          //     latitude: location.latitude,
+          //     longitude: location.longitude,
+          //     radius: 500,
+          //     color: "#ff0000ff",
+          //     fillColor: "#60caf566"
+          //   }
+          // ];
+          // this.map2.circles = [
+          //   {
+          //     latitude: location.latitude,
+          //     longitude: location.longitude,
+          //     radius: 500,
+          //     color: "#ff0000ff",
+          //     fillColor: "#60caf566"
+          //   }
+          // ];
+          // this.map1.markers = [
+          //   {
+          //     id: "myself",
+          //     latitude: location.latitude,
+          //     longitude: location.longitude
+          //   }
+          // ];
+          // this.map2.markers = [
+          //   {
+          //     id: "myself",
+          //     latitude: location.latitude,
+          //     longitude: location.longitude
+          //   }
+          // ];
           wx.setStorageSync("zutuanposition", location);
         } else {
           console.log("拒绝授权");
@@ -330,6 +309,9 @@ export default {
     },
     searchbangzhu(){
       let self = this
+      wx.showLoading({
+        title:"附近帮主获取中..."
+      })
       qc.request({
         url: conf.service.searchbangzhuUrl ,
         data: {
@@ -342,6 +324,11 @@ export default {
         fail(err){
           console.log(err);
           self.bangzhulist = []
+        },
+        complete(){
+          console.log('complete');
+          wx.hideLoading()
+          wx.stopPullDownRefresh()
         }
       })
     },
@@ -354,22 +341,22 @@ export default {
         },
         success(res){
           console.log(res);
-          self.bangzhulist = res.data.data
+          self.nearuserlist = res.data.data
         },
         fail(err){
           console.log(err);
-          self.bangzhulist = []
+          self.nearuserlist = []
         }
       })
     },
-    tosearchgoods(openid){
+    tosearchgoods(who){
       wx.navigateTo({
-        url:`/pages/bangzhugoods/main?openid=${openid}`
+        url:`/pages/bangzhugoods/main?openid=${who}`
       })
     },
-    searchgoods(openid){
+    searchgoods(who){
       let self = this
-      if( !openid ){
+      if( !who ){
         return wx.showToast({
           title:'没有发布商品',
           icon:'none',
@@ -379,7 +366,7 @@ export default {
       qc.request({
         url: conf.service.searchbangzhugoodsUrl ,
         data: {
-          openid: openid
+          openid: who
         },
         success(res){
           console.log(res);
@@ -389,6 +376,7 @@ export default {
         }
       })
     },
+    
     handleChange(x) {
       console.log(x);
       this.current = x.mp.detail.key;
@@ -398,6 +386,11 @@ export default {
         url: "/pages/goodsupload/main"
       });
     }
+  },
+  onPullDownRefresh(){
+    this.searchbangzhu()
+    this.searchzutuanuser()
+
   },
   async onLoad() {
     console.log("onload");
@@ -420,44 +413,47 @@ export default {
       console.log("querycode:", querycode);
       this.mypositioncode = querycode.result.ad_info.adcode;
       console.log("this.mypositioncode:", this.mypositioncode);
+
       this.searchbangzhu()
-      this.map1.longitude = zutuanposition.longitude;
-      this.map1.latitude = zutuanposition.latitude;
-      this.map2.longitude = zutuanposition.longitude;
-      this.map2.latitude = zutuanposition.latitude;
-      this.map1.circles = [
-        {
-          latitude: zutuanposition.latitude,
-          longitude: zutuanposition.longitude,
-          radius: 500,
-          color: "#ff0000ff",
-          fillColor: "#60caf566"
-        }
-      ];
-      this.map2.circles = [
-        {
-          latitude: zutuanposition.latitude,
-          longitude: zutuanposition.longitude,
-          radius: 500,
-          color: "#ff0000ff",
-          fillColor: "#60caf566"
-        }
-      ];
-      this.map1.markers = [
-        {
-          id: "myself",
-          latitude: zutuanposition.latitude,
-          longitude: zutuanposition.longitude
-        }
-      ];
-      this.map2.markers = [
-        {
-          id: "myself",
-          latitude: zutuanposition.latitude,
-          longitude: zutuanposition.longitude
-        }
-      ];
-      console.log(this.map1, this.map2);
+      this.searchzutuanuser()
+
+      // this.map1.longitude = zutuanposition.longitude;
+      // this.map1.latitude = zutuanposition.latitude;
+      // this.map2.longitude = zutuanposition.longitude;
+      // this.map2.latitude = zutuanposition.latitude;
+      // this.map1.circles = [
+      //   {
+      //     latitude: zutuanposition.latitude,
+      //     longitude: zutuanposition.longitude,
+      //     radius: 500,
+      //     color: "#ff0000ff",
+      //     fillColor: "#60caf566"
+      //   }
+      // ];
+      // this.map2.circles = [
+      //   {
+      //     latitude: zutuanposition.latitude,
+      //     longitude: zutuanposition.longitude,
+      //     radius: 500,
+      //     color: "#ff0000ff",
+      //     fillColor: "#60caf566"
+      //   }
+      // ];
+      // this.map1.markers = [
+      //   {
+      //     id: "myself",
+      //     latitude: zutuanposition.latitude,
+      //     longitude: zutuanposition.longitude
+      //   }
+      // ];
+      // this.map2.markers = [
+      //   {
+      //     id: "myself",
+      //     latitude: zutuanposition.latitude,
+      //     longitude: zutuanposition.longitude
+      //   }
+      // ];
+      // console.log(this.map1, this.map2);
     } else {
       this.location = "点击切换定位";
     }

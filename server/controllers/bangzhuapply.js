@@ -6,7 +6,7 @@ module.exports = async (ctx, next) => {
     let openid = ctx.state.$wxInfo.userinfo.openId ;
     console.log('@bangzhuapply  params:',params);
     try{
-        let searchs = await mysql('applysforbz').select().where({openid})
+        let searchs = await mysql('applysforbz').first().where({openid})
         if(searchs.length===0){
             // 直接插入
             await mysql('applysforbz').insert({...params,openid})

@@ -84,7 +84,8 @@ var config = {
         // 帮主商品上传
         bangzhugoodsuploadUrl: `${host}/weapp/bangzhugoodsupload`,
         
-    }
+    },
+    mapkey:'HOOBZ-FGYRX-3SC4H-ZDMLM-6ZJG6-V7BJD'
 };
 
 export default config;

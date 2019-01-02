@@ -278,8 +278,17 @@
 </template>
 
 <script>
+
+
 import qc from "wafer2-client-sdk";
 import conf from "@/config";
+
+import qqmap from "@/wxapis/qqmap.js";
+var mymap = new qqmap({
+  // 地图开发秘钥
+  key: conf.mapkey // 必填
+});
+
 
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
@@ -302,8 +311,8 @@ export default {
         name: "",
         phone: "",
         deliveryArea: "点击选择提货点",
-        deliveryAreaLongitude:'',
-        deliveryAreaLatitude:'',
+        longitude:'',
+        latitude:'',
         deliveryTime: "",
         _start:"",
         _end:'',
@@ -313,7 +322,8 @@ export default {
         oldPrice:'',
         curentPrice:'',
         unit:'',
-        stock:''
+        stock:'',
+        code:''
       },
       radios: [
         {
@@ -442,6 +452,13 @@ export default {
         let location = await chooselocation();
         console.log(location);
         this.location = location.name;
+        let querycode = await this.reverseGeocoder(
+          location.longitude,
+          location.latitude
+        )
+        this.form.code = querycode.result.ad_info.adcode
+        console.log( this.form.code );
+
       }
     },
     async chooselocation() {
@@ -455,12 +472,20 @@ export default {
             icon: "none"
           });
           this.form.deliveryArea =  "点击选择提货点"
-          this.form.deliveryAreaLongitude = '' 
-          this.form.deliveryAreaLatitude = ''
+          this.form.longitude = '' 
+          this.form.latitude = ''
         }else{
           this.form.deliveryArea = location.address+' '+location.name ;
-          this.form.deliveryAreaLongitude = location.longitude 
-          this.form.deliveryAreaLatitude = location.latitude 
+          this.form.longitude = location.longitude 
+          this.form.latitude = location.latitude 
+          let querycode = await this.reverseGeocoder(
+            location.longitude,
+            location.latitude
+          )
+          
+          this.form.code = querycode.result.ad_info.adcode ;
+          console.log( this.form.code );
+          
         }
       } catch (error) {
         wx.showToast({
@@ -532,6 +557,7 @@ export default {
       this.form.urls[which] = "";
     },
     formSubmit(data) {
+      var self = this;
       if (self.globalData.loginstate !== true) {
         return wx.showToast({
           title: "请先登录",
@@ -547,7 +573,6 @@ export default {
         });
       }
       
-      var self = this;
       let obj = data.mp.detail;
       let { formId} = obj;
       let formvalue = obj.value
@@ -555,7 +580,10 @@ export default {
 
       formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
       formvalue.deliveryArea = self.form.deliveryArea
-
+      formvalue.longitude = self.form.longitude
+      formvalue.latitude = self.form.latitude
+      formvalue.code = self.form.code
+      
       // 数据校验
       for (const key in formvalue) {
         if (formvalue.hasOwnProperty(key)) {
@@ -608,9 +636,39 @@ export default {
     radioChange(e) {
       console.log("deliveryMethods:", e.mp.detail.value);
       this.deliveryMethods = e.mp.detail.value;
-    }
+    },
+    reverseGeocoder(longitude, latitude) {
+      return new Promise(function(resolve, reject) {
+        mymap.reverseGeocoder({
+          location: {
+            latitude: latitude,
+            longitude: longitude
+          },
+          success: function(res) {
+            resolve(res);
+          },
+          fail: function(res) {
+            resolve(null);
+          }
+        });
+      });
+    },
   },
-  async onShow() {}
+  async onShow() {
+    if (!this.globalData.loginstate) {
+      wx.showToast({
+        title: "请先登录哦",
+        icon: "none",
+        mask: true,
+        duration: 1500,
+        success() {
+          setTimeout(function() {
+            wx.switchTab({ url: "/pages/my/main" });
+          }, 1500);
+        }
+      });
+    }
+  }
 };
 </script>
 

@@ -37,7 +37,7 @@
           <span class="m">商品组团价：</span>
           <span class="r">
             <input
-              type="number"
+              type="digit"
               name="currentPrice"
               v-model="form.currentPrice"
               placeholder="请输入价格，单位：元"
@@ -51,7 +51,7 @@
           <span class="m">商品市场价：</span>
           <span class="r">
             <input
-              type="number"
+              type="digit"
               name="oldPrice"
               v-model="form.oldPrice"
               placeholder="需高于组团价，单位：元"
@@ -60,7 +60,40 @@
             >
           </span>
         </div>
+        <div class="item tip">
+          通过微信支付须扣除0.6%的手续费，因此定价须根据该因素适当调整，本平台不会收取任何费用。
+          例如：原组团价100元的商品，除以0.994=100.61，100.61再扣除0.6%的手续费后所得刚好是100元。
+          为保证计算精确，价格请尽量设置成整数。（最多允许两位小数）
+        </div>
         <div class="item line">
+          <span class="l">*</span>
+          <span class="m">计量单位：</span>
+          <span class="r">
+            <input
+              type="digit"
+              name="unit"
+              v-model="form.unit"
+              placeholder="斤,件,份,公斤..."
+              confirm-type="next"
+              maxlength="10"
+            >
+          </span>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">库存数量：</span>
+          <span class="r">
+            <input
+              type="digit"
+              name="stock"
+              v-model="form.stock"
+              placeholder="具体数字或'足够多'"
+              confirm-type="next"
+              maxlength="20"
+            >
+          </span>
+        </div>
+        <div class="item line deliveryMethods">
           <span class="l">*</span>
           <span class="m">取货方式：</span>
           <span class="r">
@@ -71,20 +104,35 @@
             </radio-group>
           </span>
         </div>
-        <div class="item line">
+        <div class="item line delivery-area">
           <span class="l">*</span>
           <span class="m">提货点：</span>
+          <div class="r" @click="chooselocation" name="deliveryArea">
+            <!-- <textarea
+              name="deliveryArea"
+              v-model=""
+              placeholder="点击选择提货点"
+              confirm-type="next" 
+              disabled
+            ></textarea> -->
+            {{form.deliveryArea}}
+          </div>
+        </div>
+        <div class="item line">
+          <span class="l">*</span>
+          <span class="m">具体提货点：</span>
           <span class="r">
             <input
               type="text"
-              name="deliveryArea"
-              v-model="form.deliveryArea"
-              placeholder="若是快递运输请选择发货地"
+              name="deliveryArea1"
+              v-model="form.deliveryArea1"
+              placeholder="xx栋xx单元xx号"
               confirm-type="next"
-              disabled
-              @click="deliveryAreachange"
             >
           </span>
+        </div>
+        <div class="item tip">
+          如果是快递运输或线下配送请选择发货地，如果是买家自提则选择具体提货点（需精确到楼栋和房号）。提货点精确到小区，具体提货点精确到xx栋xx单元xx号。
         </div>
         <div class="item line">
           <span class="l">*</span>
@@ -130,6 +178,7 @@
                 v-model="form.deliveryTime"
                 placeholder="点击选择"
                 confirm-type="next"
+                disabled
               >
             </picker>
           </span>
@@ -183,6 +232,9 @@
             <input type="text" name="urls2" disabled v-model="form.urls[2]" hidden>
           </div>
         </div>
+        <div class="item tip">
+          商品图请上传相机横向放置拍摄的图片，竖向拍摄的图片不利于展示。
+        </div>
         <div class="textarea">
           <span class="l">*</span>
           <span class="m">商品描述：</span>
@@ -209,7 +261,10 @@
             ></textarea>
           </span>
         </div>
-        <button class="submit" form-type="submit" hover-class="btn-hover">确认发布</button>
+        <div class="footer">
+          <button class="reset"  form-type='reset'  hover-class="btn-hover1">清空表单</button>
+          <button class="submit" form-type="submit" hover-class="btn-hover">确认发布</button>
+        </div>
       </form>
       <mp-citypicker
         ref="mpCityPicker"
@@ -229,6 +284,7 @@ import conf from "@/config";
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
+import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
 
 import mpDatepicker from '@/components/datePicker';
@@ -245,7 +301,9 @@ export default {
       form: {
         name: "",
         phone: "",
-        deliveryArea: "",
+        deliveryArea: "点击选择提货点",
+        deliveryAreaLongitude:'',
+        deliveryAreaLatitude:'',
         deliveryTime: "",
         _start:"",
         _end:'',
@@ -253,7 +311,9 @@ export default {
         detailDesc: "",
         tips: "",
         oldPrice:'',
-        curentPrice:''
+        curentPrice:'',
+        unit:'',
+        stock:''
       },
       radios: [
         {
@@ -280,13 +340,6 @@ export default {
       citylabel1: "",
       citylabel2: "",
       code: "",
-      // 上传的三张照片
-      imgurls: {
-        1: "",
-        2: "",
-        3: "",
-        4: ""
-      }
     };
   },
   components: {
@@ -391,6 +444,32 @@ export default {
         this.location = location.name;
       }
     },
+    async chooselocation() {
+      try {
+        let location = (await chooselocation()) || null;
+        console.log(location);
+        if(!location.address || !location.name){
+          wx.showToast({
+            title: '请选择提货点',
+            duration: 1500,
+            icon: "none"
+          });
+          this.form.deliveryArea =  "点击选择提货点"
+          this.form.deliveryAreaLongitude = '' 
+          this.form.deliveryAreaLatitude = ''
+        }else{
+          this.form.deliveryArea = location.address+' '+location.name ;
+          this.form.deliveryAreaLongitude = location.longitude 
+          this.form.deliveryAreaLatitude = location.latitude 
+        }
+      } catch (error) {
+        wx.showToast({
+          title: '请选择提货点',
+          duration: 1500,
+          icon: "none"
+        });
+      }
+    },
     citychange({ label, value, cityCode }) {
       console.log(label, value, cityCode);
     },
@@ -453,35 +532,6 @@ export default {
       this.form.urls[which] = "";
     },
     formSubmit(data) {
-      let obj = data.mp.detail;
-
-      let { formId} = obj;
-      let formvalue = obj.value
-      console.log(formvalue);
-      var self = this;
-      // 数据校验
-      // for (const key in formvalue) {
-      //   if (formvalue.hasOwnProperty(key)) {
-      //     const element = formvalue[key];
-      //     if (!element.toString().trim()) {
-      //       return wx.showToast({
-      //         title: "信息不完整！",
-      //         mask: true,
-      //         icon: "none",
-      //         duration: 1000
-      //       });
-      //     }
-      //   }
-      // }
-
-      formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
-
-      
-      // let arr = value.code.split(""); // 110201
-      // value.provincecode = arr[0] + arr[1]; // 11
-      // value.citycode = arr[2] + arr[3]; // 02
-      // value.countrycode = arr[4] + arr[5]; // 01
-
       if (self.globalData.loginstate !== true) {
         return wx.showToast({
           title: "请先登录",
@@ -496,7 +546,31 @@ export default {
           }
         });
       }
+      
+      var self = this;
+      let obj = data.mp.detail;
+      let { formId} = obj;
+      let formvalue = obj.value
+      console.log(formvalue);
 
+      formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
+      formvalue.deliveryArea = self.form.deliveryArea
+
+      // 数据校验
+      for (const key in formvalue) {
+        if (formvalue.hasOwnProperty(key)) {
+          const element = formvalue[key];
+          if (!element.toString().trim()) {
+            return wx.showToast({
+              title: "信息不完整！",
+              mask: true,
+              icon: "none",
+              duration: 1000
+            });
+          }
+        }
+      }
+      
       wx.showLoading({
         title: "提交中...",
         mask: true
@@ -515,14 +589,19 @@ export default {
             icon: "none",
             duration: 1400
           });
-          // setTimeout(function() {
-          //   wx.hideToast();
-          //   wx.switchTab({
-          //     url: "/pages/index/main"
-          //   });
-          // }, 1600);
+          setTimeout(function() {
+            wx.switchTab({
+              url: "/pages/zutuan/main"
+            });
+          }, 1600);
         },
-        fail() {},
+        fail() {
+          wx.showToast({
+            title: '发布失败,请检查网络',
+            icon: "none",
+            duration: 1400
+          });
+        },
         complete() {}
       });
     },
@@ -531,7 +610,6 @@ export default {
       this.deliveryMethods = e.mp.detail.value;
     }
   },
-
   async onShow() {}
 };
 </script>
@@ -570,6 +648,32 @@ $maincolor: #ce4031;
         font-size: 25rpx;
       }
     }
+  }
+  .deliveryMethods{
+    .m{
+      width: 200rpx;
+    }
+    .r{
+      width: 485rpx;
+    }
+  }
+  .delivery-area{
+    // textarea{
+      .r{
+        border: 1px solid #e5e5e5;
+        min-height: 120rpx;
+        width: 440rpx;
+        padding: 12rpx;
+        box-sizing: border-box;
+      }
+    // }
+  }
+  .tip{
+    font-size: 26rpx;
+    background-color: #f5f5f5;
+    color: #a1a1a1;
+    padding: 8rpx;
+    border-radius: 8rpx;
   }
   .block {
     .r {
@@ -633,20 +737,40 @@ $maincolor: #ce4031;
     height: 160rpx;
     width: 100%;
   }
-  .submit {
-    background-color: $maincolor;
-    width: 50%;
-    height: 80rpx;
-    line-height: 80rpx;
-    color: #fff;
-    border: none;
-    margin-top: 20rpx;
-    border-radius: 40rpx;
+  .footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    .submit {
+      background-color: $maincolor;
+      width: 38%;
+      height: 80rpx;
+      line-height: 80rpx;
+      color: #fff;
+      border: none;
+      margin-top: 20rpx;
+      border-radius: 40rpx;
+    }
+    .btn-hover {
+      background-color: rgb(172, 0, 0);
+      color: #ccc;
+    }
+    .reset {
+      background-color: #fff;
+      width: 38%;
+      height: 80rpx;
+      line-height: 80rpx;
+      color: $maincolor;
+      border: 1px solid $maincolor;
+      margin-top: 20rpx;
+      border-radius: 40rpx;
+    }
+    .btn-hover1 {
+      background-color: rgb(212, 212, 212);
+      color: rgb(126, 1, 1);
+    }
   }
-  .btn-hover {
-    background-color: rgb(172, 0, 0);
-    color: #ccc;
-  }
+  
 }
 label:nth-child(2) {
   padding-left: 12rpx;

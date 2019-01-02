@@ -345,6 +345,23 @@ export default {
         }
       })
     },
+    searchzutuanuser(){
+      let self = this
+      qc.request({
+        url: conf.service.searchzutuanuserUrl,
+        data: {
+          code: self.mypositioncode
+        },
+        success(res){
+          console.log(res);
+          self.bangzhulist = res.data.data
+        },
+        fail(err){
+          console.log(err);
+          self.bangzhulist = []
+        }
+      })
+    },
     tosearchgoods(openid){
       wx.navigateTo({
         url:`/pages/bangzhugoods/main?openid=${openid}`

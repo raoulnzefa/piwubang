@@ -47,22 +47,22 @@
       <!-- 发货地 发货时间 发货方式 -->
       <div class="m">
         <div class="table">
-        <div class="tr">
-          <div>发货方式 :</div>
-          <div class="tips">{{goodsdetail.deliveryMethods || '商家未注明'}}</div>
-          <div>发货地 :</div>
-          <div>{{goodsdetail.deliveryArea || '商家未注明'}}</div>
-        </div>
-        <div class="tr">
-          <div>发货时间 :</div>
-          <div>{{goodsdetail.deliveryTime || '商家未注明'}}</div>
-          <div>可购区域 :</div>
-          <div class="tips">{{goodsdetail.targetArea_name || '商家未注明'}}</div>
-        </div>
-        <div class="tr">
-          <div>是否包邮 :</div>
-          <div>{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
-        </div>
+          <div class="tr">
+            <div>发货方式 :</div>
+            <div class="tips">{{goodsdetail.deliveryMethods || '商家未注明'}}</div>
+            <div>发货地 :</div>
+            <div>{{goodsdetail.deliveryArea || '商家未注明'}}</div>
+          </div>
+          <div class="tr">
+            <div>发货时间 :</div>
+            <div>{{goodsdetail.deliveryTime || '商家未注明'}}</div>
+            <div>可购区域 :</div>
+            <div class="tips">{{goodsdetail.targetArea_name || '商家未注明'}}</div>
+          </div>
+          <div class="tr">
+            <div>是否包邮 :</div>
+            <div>{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
+          </div>
       </div>
       </div>
     </div>

@@ -74,6 +74,9 @@ var config = {
         
         // 帮主搜索
         searchbangzhuUrl: `${host}/weapp/searchbangzhu`,
+
+        // 组团普通用户搜索
+        searchzutuanuserUrl: `${host}/weapp/searchzutuanuser`,
         
         // 帮主商品搜索
         searchbangzhugoodsUrl: `${host}/weapp/searchbangzhugoods`,

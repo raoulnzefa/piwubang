@@ -58,7 +58,7 @@ router.get('/prepay', validationMiddleware, unifiedorder)
 // GET !!! 小程序获取收货地址列表
 router.get('/addresslist', validationMiddleware, controllers.addresslist)
 
-// GET !!! 小程序编辑收货地址
+// POST !!! 小程序编辑收货地址
 router.post('/addressedit', validationMiddleware, controllers.addressedit)
 
 // GET !!! 小程序支付完成后客户端通知服务器支付结果
@@ -79,19 +79,22 @@ router.get('/refund', validationMiddleware, controllers.refund)
 // GET !!! 小程序删除订单
 router.get('/deleteorder', validationMiddleware, controllers.deleteorder)
 
-// GET !!! 小程序帮主申请
+// POST !!! 小程序帮主申请
 router.post('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
 
-// GET !!! 小程序供应商、厂商申请
+// POST !!! 小程序供应商、厂商申请
 router.post('/gysapply', validationMiddleware, controllers.gysapply)
 
 // GET !!! 小程序搜索附近帮主
 router.get('/searchbangzhu', validationMiddleware, controllers.searchbangzhu)
 
+// GET !!! 小程序搜索附近用户
+router.get('/searchzutuanuser', validationMiddleware, controllers.searchzutuanuser)
+
 // GET !!! 小程序搜索附近帮主发布的商品
 router.get('/searchbangzhugoods', validationMiddleware, controllers.searchbangzhugoods)
 
-// GET !!! 小程序帮主/用户发布商品
+// POST !!! 小程序帮主/用户发布商品
 router.post('/bangzhugoodsupload', validationMiddleware, controllers.bangzhugoodsupload)
 
 module.exports = router

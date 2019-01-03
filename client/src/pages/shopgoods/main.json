@@ -1,7 +1,7 @@
 {
     "navigationBarBackgroundColor": "#CE4031",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "周边好物",
+    "navigationBarTitleText": "上批物帮,买啥都批发!",
     "backgroundTextStyle": "light",
-    "enablePullDownRefresh": true
+    "enablePullDownRefresh": false
 }

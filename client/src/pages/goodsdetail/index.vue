@@ -7,6 +7,9 @@
         </swiper-item>
       </block>
     </swiper>
+    <div class="warn">
+      *为保证交易安全，普通用户上传的商品只可浏览不可购买
+    </div>
     <div class="head">
       <div class="title">{{goodsdetail.name}}</div>
       <div class="brdesc" v-if="goodsdetail.origin == 'paltform'">{{goodsdetail.briefDesc}}</div>
@@ -51,7 +54,8 @@
             <span class='iconfont icon-round position'></span>
             <span class='position'>{{goodsdetail.deliveryArea || '商家未注明'}}</span>
           </div>
-          <div>发货时间 :{{goodsdetail.deliveryTime || '商家未注明'}}</div>
+          <div>组团时间 :{{goodsdetail._start+'~'+goodsdetail._end}}</div>
+          <div>发货/提货时间 :{{goodsdetail.deliveryTime || '商家未注明'}}</div>
           <div>可购区域 :<span>{{goodsdetail.targetArea_name || '商家未注明'}}</span> </div>
           <div class="tips"></div>
           <div>是否包邮 :{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
@@ -65,7 +69,7 @@
     </div>
     <div class="spacing">
     </div>
-    <div class="foot">
+    <div class="foot" v-if="goodsdetail.origin != 'user'">
       <div class="item s part1">
         <div @click="routeToHome">
           <i class="iconfont icon-shouye"></i>
@@ -253,6 +257,12 @@ swiper {
       height: 562.5rpx;
     }
   }
+}
+.warn{
+  color: #949494;
+  font-size: 28rpx;
+  padding: 0 12rpx;
+  background-color: #eeeeee;
 }
 .head {
   padding: 20rpx 0;

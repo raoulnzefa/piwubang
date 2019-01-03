@@ -97,4 +97,22 @@ router.get('/searchbangzhugoods', validationMiddleware, controllers.searchbangzh
 // POST !!! 小程序帮主/用户发布商品
 router.post('/bangzhugoodsupload', validationMiddleware, controllers.bangzhugoodsupload)
 
+// GET !!! 小程序检查当前用户是否已注册商铺
+router.get('/checkuserisshop', validationMiddleware, controllers.checkuserisshop)
+
+// POST !!! 小程序周边店铺申请
+router.post('/roundshopapply', validationMiddleware, controllers.roundshopapply)
+
+// POST !!! 小程序周边店铺商品上传
+router.post('/roundshopgoodsupload', validationMiddleware, controllers.roundshopgoodsupload)
+
+// GET !!! 小程序搜索附近周边店铺
+router.get('/roundshop', validationMiddleware, controllers.roundshop)
+
+// GET !!! 小程序搜索附近周边店铺商品
+router.get('/roundshopgoods', validationMiddleware, controllers.roundshopgoods)
+
+
+
+
 module.exports = router

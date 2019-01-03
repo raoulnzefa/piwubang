@@ -84,6 +84,21 @@ var config = {
         // 帮主商品上传
         bangzhugoodsuploadUrl: `${host}/weapp/bangzhugoodsupload`,
         
+        // 周边店铺
+        searchroundshopUrl: `${host}/weapp/roundshop`,
+
+        // 周边店铺商品
+        searchroundshopgoodsUrl: `${host}/weapp/roundshopgoods`,
+
+        // 检查当前用户是否已注册商铺
+        checkuserisshopUrl: `${host}/weapp/checkuserisshop`,
+
+        // 周边店铺入驻申请
+        roundshopapplyUrl: `${host}/weapp/roundshopapply`,
+
+        // 周边店铺商品上传
+        roundshopgoodsuploadUrl: `${host}/weapp/roundshopgoodsupload`,
+
     },
     mapkey:'HOOBZ-FGYRX-3SC4H-ZDMLM-6ZJG6-V7BJD'
 };

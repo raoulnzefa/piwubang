@@ -12,7 +12,7 @@ module.exports = async (ctx, next) => {
     let _time = now.toLocaleString()
     try {
         if(goodsid && goodsid!='undefined'){
-            let cartinfo = await mysql('cart').select().where({openid})
+            let cartinfo = await mysql('cart').select().where({openid}).limit(1)
             console.log('cartinfo:',cartinfo);
             if(cartinfo.length == 1){
                 let cartgoods = JSON.parse(cartinfo[0].cartgoods)

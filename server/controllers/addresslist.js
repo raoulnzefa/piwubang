@@ -4,7 +4,7 @@ const { mysql } = qcloud
 module.exports = async (ctx, next) => {
     let open_id = ctx.state.$wxInfo.userinfo.openId ;
     try {
-        let searchs = await mysql('cSessionInfo').select('receipt').where({open_id})
+        let searchs = await mysql('cSessionInfo').first('receipt').where({open_id})
         console.log(searchs);
         console.log(searchs[0].receipt);
         if(searchs.length>0 && searchs[0].receipt){

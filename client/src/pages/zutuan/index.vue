@@ -39,11 +39,15 @@
           :key="i"
           full
           :title="x.userinfo.nickName"
-          extra="点击查看他的商品"
-          thumb="x.thumbnail"
+          extra="点击查商品详情"
+          :thumb="x.thumbnail"
+          @click="togoodsdetail(x._id)"
         >
-          <view slot="content">内容不错</view>
-          <view slot="footer">尾部内容</view>
+          <view slot="content">TA发布了【{{x.name}}】</view>
+          <view slot="footer">
+            <span class="iconfont icon-round"></span>
+            {{x.deliveryArea}}
+          </view>
         </i-card>
       </div>
     </div>
@@ -78,46 +82,6 @@ export default {
       mypositioncode: "",
       bangzhulist:[],
       nearuserlist: []
-      // map1: {
-      //   mapshow: true,
-      //   showopensettingbtn: true,
-      //   longitude: "longitude",
-      //   latitude: "latitude",
-      //   scale: 17,
-      //   markers: [],
-      //   circles: [],
-      //   controls: [
-      //     {
-      //       position: {
-      //         left: 0,
-      //         top: 0,
-      //         width: 32,
-      //         height: 32
-      //       },
-      //       iconPath: "/static/img/initialAvatar.png"
-      //     }
-      //   ]
-      // },
-      // map2: {
-      //   mapshow: true,
-      //   showopensettingbtn: false,
-      //   longitude: "longitude",
-      //   latitude: "latitude",
-      //   scale: 17,
-      //   markers: [],
-      //   circles: [],
-      //   controls: [
-      //     {
-      //       position: {
-      //         left: 0,
-      //         top: 0,
-      //         width: 32,
-      //         height: 32
-      //       },
-      //       iconPath: "/static/img/initialAvatar.png"
-      //     }
-      //   ]
-      // }
     };
   },
   methods: {
@@ -135,51 +99,6 @@ export default {
         // console.log("this.mypositioncode:", this.mypositioncode);
         this.searchbangzhu()
         this.searchzutuanuser()
-        // this.map1.longitude = location.longitude;
-        // this.map1.latitude = location.latitude;
-        // this.map2.longitude = location.longitude;
-        // this.map2.latitude = location.latitude;
-        // console.log(location.latitude, location.longitude);
-        // {
-        //   latitude: 31.24924,
-        //   longitude: 120.68966,
-        //   radius: 500,
-        //   color : "#ff0000ff",
-        //   fillColor	: "#60caf566",
-        // }
-        // this.map1.circles = [
-        //   {
-        //     latitude: location.latitude,
-        //     longitude: location.longitude,
-        //     radius: 500,
-        //     color: "#ff0000ff",
-        //     fillColor: "#60caf566"
-        //   }
-        // ];
-        // this.map2.circles = [
-        //   {
-        //     latitude: location.latitude,
-        //     longitude: location.longitude,
-        //     radius: 500,
-        //     color: "#ff0000ff",
-        //     fillColor: "#60caf566"
-        //   }
-        // ];
-        // this.map1.markers = [
-        //   {
-        //     id: "myself",
-        //     latitude: location.latitude,
-        //     longitude: location.longitude
-        //   }
-        // ];
-        // this.map2.markers = [
-        //   {
-        //     id: "myself",
-        //     latitude: location.latitude,
-        //     longitude: location.longitude
-        //   }
-        // ];
-        // console.log(this.map1, this.map2);
 
         wx.setStorageSync("zutuanposition", location);
       } catch (error) {
@@ -213,43 +132,7 @@ export default {
           this.searchbangzhu()
           this.searchzutuanuser()
           this.location = location.name || "切换位置";
-          // console.log(location);
-          // this.map1.longitude = location.longitude;
-          // this.map1.latitude = location.latitude;
-          // this.map2.longitude = location.longitude;
-          // this.map2.latitude = location.latitude;
-          // this.map1.circles = [
-          //   {
-          //     latitude: location.latitude,
-          //     longitude: location.longitude,
-          //     radius: 500,
-          //     color: "#ff0000ff",
-          //     fillColor: "#60caf566"
-          //   }
-          // ];
-          // this.map2.circles = [
-          //   {
-          //     latitude: location.latitude,
-          //     longitude: location.longitude,
-          //     radius: 500,
-          //     color: "#ff0000ff",
-          //     fillColor: "#60caf566"
-          //   }
-          // ];
-          // this.map1.markers = [
-          //   {
-          //     id: "myself",
-          //     latitude: location.latitude,
-          //     longitude: location.longitude
-          //   }
-          // ];
-          // this.map2.markers = [
-          //   {
-          //     id: "myself",
-          //     latitude: location.latitude,
-          //     longitude: location.longitude
-          //   }
-          // ];
+          
           wx.setStorageSync("zutuanposition", location);
         } else {
           console.log("拒绝授权");
@@ -354,6 +237,11 @@ export default {
         url:`/pages/bangzhugoods/main?openid=${who}`
       })
     },
+    togoodsdetail(goodsid){
+      wx.navigateTo({
+        url:`/pages/goodsdetail/main?goodsid=${goodsid}&origin=user`
+      })
+    },
     searchgoods(who){
       let self = this
       if( !who ){
@@ -417,43 +305,6 @@ export default {
       this.searchbangzhu()
       this.searchzutuanuser()
 
-      // this.map1.longitude = zutuanposition.longitude;
-      // this.map1.latitude = zutuanposition.latitude;
-      // this.map2.longitude = zutuanposition.longitude;
-      // this.map2.latitude = zutuanposition.latitude;
-      // this.map1.circles = [
-      //   {
-      //     latitude: zutuanposition.latitude,
-      //     longitude: zutuanposition.longitude,
-      //     radius: 500,
-      //     color: "#ff0000ff",
-      //     fillColor: "#60caf566"
-      //   }
-      // ];
-      // this.map2.circles = [
-      //   {
-      //     latitude: zutuanposition.latitude,
-      //     longitude: zutuanposition.longitude,
-      //     radius: 500,
-      //     color: "#ff0000ff",
-      //     fillColor: "#60caf566"
-      //   }
-      // ];
-      // this.map1.markers = [
-      //   {
-      //     id: "myself",
-      //     latitude: zutuanposition.latitude,
-      //     longitude: zutuanposition.longitude
-      //   }
-      // ];
-      // this.map2.markers = [
-      //   {
-      //     id: "myself",
-      //     latitude: zutuanposition.latitude,
-      //     longitude: zutuanposition.longitude
-      //   }
-      // ];
-      // console.log(this.map1, this.map2);
     } else {
       this.location = "点击切换定位";
     }

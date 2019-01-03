@@ -1,8 +1,12 @@
 {
   "pages": [
+    "pages/near/main",
+    "pages/shopgoods/main",
+    "pages/shopapply/main",
+    "pages/shopgoodsupload/main",
+    "pages/zutuan/main",
     "pages/index/main",
     "pages/goodsupload/main",
-    "pages/zutuan/main",
     "pages/bangzhugoods/main",
     "pages/mymoney/main",
     "pages/order/main",
@@ -13,10 +17,7 @@
     "pages/gysapply/main",
     "pages/bangzhuapply/main",
     "pages/orderlist/main",
-    "pages/near/main",
     "pages/qqmap/main"
-
-    
   ],
   "usingComponents": {
     "i-button":       "/static/iview/button/index",

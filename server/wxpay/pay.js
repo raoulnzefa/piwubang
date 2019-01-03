@@ -31,7 +31,7 @@
  * @author shenjie
  *
  * Created at     : 2018-12-17 16:14:34 
- * Last modified  : 2018-12-20 09:05:51
+ * Last modified  : 2019-01-03 10:38:33
  */
 var request = require('request');
 var xmlreader = require("xmlreader");
@@ -91,6 +91,13 @@ const unifiedorder = async (ctx, next) => {
         var table = 't_product'
     }else if(origin === 'bangzhu'){
         var table = 't_product_zutuan'
+    }else if(origin === 'user'){
+        return ctx.body = {
+            code:"GOODS_FROM_USER_CANNOT_BUY",
+            success:false,
+            data:null,
+            msg:"普通用户商品不可购买"
+        }
     }
     let goodsinfo = await knex(table).where({
         _id

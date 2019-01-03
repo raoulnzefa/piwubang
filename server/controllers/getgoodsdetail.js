@@ -37,7 +37,7 @@ module.exports = async (ctx, next) => {
                 }
                 let viewcount = res.viewcount||0;
                 console.log( viewcount );
-                let update = await mysql(table).update({ viewcount: viewcount+1 }).where({ _id: goodsid });
+                let update = await mysql(table).update({ viewcount: viewcount+1 }).limit(1).where({ _id: goodsid });
             }else{
                 return ctx.body = {
                     code:1,

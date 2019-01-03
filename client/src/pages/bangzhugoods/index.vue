@@ -12,6 +12,7 @@
         <view slot="footer">已售{{x.salescount}}件</view>
       </i-card>
     </div>
+    <i-divider content="已经到底啦" ></i-divider>
   </div>
 </template>
 <script>

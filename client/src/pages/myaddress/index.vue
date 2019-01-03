@@ -21,7 +21,7 @@
         <div class="btn-edit" @click="del(i)">删除</div>
       </div>
     </div>
-    <div class="btm">已经到底了</div>
+    <i-divider content="已经到底啦" ></i-divider>
     <!-- </div> -->
     <div class="importwx">
       <button @click="getwxaddress" hover-class="btn-hover">微信导入</button>

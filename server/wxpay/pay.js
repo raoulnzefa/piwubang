@@ -319,7 +319,6 @@ const unifiedorder = async (ctx, next) => {
                             countrycode,
                             origin,
                             bangzhuid:uploadUser,
-
                             total_fee,
                             status:1, //未支付
                             prepay_id:  prepay_id, 

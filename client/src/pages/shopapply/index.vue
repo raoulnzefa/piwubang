@@ -1,108 +1,70 @@
 <template>
   <div class="">
-    <slogan type='bangzhu'></slogan>
+    <!-- <slogan type='bangzhu'></slogan> -->
     <div class="container">
       <form report-submit=true @submit="formSubmit">
     <div class="item line">
       <span class="l">*</span>
       <span class="m">真实姓名：</span>
       <span class="r">
-        <input type="text" name='name' v-model="form.name" placeholder="请输入姓名" confirm-type='next' maxlength='4' focus=true>
+        <input type="text" name='name' placeholder="请输入姓名" confirm-type='next' maxlength='20' focus=true>
       </span>
     </div>
     <div class="item line">
       <span class="l">*</span>
       <span class="m">手机号：</span>
       <span class="r">
-        <input type="number" name='phone' v-model="form.phone" placeholder="请输入手机号" confirm-type='next' maxlength='11'>
+        <input type="number" name='phone' placeholder="请输入手机号" confirm-type='next' maxlength='11'>
       </span>
+    </div>
+    <div class="item line">
+      <span class="l">*</span>
+      <span class="m">店铺名：</span>
+      <span class="r">
+        <input type="text" name='shopname' placeholder="如:阿迪达斯圆融店" confirm-type='next' maxlength='30'>
+      </span>
+    </div>
+    <div class="item line delivery-area">
+      <span class="l">*</span>
+      <span class="m">店铺位置：</span>
+      <div class="r" @click="chooselocation">
+        {{form.citylabel1}}
+      </div>
     </div>
     <div class="item block place">
       <span class="l">*</span>
-      <span class="m">帮主地盘：</span>
-      <div class="r">
-        <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
-        <div>
-          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='code' disabled v-model="code" hidden>
-        </div>
-        <div>
-          <textarea name="citylabel2" id="" placeholder="你能管理的详细区域(如九龙仓小区、湖景社区等)..." v-model="citylabel2" confirm-type='next'></textarea>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="item block place">
-      <span class="l">*</span>
-      <span class="m">常驻小区：</span>
+      <span class="m">详细位置：</span>
       <div class="r">
         <div>
-          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='code' disabled v-model="code" hidden>
-        </div>
-        <div>
-          <textarea name="citylabel2" id="" placeholder="你能管理的详细区域(如九龙仓小区、湖景社区等)..." v-model="citylabel2" confirm-type='next'></textarea>
+          <textarea name="citylabel2" id="" placeholder="如:xx大厦xxx栋xxx号" confirm-type='next'></textarea>
         </div>
       </div>
-    </div> -->
-    <div class="item line">
-      <span class="l">*</span>
-      <span class="m">是否能全职：</span>
-      <span class="r">
-        <switch name='fulltime' checked="form.fulltime"></switch>
-      </span>
-    </div>
-    <div class="item line">
-      <span class="l">*</span>
-      <span class="m">目前职业：</span>
-      <span class="r">
-        <input type="text" name='job' v-model="form.currentjob" placeholder="请输入职业" confirm-type='next' maxlength='10'>
-      </span>
-    </div>
-    <div class="item line">
-      <span class="l">*</span>
-      <span class="m">身份证号码：</span>
-      <span class="r">
-        <input type="idcard" name='idno' v-model="form.idno" placeholder="请输入身份证号" confirm-type='next' maxlength='18'>
-      </span>
     </div>
     <div class="item block">
       <span class="l">*</span>
-      <span class="m">身份证正面：</span>
+      <span class="m">店铺logo图：</span>
       <div class="r">
         <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail0" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='1'></mp-uploader>
-          <input type="text" name='idcard1' disabled v-model="imgurls['1']" hidden>
+          <input type="text" name='logo' disabled v-model="imgurls['1']" hidden>
       </div>
     </div>
     <div class="item block">
       <span class="l">*</span>
-      <span class="m">身份证反面：</span>
+      <span class="m">营业执照：</span>
       <div class="r">
         <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail1" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='2'></mp-uploader>
-          <input type="text" name='idcard2' disabled v-model="imgurls['2']" hidden>
-      </div>
-    </div>
-    <div class="item block">
-      <span class="l">*</span>
-      <span class="m">手持身份证<br>半身照：</span>
-      <div class="r">
-        <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail2" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='3'></mp-uploader>
-        <input type="text" name='idcard3' disabled v-model="imgurls['3']" hidden>
+        <input type="text" name='yyzhizhao' disabled v-model="imgurls['2']" hidden>
       </div>
     </div>
     <div class="textarea">
       <span class="l">*</span>
-      <span class="m">申请说明：</span>
+      <span class="m">主营商品：</span>
       <span class="r">
-        <textarea name='applydesc' type="text" v-model="form.desc" placeholder="说说你作为帮主的优势..."></textarea>
+        <textarea name='applydesc' type="text" v-model="form.desc" class="desc" placeholder="简单描述一下你的主营商品"></textarea>
       </span>
     </div>
     <button class="submit" form-type='submit' hover-class='btn-hover'>提交申请</button>
     </form>
-    <mp-citypicker ref="mpCityPicker" 
-          :pickerValueDefault="pickerValueDefault" 
-          @onChange="citychange" 
-          @onCancel="citycancel" 
-          @onConfirm="cityconfirm"></mp-citypicker>
     </div>
   </div>
 </template>
@@ -110,11 +72,18 @@
 <script>
 import qc from 'wafer2-client-sdk'
 import conf from '@/config'
+
+import qqmap from "@/wxapis/qqmap.js";
+var mymap = new qqmap({
+  // 地图开发秘钥
+  key: conf.mapkey // 必填
+});
+
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import modal from "@/wxapis/modal";
-
+import chooselocation from "@/wxapis/chooselocation";
 
 import mpSwitch from 'mpvue-weui/src/switch';
 import mpCitypicker from 'mpvue-weui/src/city-picker';
@@ -129,30 +98,25 @@ export default {
       form:{
         name:'',
         phone:'',
-        area:'',
-        fulltime:true,
-        currentjob:'',
-        idno:'',
-        idcardurl1:'',
-        idcardurl2:'',
-        idcardurl3:'',
+        shopname:'',
+        citylabel1: "点击选择店铺位置",
+        citylabel2: "",
+        logo:'',
+        yyzhizhao:'',
         desc:'',
-        phone:'',
+        code:'',
+        longitude:'',
+        latitude:''
       },
       // uploader配置项
       piccount:1,
       showtip:true,
       maxlength:1,
-      // city picker 配置项
-      pickerValueDefault:[0,0,0],
-      citylabel1:'',
-      citylabel2:'',
       code:'',
       // 上传的三张照片
       imgurls:{
         1:'',
-        2:'',
-        3:''
+        2:''
       }
 
     };
@@ -167,7 +131,6 @@ export default {
     icon: 'loading',
     duration: 1500
     }),
-
     // 显示成功提示
     showSuccess: text => wx.showToast({
     title: text,
@@ -242,7 +205,71 @@ export default {
         let location = await chooselocation();
         console.log(location);
         this.location = location.name;
+
+        let querycode = await this.reverseGeocoder(
+          location.longitude,
+          location.latitude
+        )
+        this.form.code = querycode.result.ad_info.adcode
+        console.log( this.form.code );
+
       }
+    },
+    async chooselocation() {
+      try {
+        let location = (await chooselocation()) || null;
+        console.log(location);
+        if(!location.address || !location.name){
+          wx.showToast({
+            title: '请选择店铺位置',
+            duration: 1500,
+            icon: "none"
+          });
+          this.form.citylabel1 =  "点击选择店铺位置"
+          this.form.code = ''
+          this.form.longitude = '' 
+          this.form.latitude = ''
+        }else{
+          this.form.citylabel1 = location.address;
+          this.form.citylabel2 = location.name;
+          this.form.longitude = location.longitude 
+          this.form.latitude = location.latitude 
+          let querycode = await this.reverseGeocoder(
+            location.longitude,
+            location.latitude
+          )
+          this.form.code = querycode.result.ad_info.adcode ;
+          console.log( this.form.code );
+          
+        }
+      } catch (error) {
+        console.log(error);
+        this.form.citylabel1 =  "点击选择店铺位置"
+        this.form.code = ''
+        this.form.longitude = '' 
+        this.form.latitude = ''
+        wx.showToast({
+          title: '请选择店铺位置',
+          duration: 1500,
+          icon: "none"
+        });
+      }
+    },
+    reverseGeocoder(longitude, latitude) {
+      return new Promise(function(resolve, reject) {
+        mymap.reverseGeocoder({
+          location: {
+            latitude: latitude,
+            longitude: longitude
+          },
+          success: function(res) {
+            resolve(res);
+          },
+          fail: function(res) {
+            resolve(null);
+          }
+        });
+      });
     },
     citychange({label, value, cityCode}){
       console.log(label, value, cityCode);
@@ -250,7 +277,7 @@ export default {
     },
     cityconfirm({label, value, cityCode}){
       console.log(label, value, cityCode);
-      this.citylabel1 = label
+      this.form.citylabel1 = label
       this.code = cityCode
     },
     citycancel({label, value, cityCode}){
@@ -284,22 +311,24 @@ export default {
         filePath: filePath,
         name: 'file',
         success: function(res){
-          let data = JSON.parse(res.data)
+          console.log(res);
           
-          console.log(data.data);
-          console.log(data.data.imgUrl);
+          let format = JSON.parse(res.data)
           
-          if(data.data.imgUrl){
-            self.imgurls[which]= data.data.imgUrl
+          console.log(format.data);
+          console.log(format.data.imgUrl);
+          
+          if(format.data.imgUrl){
+            self.imgurls[which]= format.data.imgUrl
             self.showSuccess('图片上传成功')
           }else{
             self.imgurls[which]= ''
             self.showModel('提示','图片上传失败')
           }
-          
         },
         fail: function(e) {
           console.error(e)
+          self.imgurls[which]= ''
         }
       })
     },
@@ -307,31 +336,13 @@ export default {
       this.imgurls[which] = ''
     },
     formSubmit(data){
-      
-      wx.showLoading({
-        title: '提交中...',
-        mask:true,
-        success(){
-
-        },
-        fail(){
-
-        },
-        complete(){
-          
-        }
-      })
+      let obj = data.mp.detail
+      console.log(obj.value);
       var self = this
-
-
-      let {formId, value} = data.mp.detail
-      
-      console.log(value);
-      
       // 数据校验
-      for (const key in value) {
-        if (value.hasOwnProperty(key)) {
-          const element = value[key];
+      for (const key in obj.value) {
+        if (obj.value.hasOwnProperty(key)) {
+          const element = obj.value[key];
           if(!element.toString().trim()){
             return wx.showToast({
               title: '信息不完整！',
@@ -342,50 +353,65 @@ export default {
           }
         }
       }
-      
-      console.log(formId , value);
-      let arr = value.code.split('')     // 110201
-      value.provincecode = arr[0]+arr[1] // 11
-      value.citycode =     arr[2]+arr[3] // 02
-      value.countrycode =  arr[4]+arr[5] // 01
 
+      let {formId, value} = obj
+      console.log(formId , value);
+      if(self.globalData.loginstate !== true){
+        return wx.showToast({
+          title:'请先登录',
+          icon:"none",
+          duration:1000,
+          success(){
+            setTimeout(function(){
+              wx.navigateTo({
+                url:'/pages/my/main'
+              })
+            },1000)
+          }
+        })
+      }
+
+      value.citylabel1 = self.form.citylabel1
+      value.longitude = self.form.longitude
+      value.latitude = self.form.latitude
+
+      wx.showLoading({
+        title: '提交中...',
+        mask:true,
+      })
+    
       qc.request({
         // login:true,
         method:"POST",
         data:{formId , ...value},
-        url: conf.service.bangzhuapplyUrl,
+        url: conf.service.roundshopapplyUrl,
         success(res){
           console.log(res);
-
-          // if(res.data.code == ){
-
-          // }
           wx.hideLoading()
           wx.showToast({
             title:res.data.msg,
             icon:'none',
             duration:1400
           })
-          setTimeout(function(){
-            wx.hideToast()
+          if(res.data.code == 'ROUNDSHOP_APPLY_SUCCESS'){
             wx.switchTab({
-              url:'/pages/index/main'
+              url:'/pages/near/main'
             })
-          },1600)
+          }
         },
         fail(){
-          wx.hideLoading()
-          wx.showToast({
-            title:'网络连接失败',
-            icon:'none',
-            duration:1400
-          })
+          
         },
         complete(){
+          
         }
       })
 
-    }
+    },
+    radioChange(e) {
+      console.log("whoami:", e.mp.detail.value);
+      this.whoami = e.mp.detail.value
+    },
     
   },
 
@@ -425,6 +451,13 @@ $maincolor: #ce4031;
       width: 450rpx;
       display: felx;
       flex-direction: row;
+    }
+  }
+  .code{
+    .m{
+      
+      font-size: 26rpx;
+      
     }
   }
   .place{
@@ -473,6 +506,9 @@ $maincolor: #ce4031;
       padding: 8rpx;
     }
   }
+  .desc{
+    height: 160rpx;width: 100%;
+  }
   .submit{
     background-color: $maincolor;
     width: 50%;
@@ -488,5 +524,7 @@ $maincolor: #ce4031;
     color: #ccc;
   }
 }
-
+label:nth-child(2){
+  padding-left: 12rpx;
+}
 </style>

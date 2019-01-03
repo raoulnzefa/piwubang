@@ -60,6 +60,9 @@
       <div class="list" @click="tomymoney">我的余额
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
+      <div class="list" @click="tomygoods">我的发布
+        <i class="iconfont icon-tubiao_xiangyou"></i>
+      </div>
       <!-- <div class="list">我的邀请
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div> -->
@@ -67,6 +70,8 @@
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div> -->
     </div>
+    <i-load-more class="footer" tip="苏州任意门软件提供技术支持" @click="showrenyimen" />
+
   </div>
 </template>
 <script>
@@ -118,6 +123,12 @@ export default {
     }
   },
   methods: {
+    showrenyimen(){
+      wx.showModal({
+        title:"联系方式",
+        content:"138-148-78101"
+      })
+    },
     showBusy: text =>
       wx.showToast({
         title: text,
@@ -227,11 +238,12 @@ export default {
 <style lang="scss" scoped>
 $maincolor: #ce4031;
 .container {
-  background-color: rgb(233, 233, 233);
+  height: 100vh;
+  background-color: #fff;
   .mainpart {
     padding: 20rpx;
     background-color: #fff;
-    margin-bottom: 12rpx;
+    border-bottom: 12rpx solid rgb(233, 233, 233);
   }
   .top {
     display: flex;
@@ -322,6 +334,13 @@ $maincolor: #ce4031;
       justify-content: space-between;
       border-bottom: 1px solid #eee;
     }
+  }
+  .footer{
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: 50rpx;
+    color: #e5e5e5;
   }
 }
 </style>

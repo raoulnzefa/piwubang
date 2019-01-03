@@ -62,6 +62,7 @@
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="paynow">确认付款</div>
     </div> -->
+    <i-divider content="已经到底啦" v-if="!shownone"></i-divider>
     <div class="none" v-if="shownone">
       <i class="iconfont icon-tubiao_gouwuche-copy"></i>
       <div>购物车空空如也~</div>

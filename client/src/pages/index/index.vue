@@ -4,11 +4,11 @@
     <slogan type='index'></slogan>
     <!-- 打开授权设置页面 -->
     <!-- <mp-button @click='opensetting'>opensetting</mp-button> -->
-    <div class="location" @click="changelocation">
+    <!-- <div class="location" @click="changelocation">
       <i class="iconfont icon-round"></i>
       <span>{{location}}</span>
       <i class="iconfont icon-tubiao_xiala"></i>
-    </div>
+    </div> -->
 
     <swiper indicator-dots="true" autoplay="true" interval="2500" duration="500" circular="true">
       <block v-for="(x, i) in swiperUrls" :key="i">
@@ -44,7 +44,10 @@
     <div class="dailygoods">
       <goods-item v-for="(x,k) in goodslist" :key="k" :goodsinfo="x"></goods-item>
     </div>
-    <div class='onbottom'>{{onbottom}}</div>
+    <!-- <div class='onbottom'>{{onbottom}}</div> -->
+    <!-- <i-divider :content="onbottom"></i-divider> -->
+    <i-divider content="已经到底啦"></i-divider>
+
     <auth-modal :show="authmodalshow"></auth-modal>
   </div>
 </template>
@@ -305,7 +308,7 @@ swiper {
   width: 710rpx;
   margin: 0 auto;
   height: 300rpx;
-
+  margin-top: 20rpx;
   swiper-item {
     overflow: hidden;
     border-radius: 20rpx;

@@ -3,6 +3,9 @@
     <!-- <slogan type='bangzhu'></slogan> -->
     <div class="container">
       <form report-submit="true" @submit="formSubmit">
+        <div class="item tip">
+          *本页上传的商品只做宣传/广告用，用户不能购买。
+        </div>
         <div class="item line">
           <span class="l">*</span>
           <span class="m">商品名称：</span>
@@ -45,9 +48,9 @@
             >
           </span>
         </div>
-        <div class="item tip">
+        <!-- <div class="item tip">
           为保证计算精确，价格请尽量设置成整数。（最多允许两位小数）
-        </div>
+        </div> -->
         <div class="item line">
           <span class="l">*</span>
           <span class="m">计量单位：</span>

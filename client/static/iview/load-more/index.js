@@ -4,11 +4,15 @@ Component({
     properties: {
         loading: {
             type: Boolean,
-            value: true
+            value: false
         },
         tip: {
             type: String,
             value: ''
+        },
+        color:{
+            type: String,
+            value: '#e2e2e2'
         }
     },
 });

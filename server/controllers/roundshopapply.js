@@ -4,12 +4,13 @@ const { mysql } = qcloud
 module.exports = async (ctx, next) => {
     let params = ctx.request.body;
     let openid = ctx.state.$wxInfo.userinfo.openId ;
+    let goodslist = JSON.stringify([])
     console.log('@roundshopapply  params:',params);
     try{
         let searchs = await mysql('roundshop').select().limit(1).where({openid})
         if(searchs.length===0){
             // 直接插入
-            await mysql('roundshop').insert({...params,openid})
+            await mysql('roundshop').insert({...params, openid, goodslist})
             return ctx.body = {
                 code:"ROUNDSHOP_APPLY_SUCCESS",
                 data:{},

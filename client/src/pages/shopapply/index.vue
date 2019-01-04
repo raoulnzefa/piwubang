@@ -374,6 +374,8 @@ export default {
       value.citylabel1 = self.form.citylabel1
       value.longitude = self.form.longitude
       value.latitude = self.form.latitude
+      value.code = self.form.code
+
 
       wx.showLoading({
         title: '提交中...',

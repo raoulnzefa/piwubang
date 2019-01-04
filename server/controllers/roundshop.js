@@ -32,7 +32,7 @@ module.exports = async (ctx, next) => {
         var res = await mysql('roundshop').select().where({ code });
         res.map(function(v,i){
             let string = v.goodslist 
-            if( !string || string == null ){
+            if( !string || string == null  ||  string == '[]'){
                 res.splice(i ,1)
             }else{
                 v.goodslist = JSON.parse(string)

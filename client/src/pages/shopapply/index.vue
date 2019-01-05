@@ -381,7 +381,6 @@ export default {
         title: '提交中...',
         mask:true,
       })
-    
       qc.request({
         // login:true,
         method:"POST",

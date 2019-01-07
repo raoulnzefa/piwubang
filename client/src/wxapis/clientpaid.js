@@ -6,7 +6,7 @@
  * Created at     : 2018-12-19 12:40:16 
  * Last modified  : 2018-12-19 15:53:48
  */
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 const clientpaid = async ( x ) => {

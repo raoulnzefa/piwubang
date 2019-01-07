@@ -1,5 +1,5 @@
 <script>
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import config from '@/config'
 
 export default {

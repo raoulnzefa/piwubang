@@ -99,7 +99,7 @@ import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 import slogan from "@/components/slogan";

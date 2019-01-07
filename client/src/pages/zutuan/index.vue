@@ -6,12 +6,11 @@
       <i class="iconfont icon-tubiao_xiala"></i>
       <button @click="opensetting" v-if="showopensettingbtn">打开定位</button>
     </div>
-    <i-tabs :current="current" color="#ce4031" @change="handleChange">
+    <!-- <i-tabs :current="current" color="#ce4031" @change="handleChange">
       <i-tab key="tab1" title="附近帮主"></i-tab>
       <i-tab key="tab2" title="附近用户"></i-tab>
-    </i-tabs>
-    <div class="tab1con tabcon" v-if="current == 'tab1'">
-      
+    </i-tabs> -->
+    <div class="tab1con tabcon" >
       <div>
         <i-card
           v-for='(x,i) in bangzhulist'
@@ -31,7 +30,7 @@
       </div>
     </div>
 
-    <div class="tab2con tabcon" v-if="current == 'tab2'">
+    <div class="tab2con tabcon" >
       
       <div>
         <i-card 
@@ -54,11 +53,15 @@
     <div class="fabu">
       <button hover-class="btnhover" @click="togoodsupload">我要发布</button>
     </div>
+    <mp-picker ref="mpPicker" 
+      :mode="mode" :deepLength='deepLength' 
+      @onChange="onChange" @onConfirm="onConfirm" >
+    </mp-picker>
   </div>
 </template>
 <script>
 
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 import qqmap from "@/wxapis/qqmap.js";
@@ -72,19 +75,65 @@ import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
+import mpPicker from 'mpvue-weui/src/picker';
 
 export default {
+  components:{
+    mpPicker
+  },
   data: function() {
     return {
-      // routeInfo: routeInfo
-      current: "tab1",
       location: "点击切换定位",
       mypositioncode: "",
       bangzhulist:[],
-      nearuserlist: []
+      nearuserlist: [],
+      mode:'selector',
+      deepLength: 1,
+      pickerValueArray:[],
     };
   },
   methods: {
+    onChange(e){
+
+    },
+    onConfirm(e){
+
+    },
+    getCommunity(){
+      var self = this;
+      wx.showLoading({
+        title:'开放小区列表加载中...'
+      })
+      qc.request({
+        url:conf.service.getcommunitylistUrl,
+        data:{
+          code: self.mypositioncode
+        },
+        success(res){
+          wx.hideLoading()
+          let data = res.data.data
+          if(data && data.length > 0){
+            self.pickerValueArray = []
+            data.map(function(v,i){
+              // 2019年1月8日 00:25:37
+              self.pickerValueArray.push(v.name)
+            })
+            console.log(self.pickerValueArray);
+            
+            self.$refs.mpPicker.show();
+          }else{
+            wx.showToast({
+              icon:'none',
+              title:'开地区尚未开放，敬请期待',
+              duration: 2000
+            })
+          }
+        },
+        fail(err){
+
+        }
+      })
+    },
     async chooselocation() {
       try {
         let location = (await chooselocation()) || null;
@@ -96,11 +145,16 @@ export default {
         );
         console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
-        // console.log("this.mypositioncode:", this.mypositioncode);
-        this.searchbangzhu()
-        this.searchzutuanuser()
+        // console.log( "this.mypositioncode:", this.mypositioncode );
+        // this.searchbangzhu()
+        // this.searchzutuanuser()
 
-        wx.setStorageSync("zutuanposition", location);
+        // 获取该地区所有小区列表
+        this.getCommunity()
+
+
+
+        wx.setStorageSync("mycommunity", location);
       } catch (error) {
         wx.showToast({
           title: '您没有选择定位',
@@ -129,11 +183,12 @@ export default {
           console.log("querycode:", querycode);
           this.mypositioncode = querycode.result.ad_info.adcode;
           console.log("this.mypositioncode:", this.mypositioncode);
-          this.searchbangzhu()
-          this.searchzutuanuser()
           this.location = location.name || "切换位置";
+
+          // this.searchbangzhu()
+          // this.searchzutuanuser()
           
-          wx.setStorageSync("zutuanposition", location);
+          wx.setStorageSync("mycommunity", location);
         } else {
           console.log("拒绝授权");
           // 拒绝过
@@ -265,10 +320,10 @@ export default {
       })
     },
     
-    handleChange(x) {
-      console.log(x);
-      this.current = x.mp.detail.key;
-    },
+    // handleChange(x) {
+    //   console.log(x);
+    //   this.current = x.mp.detail.key;
+    // },
     togoodsupload() {
       wx.navigateTo({
         url: "/pages/goodsupload/main"
@@ -276,8 +331,8 @@ export default {
     }
   },
   onPullDownRefresh(){
-    this.searchbangzhu()
-    this.searchzutuanuser()
+    // this.searchbangzhu()
+    // this.searchzutuanuser()
 
   },
   async onLoad() {
@@ -286,24 +341,24 @@ export default {
       withShareTicket: true
     });
     // 获取storage中存出的地址
-    let zutuanposition = wx.getStorageSync("zutuanposition") || null;
-    console.log(zutuanposition);
-    // if(!zutuanposition){
+    let mycommunity = wx.getStorageSync("mycommunity") || null;
+    console.log(mycommunity);
+    // if(!mycommunity){
     //   this.changelocation()
     // }
-    if (zutuanposition && zutuanposition.name) {
-      this.location = zutuanposition.name || "点击切换定位";
+    if (mycommunity && mycommunity.name) {
+      this.location = mycommunity.name || "点击切换定位";
 
       let querycode = await this.reverseGeocoder(
-        zutuanposition.longitude,
-        zutuanposition.latitude
+        mycommunity.longitude,
+        mycommunity.latitude
       );
       console.log("querycode:", querycode);
       this.mypositioncode = querycode.result.ad_info.adcode;
       console.log("this.mypositioncode:", this.mypositioncode);
 
-      this.searchbangzhu()
-      this.searchzutuanuser()
+      // this.searchbangzhu()
+      // this.searchzutuanuser()
 
     } else {
       this.location = "点击切换定位";
@@ -335,6 +390,7 @@ $maincolor: #ce4031;
   justify-content: flex-start;
   align-items: center;
   padding: 0 20rpx;
+  border-bottom: 8rpx solid #ccc;
   // max-width: 70%;
   // margin: 0 auto 5rpx;
   i {

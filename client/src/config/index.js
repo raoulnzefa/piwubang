@@ -72,31 +72,34 @@ var config = {
         // 供应商、厂商申请
         gysapplyUrl: `${host}/weapp/gysapply`,
         
-        // 帮主搜索
+        // 组团-搜索帮主
         searchbangzhuUrl: `${host}/weapp/searchbangzhu`,
 
-        // 组团普通用户搜索
+        // 组团-搜索普通用户商品
         searchzutuanuserUrl: `${host}/weapp/searchzutuanuser`,
         
-        // 帮主商品搜索
+        // 组团-搜索帮主商品
         searchbangzhugoodsUrl: `${host}/weapp/searchbangzhugoods`,
 
-        // 帮主商品上传
+        // 组团-帮主商品上传
         bangzhugoodsuploadUrl: `${host}/weapp/bangzhugoodsupload`,
+
+        // 组团-搜索该地区已开放小区列表
+        getcommunitylistUrl: `${host}/weapp/getcommunitylist`,
         
-        // 周边店铺
+        // 周边-周边店铺
         searchroundshopUrl: `${host}/weapp/roundshop`,
 
-        // 周边店铺商品
+        // 周边-周边店铺商品
         searchroundshopgoodsUrl: `${host}/weapp/roundshopgoods`,
 
-        // 检查当前用户是否已注册商铺
+        // 周边-检查当前用户是否已注册商铺
         checkuserisshopUrl: `${host}/weapp/checkuserisshop`,
 
-        // 周边店铺入驻申请
+        // 周边-周边店铺入驻申请
         roundshopapplyUrl: `${host}/weapp/roundshopapply`,
 
-        // 周边店铺商品上传
+        // 周边-周边店铺商品上传
         roundshopgoodsuploadUrl: `${host}/weapp/roundshopgoodsupload`,
 
     },

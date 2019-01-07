@@ -23,7 +23,7 @@
 </template>
 <script>
 
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 import qqmap from "@/wxapis/qqmap.js";
 var mymap = new qqmap({

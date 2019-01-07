@@ -1,14 +1,15 @@
 {
   "pages": [
+    "pages/zutuan/main",
+    "pages/bangzhuapply/main",
     "pages/index/main",
     "pages/shopapply/main",
     "pages/bangzhugoods/main",
-    "pages/bangzhuapply/main",
     "pages/cart/main",
+    "pages/my/main",
     "pages/gysapply/main",
     "pages/goodsupload/main",
     "pages/goodsdetail/main",
-    "pages/my/main",
     "pages/myaddress/main",
     "pages/mymoney/main",
     "pages/near/main",
@@ -16,8 +17,7 @@
     "pages/orderlist/main",
     "pages/qqmap/main",
     "pages/shopgoods/main",
-    "pages/shopgoodsupload/main",
-    "pages/zutuan/main"
+    "pages/shopgoodsupload/main"
   ],
   "usingComponents": {
     "i-button":       "/static/iview/button/index",

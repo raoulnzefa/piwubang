@@ -23,32 +23,21 @@
       <div class="r">
         <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
         <div>
-          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='code' disabled v-model="code" hidden>
+          <!-- <input type="text" name='citylabel' disabled placeholder="点击选择你的小区" @click='showcitypicker' v-model="citylabel"> -->
+          <input type="text" name='citylabel' disabled placeholder="点击选择你的小区位置" @click='chooselocation' v-model="form.citylabel">
+
+          <input type="text" name='code' disabled v-model="form.code" hidden>
         </div>
         <div>
-          <textarea name="citylabel2" id="" placeholder="你能管理的详细区域(如九龙仓小区、湖景社区等)..." v-model="citylabel2" confirm-type='next'></textarea>
+          <textarea name="community" id="" placeholder="详细地址(如九龙仓1区3幢201室,中海七区5幢601室...)" v-model="form.community" confirm-type='next'></textarea>
         </div>
       </div>
     </div>
-    <!-- <div class="item block place">
-      <span class="l">*</span>
-      <span class="m">常驻小区：</span>
-      <div class="r">
-        <div>
-          <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
-          <input type="text" name='code' disabled v-model="code" hidden>
-        </div>
-        <div>
-          <textarea name="citylabel2" id="" placeholder="你能管理的详细区域(如九龙仓小区、湖景社区等)..." v-model="citylabel2" confirm-type='next'></textarea>
-        </div>
-      </div>
-    </div> -->
     <div class="item line">
       <span class="l">*</span>
       <span class="m">是否能全职：</span>
       <span class="r">
-        <switch name='fulltime' checked="form.fulltime"></switch>
+        <switch name='fulltime' :checked="form.fulltime" ></switch>
       </span>
     </div>
     <div class="item line">
@@ -108,12 +97,21 @@
 </template>
 
 <script>
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
+
+import qqmap from "@/wxapis/qqmap.js";
+var mymap = new qqmap({
+  // 地图开发秘钥
+  key: conf.mapkey // 必填
+});
+
+
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import modal from "@/wxapis/modal";
+import chooselocation from "@/wxapis/chooselocation";
 
 
 import mpSwitch from 'mpvue-weui/src/switch';
@@ -129,7 +127,6 @@ export default {
       form:{
         name:'',
         phone:'',
-        area:'',
         fulltime:true,
         currentjob:'',
         idno:'',
@@ -138,16 +135,19 @@ export default {
         idcardurl3:'',
         desc:'',
         phone:'',
+        longitude:'',
+        latitude:'',
+        code:'',
+        citylabel:'',
+        community:'',
+        province:'',
+        city:'',
+        country:''
       },
       // uploader配置项
       piccount:1,
       showtip:true,
       maxlength:1,
-      // city picker 配置项
-      pickerValueDefault:[0,0,0],
-      citylabel1:'',
-      citylabel2:'',
-      code:'',
       // 上传的三张照片
       imgurls:{
         1:'',
@@ -244,13 +244,62 @@ export default {
         this.location = location.name;
       }
     },
+    
+    async chooselocation() {
+      try {
+        let location = (await chooselocation()) || null;
+        this.location = location.name || "切换位置";
+        console.log(location);
+        this.form.citylabel = location.address+' '+location.name;
+        this.form.longitude = location.longitude;
+        this.form.latitude = location.latitude;
+
+        let querycode = await this.reverseGeocoder(
+          location.longitude,
+          location.latitude
+        );
+        console.log("querycode:", querycode);
+
+        this.form.code = querycode.result.ad_info.adcode;
+        
+
+        this.form.province = querycode.result.address_component.province;
+        this.form.city = querycode.result.address_component.city;
+        this.form.country = querycode.result.address_component.district;
+        
+
+        // wx.setStorageSync("zutuanposition", location);
+      } catch (error) {
+        wx.showToast({
+          title: '您没有选择定位',
+          duration: 1500,
+          icon: "none"
+        });
+      }
+    },
+    reverseGeocoder(longitude, latitude) {
+      return new Promise(function(resolve, reject) {
+        mymap.reverseGeocoder({
+          location: {
+            latitude: latitude,
+            longitude: longitude
+          },
+          success: function(res) {
+            resolve(res);
+          },
+          fail: function(res) {
+            resolve(null);
+          }
+        });
+      });
+    },
     citychange({label, value, cityCode}){
       console.log(label, value, cityCode);
       
     },
     cityconfirm({label, value, cityCode}){
       console.log(label, value, cityCode);
-      this.citylabel1 = label
+      this.citylabel = label
       this.code = cityCode
     },
     citycancel({label, value, cityCode}){
@@ -348,6 +397,13 @@ export default {
       value.provincecode = arr[0]+arr[1] // 11
       value.citycode =     arr[2]+arr[3] // 02
       value.countrycode =  arr[4]+arr[5] // 01
+
+      value.province = self.form.province
+      value.city = self.form.city
+      value.country = self.form.country
+
+      value.longitude = self.form.longitude
+      value.latitude = self.form.latitude
 
       qc.request({
         // login:true,

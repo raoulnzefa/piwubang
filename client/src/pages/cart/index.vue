@@ -50,18 +50,6 @@
       <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
     </div>
     </div>
-    <!-- <div class="foot">
-      <div class="item s part1">
-        <div @click="routeToHome">
-          <i class="iconfont icon-shouye"></i>
-          返回首页
-        </div>
-      </div>
-      <div class="item b part4">
-        总计:￥{{totalfee || 0}}
-      </div>
-      <div class="item b part5" hover-class="hoverbtn" @click="paynow">确认付款</div>
-    </div> -->
     <i-divider content="已经到底啦" v-if="!shownone"></i-divider>
     <div class="none" v-if="shownone">
       <i class="iconfont icon-tubiao_gouwuche-copy"></i>
@@ -79,7 +67,7 @@ import modal from "@/wxapis/modal";
 import wxpay from "@/wxapis/wxpay";
 import clientpaid from "@/wxapis/clientpaid";
 
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 import slogan from "@/components/slogan";

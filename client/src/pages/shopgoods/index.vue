@@ -37,7 +37,7 @@
 </template>
 <script>
 
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 export default {

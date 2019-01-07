@@ -75,15 +75,13 @@
   </div>
 </template>
 <script>
-import qc from '@/wafer2-client-sdk'
+import qc from 'wafer2-client-sdk'
 import config from '@/config'
 
 import checkscope from '@/wxapis/check_scope'
 
 export default {
-  components: {
-    
-  },
+  
   data: function() {
     return {
       logged: false,

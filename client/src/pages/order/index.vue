@@ -105,7 +105,7 @@ import modal from "@/wxapis/modal";
 import wxpay from "@/wxapis/wxpay";
 import clientpaid from "@/wxapis/clientpaid";
 
-import qc from 'wafer2-client-sdk'
+import qc from '@/wafer2-client-sdk'
 import conf from '@/config'
 
 import slogan from "@/components/slogan";

@@ -142,6 +142,17 @@ function authorizationMiddleware (ctx, next) {
 function validationMiddleware (ctx, next) {
     return validation(ctx.req).then(result => {
         ctx.state.$wxInfo = result
+        console.log('@validationMiddleware result:',result)
+        if(result.loginState === 0){
+            console.log('loginState 是 0')
+            return ctx.body = {
+                // code:"USER_SKEY_EXPIRED",
+                code: -1,
+                success: false,
+                data:null,
+                msg:'用户会话已过期'
+            }
+        }
         return next()
     })
 }

@@ -20,7 +20,7 @@ import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import modal from "@/wxapis/modal";
-import qc from 'wafer2-client-sdk'
+import qc from '@/wafer2-client-sdk'
 import conf from '@/config'
 // 组件：
 // import mpNavbar from 'mpvue-weui/src/navbar';

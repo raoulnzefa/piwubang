@@ -82,7 +82,8 @@
       </div>
       <div class="item b part6" v-if="origin != 'paltform'">
       </div>
-      <div class="item b part4" v-if="origin == 'paltform'" hover-class="hoverbtn" @click="jointocart">
+      <!--  v-if="origin == 'paltform'" -->
+      <div class="item b part4" hover-class="hoverbtn" @click="jointocart">
         加入购物车
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="buynow">立即购买</div>
@@ -98,7 +99,7 @@ import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
-import qc from 'wafer2-client-sdk'
+import qc from '@/wafer2-client-sdk'
 import conf from '@/config'
 
 import slogan from "@/components/slogan";

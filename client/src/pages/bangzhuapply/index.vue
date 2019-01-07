@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import qc from 'wafer2-client-sdk'
+import qc from '@/wafer2-client-sdk'
 import conf from '@/config'
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";

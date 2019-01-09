@@ -17,9 +17,13 @@ module.exports = async (ctx, next) => {
         }else{
             return ctx.body = {
                 code:1,
-                success:true,
-                data:[],
-                msg:'查询购物车信息成功'
+                success:false,
+                data:{
+                    platform:[],
+                    bangzhu:{},
+                    user:{}
+                },
+                msg:'购物车暂无商品'
             }
         }
         console.log('cartinfo:',cartinfo);
@@ -27,18 +31,9 @@ module.exports = async (ctx, next) => {
         return ctx.body = {
             code: 0,
             success: false,
-            data: [],
+            data: {},
             msg:'查询购物车信息出错'
         }
     }
 
-
-
-
-
-    ctx.body = {
-        code:1,
-        data:{},
-        msg:"查询购物车商品待开发"
-    }
 }

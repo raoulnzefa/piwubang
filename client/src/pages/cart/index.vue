@@ -1,20 +1,30 @@
 <template>
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
-    <div class="shop platformshop" v-if='cartgoods.platform.length>0'>
+    <div class="shop platformshop" v-if='cartgoods.platform.length > 0'>
+      <div class="shopheader">
+        <div>
+          <span class="iconfont icon-tubiao_shangcheng"></span>
+          平台好物</div>
+      </div>
+      <checkbox-group  @change="selectgoods($event,'platform','platform',x)" >
       <div class="main" v-for='(x,i) in cartgoods.platform' :key="i">
         <div class="header">
-          <div class="u">商品详情</div>
+          <!-- <div class="u">商品详情</div> -->
+          
           <div class="m">
+            <div class="selectgoods">
+                <checkbox color='#ce4031' :value='x.goodsid' :checked="x.checked"/>
+            </div>
             <div class="l" @click="todetail(x)">
               <img :src="x.thumbnail" mode='widthFix' alt="">
             </div>
             <div class="m" @click="todetail(x)">
-              <div>{{x.goodsname}}</div>
+              <div>{{x.name}}</div>
               <div class='desc'>{{x.desc}}</div>          
             </div>
             <div class="r">
-              <div class='u'>￥{{x.price}}</div>
+              <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
                 <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
                 <input type="text" v-model='x.count' disabled>
@@ -24,7 +34,12 @@
           </div>
         </div>
         <div class="fahuo">
-          <div class="u">注意事项</div>
+          <span class="iconfont icon-zhuyi"></span>
+          <span class="tips" v-if="x.deliveryMethods">【{{x.deliveryMethods}}】</span>
+          <span class="tips" v-if="x.shipping">【{{x.shipping}}】</span>
+        </div>
+        <div class="fahuo" v-if='false'>
+          <!-- <div class="u">注意事项</div> -->
           <!-- 发货地 发货时间 发货方式 -->
           <div class="m">
             <div class="table">
@@ -47,68 +62,149 @@
           </div>
           </div>
         </div>
-        <div class="jiesuan">
+        <!-- <div class="jiesuan">
           <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
-        </div>
+        </div> -->
       </div>
+      </checkbox-group>
     </div>
-    <div class="shop bangzhushop">
-      
-    </div>
-    <div class="shop usershop">
-      
-    </div>
-
-    <div class="main" v-for='(x,i) in cartgoods' :key="i">
-      <div class="header">
-        <div class="u">商品详情</div>
-        <div class="m">
-          <div class="l" @click="todetail(x)">
-            <img :src="x.thumbnail" mode='widthFix' alt="">
-          </div>
-          <div class="m" @click="todetail(x)">
-            <div>{{x.goodsname}}</div>
-            <div class='desc'>{{x.desc}}</div>          
-          </div>
-          <div class="r">
-            <div class='u'>￥{{x.price}}</div>
-            <div class='b'>
-              <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
-              <input type="text" v-model='x.count' disabled>
-              <button @click="x.count++">+</button>
+    <div class="shop bangzhushop" v-for='(y,k) in cartgoods.bangzhu' :key="k">
+      <div class="shopheader">
+        <div>
+          <span class="iconfont icon-tubiao_shangcheng"></span>
+          帮主推荐</div>
+      </div>
+      <checkbox-group @change="selectgoods($event,'bangzhu',k,x)" >
+      <div class="main" v-for='(x,i) in y' :key="i">
+        <div class="header">
+          <!-- <div class="u">商品详情</div> -->
+          <div class="m">
+            <div class="selectgoods">
+              
+                <checkbox color='#ce4031' :value='x.goodsid' :checked="x.checked"/>
+              
+            </div>
+            <div class="l" @click="todetail(x)">
+              <img :src="x.thumbnail" mode='widthFix' alt="">
+            </div>
+            <div class="m" @click="todetail(x)">
+              <div>{{x.name}}</div>
+              <div class='desc'>{{x.desc}}</div>          
+            </div>
+            <div class="r">
+              <div class='u'>￥{{x.currentPrice}}</div>
+              <div class='b'>
+                <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
+                <input type="text" v-model='x.count' disabled>
+                <button @click="x.count++">+</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="fahuo">
-        <div class="u">注意事项</div>
-        <!-- 发货地 发货时间 发货方式 -->
-        <div class="m">
-          <div class="table">
-          <div class="tr">
-            <div>发货方式 :</div>
-            <div class="tips">{{x.deliveryMethods || '商家未注明'}}</div>
-            <div>发货地 :</div>
-            <div>{{x.deliveryArea || '商家未注明'}}</div>
+        <div class="fahuo">
+          <span class="iconfont icon-zhuyi"></span>
+          <span class="tips" v-if="x.deliveryMethods">【{{x.deliveryMethods}}】</span>
+          <span class="tips" v-if="x.shipping">【{{x.shipping}}】</span>
+        </div>
+        <div class="fahuo" v-if='false'>
+          <!-- <div class="u">注意事项</div> -->
+          <!-- 发货地 发货时间 发货方式 -->
+          <div class="m">
+            <div class="table">
+            <div class="tr">
+              <div>发货方式 :</div>
+              <div class="tips">{{x.deliveryMethods || '商家未注明'}}</div>
+              <div>发货地 :</div>
+              <div>{{x.deliveryArea || '商家未注明'}}</div>
+            </div>
+            <div class="tr">
+              <div>发货时间 :</div>
+              <div>{{x.deliveryTime || '商家未注明'}}</div>
+              <div>可购区域 :</div>
+              <div class="tips">{{x.targetArea_name || '商家未注明'}}</div>
+            </div>
+            <div class="tr">
+              <div>是否包邮 :</div>
+              <div>{{x.shipping?'包邮':'不包邮'}}</div>
+            </div>
           </div>
-          <div class="tr">
-            <div>发货时间 :</div>
-            <div>{{x.deliveryTime || '商家未注明'}}</div>
-            <div>可购区域 :</div>
-            <div class="tips">{{x.targetArea_name || '商家未注明'}}</div>
-          </div>
-          <div class="tr">
-            <div>是否包邮 :</div>
-            <div>{{x.shipping?'包邮':'不包邮'}}</div>
           </div>
         </div>
-        </div>
+        <!-- <div class="jiesuan">
+          <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
+        </div> -->
       </div>
-      <div class="jiesuan">
-        <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
-      </div>
+      </checkbox-group>
     </div>
-    <i-divider content="已经到底啦" v-if="!shownone"></i-divider>
+    <div class="shop usershop" v-for='(y,k) in cartgoods.user' :key="k">
+      <div class="shopheader">
+        <div>
+          <span class="iconfont icon-tubiao_shangcheng"></span>
+          个人卖家</div>
+      </div>
+      <checkbox-group @change="selectgoods($event,'user',k,x)">
+      <div class="main" v-for='(x,i) in y' :key="i">
+        <div class="header">
+          <!-- <div class="u">商品详情</div> -->
+          <div class="m">
+            <div class="selectgoods">
+              
+                <checkbox color='#ce4031'  :value='x.goodsid' :checked="x.checked" />
+              
+            </div>
+            <div class="l" @click="todetail(x)">
+              <img :src="x.thumbnail" mode='widthFix' alt="">
+            </div>
+            <div class="m" @click="todetail(x)">
+              <div>{{x.name}}</div>
+              <div class='desc'>{{x.desc}}</div>          
+            </div>
+            <div class="r">
+              <div class='u'>￥{{x.currentPrice}}</div>
+              <div class='b'>
+                <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
+                <input type="text" v-model='x.count' disabled>
+                <button @click="x.count++">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fahuo">
+          <span class="iconfont icon-zhuyi"></span>
+          <span class="tips" v-if="x.deliveryMethods">【{{x.deliveryMethods}}】</span>
+          <span class="tips" v-if="x.shipping">【{{x.shipping}}】</span>
+        </div>
+        <div class="fahuo" v-if='false'>
+          <!-- <div class="u">注意事项</div> -->
+          <!-- 发货地 发货时间 发货方式 -->
+          <div class="m">
+            <div class="table">
+            <div class="tr">
+              <div>发货方式 :</div>
+              <div class="tips">{{x.deliveryMethods || '商家未注明'}}</div>
+              <div>发货地 :</div>
+              <div>{{x.deliveryArea || '商家未注明'}}</div>
+            </div>
+            <div class="tr">
+              <div>发货时间 :</div>
+              <div>{{x.deliveryTime || '商家未注明'}}</div>
+              <div>可购区域 :</div>
+              <div class="tips">{{x.targetArea_name || '商家未注明'}}</div>
+            </div>
+            <div class="tr">
+              <div>是否包邮 :</div>
+              <div>{{x.shipping?'包邮':'不包邮'}}</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <!-- <div class="jiesuan">
+          <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
+        </div> -->
+      </div>
+      </checkbox-group>
+    </div>
+    <!-- <i-divider content="已经到底啦" v-if="!shownone"></i-divider> -->
     <div class="none" v-if="shownone">
       <i class="iconfont icon-tubiao_gouwuche-copy"></i>
       <div>购物车空空如也~</div>
@@ -144,7 +240,12 @@ export default {
       location: "尚未获取定位",
       img:'',
       goodsid:'',
-      count:1
+      count:1,
+      selectedlist:{
+        origin: null,
+        uploadUser: null,
+        goods:[]
+      }
     };
   },
   components: {
@@ -154,6 +255,10 @@ export default {
   computed:{
   },
   methods: {
+    selectgoods(e, origin, uploadUser, goodsitem){
+      console.log(uploadUser, goodsitem);
+      console.log(e);
+    },
     async buy(x) {
       wx.showLoading({
         title: 'Loading...',
@@ -348,10 +453,10 @@ export default {
         data:{},
         success:function(res) {
           console.log(res);
+          self.cartgoods = res.data.data
           if(res.data.success){
-            self.cartgoods = res.data.data
-            let length = res.data.data.length
-            if(res.data.data.platform.length == 0 && res.data.data.bangzhu == {} && res.data.data.user == {}){
+            
+            if(res.data.data.platform == [] && res.data.data.bangzhu == {} && res.data.data.user == {} ){
               self.shownone = true
             }else{
               self.shownone = false
@@ -361,7 +466,7 @@ export default {
             //   text: length + ''
             // })
           }else{
-            
+            self.shownone = true
             wx.removeTabBarBadge({
               index : 3
             })
@@ -384,6 +489,8 @@ export default {
           })
         },
         complete:function(){
+          console.log('456456456456456');
+          
           wx.stopPullDownRefresh()
           wx.hideLoading();
           
@@ -393,7 +500,7 @@ export default {
     todetail(x){
       if(x.goodsid){
         wx.navigateTo({
-          url:`/pages/goodsdetail/main?goodsid=${x.goodsid}`
+          url:`/pages/goodsdetail/main?goodsid=${x.goodsid}&origin=${x.origin}`
         })
       }
     }
@@ -427,9 +534,15 @@ export default {
 
 <style scoped lang='scss'>
 $maincolor: #ce4031;
-
+.icon-zhuyi{
+  color: orange;
+}
+.container{
+  background-color: #f3f3f3;
+  padding: 20rpx 0rpx;
+}
 .main{
-  border-top: 20rpx solid #f5f5f5 ;
+  // border-top: 20rpx solid #f5f5f5 ;
   padding: 0 20rpx 10rpx;
   .u{
     color: #b3b3b3;
@@ -438,6 +551,21 @@ $maincolor: #ce4031;
     border-bottom: 1px solid #f5f5f5;
   }
 }
+.shop{
+  width: 710rpx;
+  margin: 0 auto 20rpx;
+  border-radius: 20rpx;
+  background-color: #fff;
+  padding: 20rpx 20rpx 10rpx;
+  box-sizing: border-box;
+  .shopheader{
+    color: #000;
+    font-size: 30rpx;
+    padding: 0rpx 10rpx 0rpx;
+    border-bottom: 1rpx solid #f5f5f5;
+  }
+}
+
 
 .header{
   
@@ -446,7 +574,7 @@ $maincolor: #ce4031;
     flex-direction: row;
     justify-content: space-around;
     padding: 10rpx 0 0;
-    border-bottom: 1px solid #f5f5f5;
+    // border-bottom: 1px solid #f5f5f5;
     .l{
       width: 25%;
       img{
@@ -505,6 +633,14 @@ $maincolor: #ce4031;
   }
 }
 .fahuo{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 28rpx;
+  border-bottom: 1px solid #f5f5f5;
+  .tips{
+    color: $maincolor;
+  }
   .m{
     .table{
       width: 100%;
@@ -521,9 +657,7 @@ $maincolor: #ce4031;
         div:nth-child(3){
           margin-left: 40rpx;
         }
-        .tips{
-          color: $maincolor;
-        }
+        
       }
       
     }

@@ -33,6 +33,14 @@ module.exports = async (ctx, next) => {
             if(searchgoods && searchgoods.length == 1){
                 var goodsinfo = searchgoods[0] ;
                 goodsinfo.goodsid = goodsid
+                goodsinfo.count = 1
+                if(str === 'bz'){
+                    goodsinfo.origin = 'bangzhu'
+                }else if(str === 'us'){
+                    goodsinfo.origin = 'user'
+                }else{
+                    goodsinfo.origin = 'platform'
+                }
                 console.log('goodsinfo:', goodsinfo);
                 
                 if(!goodsinfo || goodsinfo.expired == 1 || parseInt(goodsinfo.remaining) <= 0){
@@ -117,7 +125,7 @@ module.exports = async (ctx, next) => {
                    }
                 }
                 let string = JSON.stringify(cartgoods)
-                await mysql('cart').update({openid, timestamp, _time, cartgoods: string}).limit(1)
+                await mysql('cart').update({timestamp, _time, cartgoods: string}).limit(1).where({openid})
                 return ctx.body = {
                     code: 1,
                     success: true,

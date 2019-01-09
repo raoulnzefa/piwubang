@@ -1,11 +1,11 @@
 {
   "pages": [
+    "pages/cart/main",
     "pages/zutuan/main",
     "pages/bangzhuapply/main",
     "pages/index/main",
     "pages/shopapply/main",
     "pages/bangzhugoods/main",
-    "pages/cart/main",
     "pages/my/main",
     "pages/gysapply/main",
     "pages/goodsupload/main",
@@ -30,7 +30,9 @@
       "i-grid-icon":  "/static/iview/grid-icon/index",
       "i-grid-label": "/static/iview/grid-label/index",
       "i-load-more":  "/static/iview/load-more/index",
-      "i-divider":    "/static/iview/divider/index"
+      "i-divider":    "/static/iview/divider/index",
+      "i-checkbox-group": "/static/iview/checkbox-group/index",
+      "i-checkbox": "/static/iview/checkbox/index"
   },
   "permission": {
     "scope.userLocation": {

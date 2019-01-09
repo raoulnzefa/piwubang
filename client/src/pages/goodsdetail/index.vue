@@ -86,7 +86,7 @@
           联系商家 -->
         </div>
       </div>
-      <div class="item b part4" hover-class="hoverbtn" @click="jointocart">
+      <div class="item b part4" hover-class="hoverbtn1" @click="jointocart">
         加入购物车
       </div>
       <div class="item b part5" hover-class="hoverbtn" @click="buynow">立即购买</div>
@@ -448,7 +448,9 @@ swiper {
     font-size: 40rpx;
     text-align: center;
   }
-
+  .hoverbtn1 {
+    background-color: rgb(219, 143, 0);
+  }
   .hoverbtn {
     background-color: #9c2518;
   }

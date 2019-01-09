@@ -7,9 +7,9 @@
         </swiper-item>
       </block>
     </swiper>
-    <div class="warn">
+    <!-- <div class="warn">
       *为保证交易安全，普通用户上传的商品只可浏览不可购买
-    </div>
+    </div> -->
     <div class="head">
       <div class="title">{{goodsdetail.name}}</div>
       <div class="brdesc" v-if="goodsdetail.origin == 'paltform'">{{goodsdetail.briefDesc}}</div>
@@ -61,6 +61,12 @@
           <div>是否包邮 :{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
       </div>
     </div>
+    <div class="fahuo" v-if="origin != 'platform'">
+      <div class="u">[卖家提示]</div>
+      <div>
+        {{goodsdetail.tips}}
+      </div>
+    </div>
     <div class="dtimgs" v-if="origin == 'paltform'">
       <div>商品详情：</div>
       <div>
@@ -69,20 +75,17 @@
     </div>
     <div class="spacing">
     </div>
-    <div class="foot" v-if="goodsdetail.origin != 'user'">
+    <div class="foot" >
       <div class="item s part1">
         <div @click="routeToHome">
           <i class="iconfont icon-shouye"></i>
           前往首页
         </div>
         <div @click="contact">
-          <i class="iconfont icon-dianhua"></i>
-          联系商家
+          <!-- <i class="iconfont icon-dianhua"></i>
+          联系商家 -->
         </div>
       </div>
-      <div class="item b part6" v-if="origin != 'paltform'">
-      </div>
-      <!--  v-if="origin == 'paltform'" -->
       <div class="item b part4" hover-class="hoverbtn" @click="jointocart">
         加入购物车
       </div>
@@ -195,7 +198,13 @@ export default {
   onShow(){
     let goodsid = this.$root.$mp.query.goodsid
     let origin = this.$root.$mp.query.origin
-
+    if(!goodsid || !origin){
+      return wx.showToast({
+        title:'商品信息有误，请重新选择',
+        icon:'none',
+        duration: 2500
+      })
+    }
     this.goodsid = goodsid
     this.origin = origin
 
@@ -430,12 +439,6 @@ swiper {
   .part4 {
     background-color: #fdb51b;
     color: #000;
-    font-size: 40rpx;
-    text-align: center;
-  }
-  .part6 {
-    background-color: #fff;
-    color: #fff;
     font-size: 40rpx;
     text-align: center;
   }

@@ -87,6 +87,9 @@ var config = {
         // 组团-搜索该地区已开放小区列表
         getcommunitylistUrl: `${host}/weapp/getcommunitylist`,
         
+        // 组团-搜索该小区的商品列表
+        getcommunitygoodslistUrl: `${host}/weapp/getcommunitygoodslist`,
+
         // 周边-周边店铺
         searchroundshopUrl: `${host}/weapp/roundshop`,
 

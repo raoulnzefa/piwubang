@@ -1,54 +1,112 @@
 <template>
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
+    <div class="shop platformshop" v-if='cartgoods.platform.length>0'>
+      <div class="main" v-for='(x,i) in cartgoods.platform' :key="i">
+        <div class="header">
+          <div class="u">商品详情</div>
+          <div class="m">
+            <div class="l" @click="todetail(x)">
+              <img :src="x.thumbnail" mode='widthFix' alt="">
+            </div>
+            <div class="m" @click="todetail(x)">
+              <div>{{x.goodsname}}</div>
+              <div class='desc'>{{x.desc}}</div>          
+            </div>
+            <div class="r">
+              <div class='u'>￥{{x.price}}</div>
+              <div class='b'>
+                <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
+                <input type="text" v-model='x.count' disabled>
+                <button @click="x.count++">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fahuo">
+          <div class="u">注意事项</div>
+          <!-- 发货地 发货时间 发货方式 -->
+          <div class="m">
+            <div class="table">
+            <div class="tr">
+              <div>发货方式 :</div>
+              <div class="tips">{{x.deliveryMethods || '商家未注明'}}</div>
+              <div>发货地 :</div>
+              <div>{{x.deliveryArea || '商家未注明'}}</div>
+            </div>
+            <div class="tr">
+              <div>发货时间 :</div>
+              <div>{{x.deliveryTime || '商家未注明'}}</div>
+              <div>可购区域 :</div>
+              <div class="tips">{{x.targetArea_name || '商家未注明'}}</div>
+            </div>
+            <div class="tr">
+              <div>是否包邮 :</div>
+              <div>{{x.shipping?'包邮':'不包邮'}}</div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="jiesuan">
+          <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
+        </div>
+      </div>
+    </div>
+    <div class="shop bangzhushop">
+      
+    </div>
+    <div class="shop usershop">
+      
+    </div>
+
     <div class="main" v-for='(x,i) in cartgoods' :key="i">
       <div class="header">
-      <div class="u">商品详情</div>
-      <div class="m">
-        <div class="l" @click="todetail(x)">
-          <img :src="x.thumbnail" mode='widthFix' alt="">
-        </div>
-        <div class="m" @click="todetail(x)">
-          <div>{{x.goodsname}}</div>
-          <div class='desc'>{{x.desc}}</div>          
-        </div>
-        <div class="r">
-          <div class='u'>￥{{x.price}}</div>
-          <div class='b'>
-            <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
-            <input type="text" v-model='x.count' disabled>
-            <button @click="x.count++">+</button>
+        <div class="u">商品详情</div>
+        <div class="m">
+          <div class="l" @click="todetail(x)">
+            <img :src="x.thumbnail" mode='widthFix' alt="">
+          </div>
+          <div class="m" @click="todetail(x)">
+            <div>{{x.goodsname}}</div>
+            <div class='desc'>{{x.desc}}</div>          
+          </div>
+          <div class="r">
+            <div class='u'>￥{{x.price}}</div>
+            <div class='b'>
+              <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
+              <input type="text" v-model='x.count' disabled>
+              <button @click="x.count++">+</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="fahuo">
-      <div class="u">注意事项</div>
-      <!-- 发货地 发货时间 发货方式 -->
-      <div class="m">
-        <div class="table">
-        <div class="tr">
-          <div>发货方式 :</div>
-          <div class="tips">{{x.deliveryMethods || '商家未注明'}}</div>
-          <div>发货地 :</div>
-          <div>{{x.deliveryArea || '商家未注明'}}</div>
+      <div class="fahuo">
+        <div class="u">注意事项</div>
+        <!-- 发货地 发货时间 发货方式 -->
+        <div class="m">
+          <div class="table">
+          <div class="tr">
+            <div>发货方式 :</div>
+            <div class="tips">{{x.deliveryMethods || '商家未注明'}}</div>
+            <div>发货地 :</div>
+            <div>{{x.deliveryArea || '商家未注明'}}</div>
+          </div>
+          <div class="tr">
+            <div>发货时间 :</div>
+            <div>{{x.deliveryTime || '商家未注明'}}</div>
+            <div>可购区域 :</div>
+            <div class="tips">{{x.targetArea_name || '商家未注明'}}</div>
+          </div>
+          <div class="tr">
+            <div>是否包邮 :</div>
+            <div>{{x.shipping?'包邮':'不包邮'}}</div>
+          </div>
         </div>
-        <div class="tr">
-          <div>发货时间 :</div>
-          <div>{{x.deliveryTime || '商家未注明'}}</div>
-          <div>可购区域 :</div>
-          <div class="tips">{{x.targetArea_name || '商家未注明'}}</div>
-        </div>
-        <div class="tr">
-          <div>是否包邮 :</div>
-          <div>{{x.shipping?'包邮':'不包邮'}}</div>
         </div>
       </div>
+      <div class="jiesuan">
+        <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
       </div>
-    </div>
-    <div class="jiesuan">
-      <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
-    </div>
     </div>
     <i-divider content="已经到底啦" v-if="!shownone"></i-divider>
     <div class="none" v-if="shownone">
@@ -76,7 +134,11 @@ import goodsItem from "@/components/goodsitem";
 export default {
   data() {
     return {
-      cartgoods:[],
+      cartgoods:{
+        platform:[],
+        bangzhu:{},
+        user:{}
+      },
       shownone:false,
       userInfo: {},
       location: "尚未获取定位",
@@ -289,25 +351,36 @@ export default {
           if(res.data.success){
             self.cartgoods = res.data.data
             let length = res.data.data.length
-            self.shownone = length == 0?true:false
-            wx.setTabBarBadge({
-              index: 3,
-              text: length + ''
-            })
+            if(res.data.data.platform.length == 0 && res.data.data.bangzhu == {} && res.data.data.user == {}){
+              self.shownone = true
+            }else{
+              self.shownone = false
+            }
+            // wx.setTabBarBadge({
+            //   index: 3,
+            //   text: length + ''
+            // })
           }else{
-            wx.showToast({
-              title: '购物车读取失败',
-              icon:'none'
-            })
+            
             wx.removeTabBarBadge({
               index : 3
             })
           }
+          // wx.showToast({
+          //   title: '刷新成功',
+          //   icon:'none',
+          //   duration:1200
+          // })
         },
         fail: function(err) {
           console.log(err);
-          wx.removeTabBarBadge({
-            index : 3
+          // wx.removeTabBarBadge({
+          //   index : 3
+          // })
+          wx.showToast({
+            title: '请求失败，请检查网络',
+            icon:'none',
+            duration:2000
           })
         },
         complete:function(){

@@ -27,8 +27,8 @@ function authorization (req) {
         debug(ERRORS.ERR_HEADER_MISSED)
         throw new Error(ERRORS.ERR_HEADER_MISSED)
     }
+    
     debug('@authorization 参数是：encryptedData: %s, iv: %s, code: %s', encryptedData, iv, code)
-
     // 如果只有 code 视为仅使用 code 登录
     if (code && !encryptedData && !iv) {
         return getSessionKey(code).then(pkg => {
@@ -45,7 +45,8 @@ function authorization (req) {
                         loginState: LOGIN_STATE.SUCCESS,
                         userinfo: {
                             userinfo: wxUserInfo,
-                            skey: userinfo.skey
+                            skey: userinfo.skey,
+                            text:'123'
                         }
                     }))
                 // }else{
@@ -56,8 +57,6 @@ function authorization (req) {
         })
     }
 
-    
-    debug('@authorization: 前端传的code是: %s', code)
     // 获取 session key
     return getSessionKey(code)
         .then(pkg => {
@@ -195,6 +194,7 @@ function getSessionKey (code) {
             }
         }).then(res => {
             res = res.data
+            
             if (res.errcode || !res.openid || !res.session_key) {
                 debug('%s: %O', ERRORS.ERR_GET_SESSION_KEY, res.errmsg)
                 throw new Error(`${ERRORS.ERR_GET_SESSION_KEY}\n${JSON.stringify(res)}`)

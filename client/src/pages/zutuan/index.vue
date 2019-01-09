@@ -6,43 +6,19 @@
       <i class="iconfont icon-tubiao_xiala"></i>
       <button @click="opensetting" v-if="showopensettingbtn">打开定位</button>
     </div>
-    <!-- <i-tabs :current="current" color="#ce4031" @change="handleChange">
-      <i-tab key="tab1" title="附近帮主"></i-tab>
-      <i-tab key="tab2" title="附近用户"></i-tab>
-    </i-tabs> -->
-    <div class="tab1con tabcon" >
+    <div class="tab1con tabcon">
       <div>
         <i-card
-          v-for='(x,i) in bangzhulist'
+          v-for="(x,i) in goodslist"
           :key="i"
           full
-          :title="x.userinfo.nickName"
-          extra="看看他的发布"
-          :thumb="x.userinfo.avatarUrl"
-          @click='tosearchgoods(x.openid)'
+          :title="x.name"
+          extra="查看详情"
+          :thumb="x.urls[0]"
+          :origin="x.origin"
+          @click="togoodsdetail(x._id, x.origin)"
         >
-          <view slot="content">他发布了{{x.goodslist.length}}个商品</view>
-          <view slot="footer">
-            <span class="iconfont icon-round"></span>
-            {{x.citylabel2}}
-          </view>
-        </i-card>
-      </div>
-    </div>
-
-    <div class="tab2con tabcon" >
-      
-      <div>
-        <i-card 
-          v-for='(x,i) in nearuserlist'
-          :key="i"
-          full
-          :title="x.userinfo.nickName"
-          extra="点击查商品详情"
-          :thumb="x.thumbnail"
-          @click="togoodsdetail(x._id)"
-        >
-          <view slot="content">TA发布了【{{x.name}}】</view>
+          <view slot="content">{{x.detailDesc}}</view>
           <view slot="footer">
             <span class="iconfont icon-round"></span>
             {{x.deliveryArea}}
@@ -53,10 +29,14 @@
     <div class="fabu">
       <button hover-class="btnhover" @click="togoodsupload">我要发布</button>
     </div>
-    <mp-picker ref="mpPicker" 
-      :mode="mode" :deepLength='deepLength' 
-      @onChange="onChange" @onConfirm="onConfirm" >
-    </mp-picker>
+    <mp-picker
+      ref="mpPicker"
+      :mode="mode"
+      :deepLength="deepLength"
+      :pickerValueArray="communities"
+      @onChange="onChange"
+      @onConfirm="onConfirm"
+    ></mp-picker>
   </div>
 </template>
 <script>
@@ -75,7 +55,7 @@ import authorize from "@/wxapis/authorize";
 import openSetting from "@/wxapis/openSetting";
 import chooselocation from "@/wxapis/chooselocation";
 import modal from "@/wxapis/modal";
-import mpPicker from 'mpvue-weui/src/picker';
+import mpPicker from '@/components/picker';
 
 export default {
   components:{
@@ -89,20 +69,33 @@ export default {
       nearuserlist: [],
       mode:'selector',
       deepLength: 1,
-      pickerValueArray:[],
+      communities:[],
+      goodslist:[],
+      tipshow:false,
+      tip:''
     };
   },
   methods: {
     onChange(e){
-
+      console.log(e);
+      wx.setStorageSync("mycommunity", {
+        name: e.label ,
+        _id: e.value[0]
+      });
     },
     onConfirm(e){
-
+      console.log(e);
+      wx.setStorageSync("mycommunity", {
+        name: e.label ,
+        _id: e.value[0]
+      });
+      // 获取小区内发布的商品
+      this.getCommunityGoods(e.value[0])
     },
     getCommunity(){
       var self = this;
       wx.showLoading({
-        title:'开放小区列表加载中...'
+        title:'小区列表加载中...'
       })
       qc.request({
         url:conf.service.getcommunitylistUrl,
@@ -113,30 +106,78 @@ export default {
           wx.hideLoading()
           let data = res.data.data
           if(data && data.length > 0){
-            self.pickerValueArray = []
             data.map(function(v,i){
-              // 2019年1月8日 00:25:37
-              self.pickerValueArray.push(v.name)
+              v.label = v.name;
+              v.value = v._id
             })
-            console.log(self.pickerValueArray);
-            
+            self.communities = data
+            console.log(self.communities);
             self.$refs.mpPicker.show();
+            self.tip = ''
+            self.tipshow = false
           }else{
             wx.showToast({
               icon:'none',
-              title:'开地区尚未开放，敬请期待',
-              duration: 2000
+              title:'该地区尚未开放，敬请期待',
+              duration: 3000
             })
+            self.tip = '该地区暂时没有帮主，尚未开放，敬请期待。您可以点击上方定位切换到别的区看看，也可以通过"首页=>帮主招募"申请成为帮主。'
+            self.tipshow = true
           }
         },
         fail(err){
-
+          wx.hideLoading()
+          wx.showToast({
+            icon:'none',
+            title:'请求失败，请检查网络',
+            duration: 2000
+          })
+        }
+      })
+    },
+    getCommunityGoods(communityid){
+      var self = this;
+      wx.showLoading({
+        title:'组团商品加载中...'
+      })
+      qc.request({
+        url:conf.service.getcommunitygoodslistUrl,
+        data:{
+          communityid
+        },
+        success(res){
+          wx.hideLoading()
+          wx.stopPullDownRefresh()
+          let data = res.data.data
+          self.goodslist = data
+          console.log(self.goodslist);
+          if(data && data.length > 0){
+            self.tip = ''
+            self.tipshow = false
+          }else{
+            wx.showToast({
+              icon:'none',
+              title:'该小区暂无组团商品，快发布一个吧',
+              duration: 3000
+            })
+            self.tip = '该小区暂无组团商品，您可以点击下方"我要发布"，发布您的商品。'
+            self.tipshow = true
+          }
+        },
+        fail(err){
+          wx.stopPullDownRefresh()
+          wx.hideLoading()
+          wx.showToast({
+            icon:'none',
+            title:'请求失败，请检查网络',
+            duration: 2000
+          })
         }
       })
     },
     async chooselocation() {
       try {
-        let location = (await chooselocation()) || null;
+        let location = (await chooselocation()) || {};
         this.location = location.name || "切换位置";
         console.log(location);
         let querycode = await this.reverseGeocoder(
@@ -154,7 +195,7 @@ export default {
 
 
 
-        wx.setStorageSync("mycommunity", location);
+        wx.setStorageSync("zutuanposition", location);
       } catch (error) {
         wx.showToast({
           title: '您没有选择定位',
@@ -175,7 +216,7 @@ export default {
           console.log("同意授权");
           this.showopensettingbtn = false;
           // 同意
-          let location = (await chooselocation()) || null;
+          let location = (await chooselocation()) || {};
           let querycode = await this.reverseGeocoder(
             location.longitude,
             location.latitude
@@ -188,7 +229,7 @@ export default {
           // this.searchbangzhu()
           // this.searchzutuanuser()
           
-          wx.setStorageSync("mycommunity", location);
+          wx.setStorageSync("zutuanposition", location);
         } else {
           console.log("拒绝授权");
           // 拒绝过
@@ -256,12 +297,19 @@ export default {
           code: self.mypositioncode
         },
         success(res){
+          wx.hideLoading()
           console.log(res);
           self.bangzhulist = res.data.data
         },
         fail(err){
           console.log(err);
           self.bangzhulist = []
+          wx.hideLoading()
+          wx.showToast({
+            icon:'none',
+            title:'请求失败，请检查网络',
+            duration: 2000
+          })
         },
         complete(){
           console.log('complete');
@@ -292,9 +340,9 @@ export default {
         url:`/pages/bangzhugoods/main?openid=${who}`
       })
     },
-    togoodsdetail(goodsid){
+    togoodsdetail(goodsid, origin){
       wx.navigateTo({
-        url:`/pages/goodsdetail/main?goodsid=${goodsid}&origin=user`
+        url:`/pages/goodsdetail/main?goodsid=${goodsid}&origin=${origin}`
       })
     },
     searchgoods(who){
@@ -315,6 +363,12 @@ export default {
           console.log(res);
         },
         fail(err){
+          wx.hideLoading()
+          wx.showToast({
+            icon:'none',
+            title:'请求失败，请检查网络',
+            duration: 2000
+          })
           console.log(err);
         }
       })
@@ -325,44 +379,78 @@ export default {
     //   this.current = x.mp.detail.key;
     // },
     togoodsupload() {
+      // 要先加入一个小区
+      let mycommunity = wx.getStorageSync("mycommunity") || {};
+      if(!mycommunity.name || !mycommunity._id){
+        return wx.showToast({
+          icon:'none',
+          duration: 3000,
+          title:'要先成为帮主或加入一个小区才能发布商品'
+        })
+      }
       wx.navigateTo({
         url: "/pages/goodsupload/main"
       });
+    },
+    async init(){
+      
+      console.log("onload");
+      wx.showShareMenu({
+        withShareTicket: true
+      });
+      // 获取storage中存出的地址
+      let zutuanposition = wx.getStorageSync("zutuanposition") || {};
+      console.log(zutuanposition);
+      // if(!zutuanposition){
+      //   this.changelocation()
+      // }
+      if (zutuanposition && zutuanposition.name) {
+        this.location = zutuanposition.name || "点击切换定位";
+
+        let querycode = await this.reverseGeocoder(
+          zutuanposition.longitude,
+          zutuanposition.latitude
+        );
+        console.log("querycode:", querycode);
+        this.mypositioncode = querycode.result.ad_info.adcode;
+        console.log("this.mypositioncode:", this.mypositioncode);
+        // this.searchbangzhu()
+        // this.searchzutuanuser()
+
+      } else {
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title:'选择位置后才能加载商品',
+          duration:1500,
+          icon:'none'
+        })
+        return this.location = "点击切换定位";
+      }
+      // 获取storage中存出的小区信息
+      let mycommunity = wx.getStorageSync("mycommunity") || {};
+
+      if( (zutuanposition && zutuanposition.name) && (!mycommunity.name || !mycommunity._id)){
+        // 搜索该地区内小区
+        return this.getCommunity()
+      }
+      if(mycommunity.name && mycommunity._id){
+        // 查询小区中的商品
+        this.getCommunityGoods(mycommunity._id)
+      }else{
+        wx.stopPullDownRefresh()
+        wx.showToast({
+          title:'您尚未加入任何小区',
+          duration:2500,
+          icon:'none'
+        })
+      }
     }
   },
   onPullDownRefresh(){
-    // this.searchbangzhu()
-    // this.searchzutuanuser()
-
+    this.init()
   },
-  async onLoad() {
-    console.log("onload");
-    wx.showShareMenu({
-      withShareTicket: true
-    });
-    // 获取storage中存出的地址
-    let mycommunity = wx.getStorageSync("mycommunity") || null;
-    console.log(mycommunity);
-    // if(!mycommunity){
-    //   this.changelocation()
-    // }
-    if (mycommunity && mycommunity.name) {
-      this.location = mycommunity.name || "点击切换定位";
-
-      let querycode = await this.reverseGeocoder(
-        mycommunity.longitude,
-        mycommunity.latitude
-      );
-      console.log("querycode:", querycode);
-      this.mypositioncode = querycode.result.ad_info.adcode;
-      console.log("this.mypositioncode:", this.mypositioncode);
-
-      // this.searchbangzhu()
-      // this.searchzutuanuser()
-
-    } else {
-      this.location = "点击切换定位";
-    }
+  onLoad() {
+    this.init()
   },
   onShow() {
     if (!this.globalData.loginstate) {
@@ -418,6 +506,13 @@ $maincolor: #ce4031;
   map {
     width: 750rpx;
     height: 750rpx;
+  }
+  .tip {
+    padding: 50rpx;
+    color: #ccc;
+    font-size: 36rpx;
+    // text-align: center;
+    text-indent: 2em;
   }
 }
 

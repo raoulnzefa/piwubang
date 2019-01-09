@@ -45,7 +45,6 @@ router.get('/goodslist', controllers.getgoodslist)
 // GET !!! 小程序查询商品详情
 router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
 
-
 // GET !!! 小程序查询购物车
 router.get('/cartgoods', validationMiddleware, controllers.getcartgoods)
 
@@ -100,6 +99,8 @@ router.post('/bangzhugoodsupload', validationMiddleware, controllers.bangzhugood
 // GET !!! 小程序搜索该地区已开放小区列表
 router.get('/getcommunitylist', validationMiddleware, controllers.getcommunitylist)
 
+// GET !!! 小程序搜索该小区发布商品列表
+router.get('/getcommunitygoodslist', validationMiddleware, controllers.getcommunitygoodslist)
 
 // GET !!! 小程序检查当前用户是否已注册商铺
 router.get('/checkuserisshop', validationMiddleware, controllers.checkuserisshop)

@@ -311,6 +311,7 @@ export default {
         name: "",
         phone: "",
         deliveryArea: "点击选择提货点",
+        deliveryArea1:'', // 具体位置
         longitude:'',
         latitude:'',
         deliveryTime: "",
@@ -580,6 +581,7 @@ export default {
 
       formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
       formvalue.deliveryArea = self.form.deliveryArea
+      formvalue.deliveryAreaDetail = self.form.deliveryArea1
       formvalue.longitude = self.form.longitude
       formvalue.latitude = self.form.latitude
       formvalue.code = self.form.code

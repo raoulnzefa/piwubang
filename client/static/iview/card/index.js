@@ -21,6 +21,10 @@ Component({
         extra: {
             type: String,
             value: ''
+        },
+        origin: {
+            type: String,
+            value: ''
         }
     }
 });

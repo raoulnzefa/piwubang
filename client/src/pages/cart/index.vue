@@ -1,14 +1,14 @@
 <template>
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
-    <div class="shop platformshop" v-if='cartgoods.platform.length > 0'>
+    <div class="shop platformshop" v-if='platform.length > 0'>
       <div class="shopheader">
         <div>
           <span class="iconfont icon-tubiao_shangcheng"></span>
           平台好物</div>
       </div>
-      <checkbox-group  @change="selectgoods($event,'platform','platform',x)" >
-      <div class="main" v-for='(x,i) in cartgoods.platform' :key="i">
+      <checkbox-group  @change="selectgoods($event,'platform','platform', x)" >
+      <div class="main" v-for='(x,i) in platform' :key="i">
         <div class="header">
           <!-- <div class="u">商品详情</div> -->
           
@@ -26,9 +26,9 @@
             <div class="r">
               <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
-                <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
+                <button @click="minus('platform',i)" :disabled='x.count<=1'>-</button>
                 <input type="text" v-model='x.count' disabled>
-                <button @click="x.count++">+</button>
+                <button @click="plus('platform',i)">+</button>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@
       </div>
       </checkbox-group>
     </div>
-    <div class="shop bangzhushop" v-for='(y,k) in cartgoods.bangzhu' :key="k">
+    <div class="shop bangzhushop" v-for='(y,k) in bangzhu' :key="k">
       <div class="shopheader">
         <div>
           <span class="iconfont icon-tubiao_shangcheng"></span>
@@ -80,9 +80,7 @@
           <!-- <div class="u">商品详情</div> -->
           <div class="m">
             <div class="selectgoods">
-              
                 <checkbox color='#ce4031' :value='x.goodsid' :checked="x.checked"/>
-              
             </div>
             <div class="l" @click="todetail(x)">
               <img :src="x.thumbnail" mode='widthFix' alt="">
@@ -94,9 +92,9 @@
             <div class="r">
               <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
-                <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
-                <input type="text" v-model='x.count' disabled>
-                <button @click="x.count++">+</button>
+                <button @click="minus('bangzhu',k,i)" :disabled='x.count<=1'>-</button>
+                <input type="text" :value='x.count' disabled>
+                <button @click="plus('bangzhu',k,i)">+</button>
               </div>
             </div>
           </div>
@@ -136,7 +134,7 @@
       </div>
       </checkbox-group>
     </div>
-    <div class="shop usershop" v-for='(y,k) in cartgoods.user' :key="k">
+    <div class="shop usershop" v-for='(y,k) in user' :key="k">
       <div class="shopheader">
         <div>
           <span class="iconfont icon-tubiao_shangcheng"></span>
@@ -162,9 +160,9 @@
             <div class="r">
               <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
-                <button @click="x.count>1?x.count--:''" :disabled='x.count<=1'>-</button>
+                <button @click="minus('user',k,i)" :disabled='x.count<=1'>-</button>
                 <input type="text" v-model='x.count' disabled>
-                <button @click="x.count++">+</button>
+                <button @click="plus('user',k,i)">+</button>
               </div>
             </div>
           </div>
@@ -203,6 +201,10 @@
         </div> -->
       </div>
       </checkbox-group>
+    </div>
+    <div class="jiesuan">
+      <span class="total">总价：￥{{total}}</span>
+      <button hover-class="btnhover" @click="buy">结算</button>
     </div>
     <!-- <i-divider content="已经到底啦" v-if="!shownone"></i-divider> -->
     <div class="none" v-if="shownone">
@@ -235,12 +237,19 @@ export default {
         bangzhu:{},
         user:{}
       },
+      platform:[],
+      bangzhu:{},
+      user:{},
       shownone:false,
       userInfo: {},
       location: "尚未获取定位",
       img:'',
       goodsid:'',
       count:1,
+      a:{
+        
+      },
+      total:0,
       selectedlist:{
         origin: null,
         uploadUser: null,
@@ -255,9 +264,70 @@ export default {
   computed:{
   },
   methods: {
+    aa(){
+      this.a = {
+        count:1,
+      }
+    },
+    minus(type,index,index1=null){
+      if(type == 'platform'){
+        let count = this.cartgoods['platform'][index].count
+        count>1?count-=1:'';
+        this.$set(this.cartgoods['platform'][index],'count',count)
+      }else if(type == 'bangzhu'){
+        let count = this.bangzhu[index][index1].count
+        count>1?count-=1:'';
+        this.$set(this.bangzhu[index][index1],'count',count)
+      }else if(type == 'user'){
+        let count = this.user[index][index1].count
+        count>1?count-=1:'';
+        this.$set(this.user[index][index1],'count',count)
+      }
+      // console.log(this.cartgoods);
+    },
+    plus(type,index,index1=null){
+      if(type == 'platform'){
+        let count = this.cartgoods['platform'][index].count
+        count += 1 ;
+        this.$set(this.cartgoods['platform'][index],'count',count)
+      }else if(type == 'bangzhu'){
+        let count = this.bangzhu[index][index1].count
+        count += 1 ;
+        this.$set(this.bangzhu[index][index1],'count',count)
+      }else if(type == 'user'){
+        let count = this.user[index][index1].count
+        count += 1 ;
+        this.$set(this.user[index][index1],'count',count)
+      }
+      console.log(this.cartgoods);
+      
+    },
     selectgoods(e, origin, uploadUser, goodsitem){
+      var self = this
       console.log(uploadUser, goodsitem);
       console.log(e);
+      // 操作 selectedlist 只允许有一个来源 platform || bangzhu || user
+      // selectedlist:{
+      //   origin: null,
+      //   uploadUser: null,
+      //   goods:[]
+      // }
+      console.log(origin);
+      let arr = e.mp.detail.value ;
+      if(arr.length != 0){
+        self.selectedlist.goods = []
+        arr.map(function(v, i){
+          self.selectedlist.goods[i] = {}
+          self.selectedlist.goods[i]._id = v ;
+          self.selectedlist.goods[i].count = v.count ;
+        })
+        self.selectedlist.origin = origin ;
+        self.selectedlist.uploadUser = uploadUser ;
+      }else{
+
+      }
+      console.log(self.selectedlist);
+      
     },
     async buy(x) {
       wx.showLoading({
@@ -331,14 +401,16 @@ export default {
           console.log('支付流程结束，支付失败~')
           // wx.hideLoading();
           wx.showToast({
-              title: '下单失败,请先登录', 
-              duration: 1000,
+              title: '支付失败,请检查网络', 
+              duration: 1500,
               icon:'none',
               mask:true,
               complete:function(){
-                wx.switchTab({
-                  url:"/pages/my/main"
-                })
+                // setTimeout(function(){
+                //   wx.switchTab({
+                //     url:"/pages/my/main"
+                //   })
+                // }, 1500)
               }
           })
 
@@ -452,30 +524,29 @@ export default {
         // method:"GET",
         data:{},
         success:function(res) {
-          console.log(res);
           self.cartgoods = res.data.data
+          self.platform = res.data.data.platform
+          // let bangzhu = res.data.data.bangzhu
+          // for (const key in bangzhu) {
+          //   if (bangzhu.hasOwnProperty(key)) {
+          //     const el = bangzhu[key];
+          //     self.$set(self.bangzhu, key, el)
+          //   }
+          // }
+          self.bangzhu = res.data.data.bangzhu
+          self.user = res.data.data.user
           if(res.data.success){
-            
             if(res.data.data.platform == [] && res.data.data.bangzhu == {} && res.data.data.user == {} ){
               self.shownone = true
             }else{
               self.shownone = false
             }
-            // wx.setTabBarBadge({
-            //   index: 3,
-            //   text: length + ''
-            // })
           }else{
             self.shownone = true
             wx.removeTabBarBadge({
               index : 3
             })
           }
-          // wx.showToast({
-          //   title: '刷新成功',
-          //   icon:'none',
-          //   duration:1200
-          // })
         },
         fail: function(err) {
           console.log(err);
@@ -539,7 +610,7 @@ $maincolor: #ce4031;
 }
 .container{
   background-color: #f3f3f3;
-  padding: 20rpx 0rpx;
+  padding: 20rpx 0rpx 70rpx;
 }
 .main{
   // border-top: 20rpx solid #f5f5f5 ;
@@ -663,22 +734,49 @@ $maincolor: #ce4031;
     }
   }
 }
-.jiesuan{
+// .jiesuan{
+//   display: flex;
+//   flex-direction: row;
+//   justify-content: flex-end;
+//   button{
+//     width: 150rpx;
+//     height: 44rpx;
+//     line-height: 44rpx;
+//     background-color: $maincolor;
+//     color: #fff;
+//     font-size: 32rpx;
+//     text-align: center;
+//     margin: 0;
+//   }
+//   .btnhover{
+//     background-color: #9c2518;
+//   }
+// }
+.jiesuan {
+  position: fixed;
+  bottom: 0;
+  width: 710rpx;
   display: flex;
-  flex-direction: row;
   justify-content: flex-end;
-  button{
-    width: 150rpx;
-    height: 44rpx;
-    line-height: 44rpx;
+  padding: 10rpx 20rpx;
+  background-color: #f3f3f3;
+  .total{
+    color: $maincolor;
+    font-weight:600; 
+    padding-right: 20rpx;
+  }
+  button {
+    width: 26%;
+    height: 62rpx;
+    line-height: 62rpx;
     background-color: $maincolor;
-    color: #fff;
     font-size: 32rpx;
-    text-align: center;
+    border-radius: 31rpx;
+    color: #fff;
     margin: 0;
   }
-  .btnhover{
-    background-color: #9c2518;
+  .btnhover {
+    background-color: rgb(138, 0, 0);
   }
 }
 .foot {

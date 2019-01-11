@@ -27,7 +27,7 @@
               <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
                 <button @click="minus('platform',i)" :disabled='x.count<=1'>-</button>
-                <input type="text" v-model='x.count' disabled>
+                <input type="text" v-model.lazy='x.count' disabled>
                 <button @click="plus('platform',i)">+</button>
               </div>
             </div>
@@ -93,7 +93,7 @@
               <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
                 <button @click="minus('bangzhu',k,i)" :disabled='x.count<=1'>-</button>
-                <input type="text" :value='x.count' disabled>
+                <input type="text" v-model.lazy='x.count' disabled>
                 <button @click="plus('bangzhu',k,i)">+</button>
               </div>
             </div>
@@ -146,9 +146,7 @@
           <!-- <div class="u">商品详情</div> -->
           <div class="m">
             <div class="selectgoods">
-              
                 <checkbox color='#ce4031'  :value='x.goodsid' :checked="x.checked" />
-              
             </div>
             <div class="l" @click="todetail(x)">
               <img :src="x.thumbnail" mode='widthFix' alt="">
@@ -161,7 +159,7 @@
               <div class='u'>￥{{x.currentPrice}}</div>
               <div class='b'>
                 <button @click="minus('user',k,i)" :disabled='x.count<=1'>-</button>
-                <input type="text" v-model='x.count' disabled>
+                <input type="text" v-model.lazy='x.count' disabled>
                 <button @click="plus('user',k,i)">+</button>
               </div>
             </div>
@@ -271,9 +269,13 @@ export default {
     },
     minus(type,index,index1=null){
       if(type == 'platform'){
-        let count = this.cartgoods['platform'][index].count
+        // let count = this.cartgoods['platform'][index].count
+        let count = this.platform[index].count
+
         count>1?count-=1:'';
-        this.$set(this.cartgoods['platform'][index],'count',count)
+        // this.$set(this.cartgoods['platform'][index],'count',count)
+        this.$set(this.platform[index],'count',count)
+
       }else if(type == 'bangzhu'){
         let count = this.bangzhu[index][index1].count
         count>1?count-=1:'';
@@ -287,9 +289,11 @@ export default {
     },
     plus(type,index,index1=null){
       if(type == 'platform'){
-        let count = this.cartgoods['platform'][index].count
+        // let count = this.cartgoods['platform'][index].count
+        let count = this.platform[index].count
         count += 1 ;
-        this.$set(this.cartgoods['platform'][index],'count',count)
+        // this.$set(this.cartgoods['platform'][index],'count',count)
+        this.$set(this.platform[index],'count',count)
       }else if(type == 'bangzhu'){
         let count = this.bangzhu[index][index1].count
         count += 1 ;
@@ -299,7 +303,7 @@ export default {
         count += 1 ;
         this.$set(this.user[index][index1],'count',count)
       }
-      console.log(this.cartgoods);
+      console.log(this.bangzhu);
       
     },
     selectgoods(e, origin, uploadUser, goodsitem){
@@ -524,8 +528,11 @@ export default {
         // method:"GET",
         data:{},
         success:function(res) {
-          self.cartgoods = res.data.data
-          self.platform = res.data.data.platform
+          // self.cartgoods = res.data.data
+          // self.platform = res.data.data.platform
+          self.platform = [
+              {"_id":"asd13as1d","name":"智利车厘子","currentPrice":2.8,"briefDesc":"智利进口车厘子，平均直径2.5厘米，错过这次再等一年","remaining":21,"thumbnail":"https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png","sxtype":null,"targetArea_name":null,"deliveryMethods":"线下直送","uploadUser":"admin","goodsid":"asd13as1d","count":1,"origin":"platform"}
+          ]
           // let bangzhu = res.data.data.bangzhu
           // for (const key in bangzhu) {
           //   if (bangzhu.hasOwnProperty(key)) {
@@ -533,7 +540,13 @@ export default {
           //     self.$set(self.bangzhu, key, el)
           //   }
           // }
-          self.bangzhu = res.data.data.bangzhu
+          // self.bangzhu = res.data.data.bangzhu
+          self.bangzhu = {
+              "oxw_15Ul35xC40YCRmCxSgzl1trQ":{
+                  0:{"_id":"bz20190102449216006750366","name":"椰子","currentPrice":8,"briefDesc":null,"remaining":1234,"thumbnail":null,"sxtype":null,"targetArea_name":null,"deliveryMethods":"定点自提","uploadUser":"oxw_15Ul35xC40YCRmCxSgzl1trQ","goodsid":"bz20190102449216006750366","count":1,"origin":"bangzhu"},
+                  1:{"_id":"bz20190108600424868360337","name":"红薯","currentPrice":4,"briefDesc":null,"remaining":2354,"thumbnail":"https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/1546931661712-zdXzWbL5A.jpg","sxtype":null,"targetArea_name":null,"deliveryMethods":"定点自提","uploadUser":"oxw_15Ul35xC40YCRmCxSgzl1trQ","goodsid":"bz20190108600424868360337","count":1,"origin":"bangzhu"}
+              }
+          }
           self.user = res.data.data.user
           if(res.data.success){
             if(res.data.data.platform == [] && res.data.data.bangzhu == {} && res.data.data.user == {} ){

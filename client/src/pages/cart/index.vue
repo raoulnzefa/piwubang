@@ -1,12 +1,14 @@
 <template>
   <!-- @click="clickHandle('test click', $event)" -->
   <div class="container">
-    <div class="shop platformshop" v-if="platform.length > 0">
-      <div class="shopheader">
-        <div>
-          <span class="iconfont icon-tubiao_shangcheng"></span>
-          平台好物
-        </div>
+    <i-tabs :current="tabkey" color='#ce4031' @change="tabChange">
+      <i-tab key="platform" title="平台好物" :count="platform.length"></i-tab>
+      <i-tab key="bangzhu" title="帮主推荐" :count="bangzhu.length"></i-tab>
+      <i-tab key="user" title="个人卖家"  :count="user.length"></i-tab>
+    </i-tabs>
+    <div class="shop platformshop" v-if="tabkey=='platform'">
+      <div v-if='platform.length <= 0'>
+        购物车暂无平台商品
       </div>
       <checkbox-group @change="selectgoods($event,'platform','platform')">
         <div class="main" v-for="(x,i) in platform" :key="i">
@@ -14,7 +16,7 @@
             <!-- <div class="u">商品详情</div> -->
             <div class="m">
               <div class="selectgoods">
-                <checkbox color="#ce4031" :value="x.goodsid" :checked="x.checked"/>
+                <checkbox color="#ce4031" :value="x.goodsid" />
               </div>
               <div class="l" @click="todetail(x)">
                 <img :src="x.thumbnail" mode="widthFix" alt>
@@ -65,37 +67,30 @@
         </div>
       </checkbox-group>
     </div>
-    <div class="shop bangzhushop" v-for="(y,k) in bangzhu" :key="k">
-      <div class="shopheader">
-        <div>
-          <span class="iconfont icon-tubiao_shangcheng"></span>
-          帮主推荐
-        </div>
+    <checkbox-group @change="selectgoods($event,'bangzhu')">
+    <div class="shop bangzhushop" v-for="(m,j) in bangzhu" :key="j" v-if="tabkey=='bangzhu'">
+      <div v-if='bangzhu.length <= 0'>
+        购物车暂无帮主推荐商品
       </div>
-      <checkbox-group @change="selectgoods($event,'bangzhu')">
-        <div class="main" v-for="(m,j) in bangzhu[k]" :key="j">
+        <div class="main" >
           <div class="header">
-            <!-- <div class="u">商品详情</div> -->
             <div class="m">
               <div class="selectgoods">
-                <checkbox color="#ce4031" :value="m.goodsid" :checked="m.checked"/>
+                <checkbox color="#ce4031" :value="m.goodsid" :count:='m.count' />
               </div>
-              <div class="l" @click="todetail(x)">
+              <div class="l" @click="todetail(m)">
                 <img :src="m.thumbnail" mode="widthFix" alt>
               </div>
-              <div class="m" @click="todetail(x)">
+              <div class="m" @click="todetail(m)">
                 <div>{{m.name}}</div>
                 <div class="desc">{{m.desc}}</div>
               </div>
               <div class="r">
                 <div class="u">￥{{m.currentPrice}}</div>
                 <div class="b">
-                  <!-- <button @click="minus('bangzhu',k,j)" :disabled="m.count<=1">-</button>
+                  <button @click="m.count--" :disabled="m.count<=1">-</button>
                   <input type="text" v-model.lazy="m.count" disabled>
-                  <button @click="plus('bangzhu',k,j)">+</button> -->
-                  <button @click="bangzhu[k][j].count--" :disabled="m.count<=1">-</button>
-                  <input type="text" v-model.lazy="m.count" disabled>
-                  <button @click="bangzhu[k][j].count++">+</button>
+                  <button @click="m.count++">+</button>
                 </div>
               </div>
             </div>
@@ -105,26 +100,26 @@
             <span class="tips" v-if="m.deliveryMethods">【{{m.deliveryMethods}}】</span>
             <span class="tips" v-if="m.shipping">【{{m.shipping}}】</span>
           </div>
-          <!-- <div class="jiesuan">
-          <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
-          </div>-->
         </div>
-      </checkbox-group>
+      
     </div>
-    <div class="shop usershop" v-for="(y,k) in user" :key="k">
-      <div class="shopheader">
+    </checkbox-group>
+    <checkbox-group @change="selectgoods($event,'user')">
+    <div class="shop usershop" v-for="(x,i) in user" :key="i" v-if="tabkey=='user'">
+      <div v-if='user.length <= 0'>
+        购物车暂无个人卖家商品
+      </div>
+      <!-- <div class="shopheader">
         <div>
           <span class="iconfont icon-tubiao_shangcheng"></span>
           个人卖家
         </div>
-      </div>
-      <checkbox-group @change="selectgoods($event,'user')">
-        <div class="main" v-for="(x,i) in y" :key="i">
+      </div> -->
+        <div class="main">
           <div class="header">
-            <!-- <div class="u">商品详情</div> -->
             <div class="m">
               <div class="selectgoods">
-                <checkbox color="#ce4031" :value="x.goodsid" :checked="x.checked"/>
+                <checkbox color="#ce4031" :value="x.goodsid" />
               </div>
               <div class="l" @click="todetail(x)">
                 <img :src="x.thumbnail" mode="widthFix" alt>
@@ -136,9 +131,9 @@
               <div class="r">
                 <div class="u">￥{{x.currentPrice}}</div>
                 <div class="b">
-                  <button @click="minus('user',k,i)" :disabled="x.count<=1">-</button>
+                  <button @click="x.count--" :disabled="x.count<=1">-</button>
                   <input type="text" v-model.lazy="x.count" disabled>
-                  <button @click="plus('user',k,i)">+</button>
+                  <button @click="x.count++">+</button>
                 </div>
               </div>
             </div>
@@ -148,17 +143,13 @@
             <span class="tips" v-if="x.deliveryMethods">【{{x.deliveryMethods}}】</span>
             <span class="tips" v-if="x.shipping">【{{x.shipping}}】</span>
           </div>
-          <!-- <div class="jiesuan">
-          <button class='pay' hover-class='btnhover' @click='buy(x)'>结算</button>
-          </div>-->
         </div>
-      </checkbox-group>
     </div>
+    </checkbox-group>
     <div class="jiesuan">
       <span class="total">总价：￥{{total}}</span>
-      <button hover-class="btnhover" @click="buy">结算</button>
+      <button hover-class="btnhover" @click="paynow">结算</button>
     </div>
-    <!-- <i-divider content="已经到底啦" v-if="!shownone"></i-divider> -->
     <div class="none" v-if="shownone">
       <i class="iconfont icon-tubiao_gouwuche-copy"></i>
       <div>购物车空空如也~</div>
@@ -184,14 +175,15 @@ import goodsItem from "@/components/goodsitem";
 export default {
   data() {
     return {
-      cartgoods: {
-        platform: [],
-        bangzhu: {},
-        user: {}
-      },
+      tabkey:'platform',
+      // cartgoods: {
+      //   platform: [],
+      //   bangzhu: {},
+      //   user: {}
+      // },
       platform: [],
-      bangzhu: {},
-      user: {},
+      bangzhu: [],
+      user: [],
       shownone: false,
       userInfo: {},
       location: "尚未获取定位",
@@ -201,9 +193,9 @@ export default {
       a: {},
       total: 0,
       selectedlist: {
-        origin: null,
-        uploadUser: null,
-        goods: []
+        platform:[],
+        bangzhu:[],
+        user:[]
       }
     };
   },
@@ -213,163 +205,37 @@ export default {
   },
   computed: {},
   methods: {
-    aa() {
-      this.a = {
-        count: 1
-      };
+    tabChange(e) {
+      console.log(e.mp.detail);
+      this.tabkey = e.mp.detail.key
     },
-    minus(type, index, index1 = null) {
-      if (type == "platform") {
-        // let count = this.cartgoods['platform'][index].count
-        let count = this.platform[index].count;
-
-        count > 1 ? (count -= 1) : "";
-        // this.$set(this.cartgoods['platform'][index],'count',count)
-        this.$set(this.platform[index], "count", count);
-      } else if (type == "bangzhu") {
-        let count = this.bangzhu[index][index1].count;
-        count > 1 ? (count -= 1) : "";
-        this.$set(this.bangzhu[index][index1], "count", count);
-      } else if (type == "user") {
-        let count = this.user[index][index1].count;
-        count > 1 ? (count -= 1) : "";
-        this.$set(this.user[index][index1], "count", count);
-      }
-      // console.log(this.cartgoods);
-    },
-    plus(type, index, index1 = null) {
-      if (type == "platform") {
-        // let count = this.cartgoods['platform'][index].count
-        let count = this.platform[index].count;
-        count += 1;
-        // this.$set(this.cartgoods['platform'][index],'count',count)
-        this.$set(this.platform[index], "count", count);
-      } else if (type == "bangzhu") {
-        let count = this.bangzhu[index][index1].count;
-        count += 1;
-        this.$set(this.bangzhu[index][index1], "count", count);
-      } else if (type == "user") {
-        let count = this.user[index][index1].count;
-        count += 1;
-        this.$set(this.user[index][index1], "count", count);
-      }
-      console.log(this.bangzhu);
-    },
-    selectgoods(e, origin, uploadUser, goodsitem) {
+    selectgoods(e, origin, uploadUser) {
       var self = this;
-      console.log(uploadUser, goodsitem);
       console.log(e);
-      // 操作 selectedlist 只允许有一个来源 platform || bangzhu || user
-      // selectedlist:{
-      //   origin: null,
-      //   uploadUser: null,
-      //   goods:[]
-      // }
+      console.log(origin);
+      console.log(uploadUser);
       let arr = e.mp.detail.value;
-      // if (arr.length != 0) {
-      //   self.selectedlist.goods = [];
-      //   arr.map(function(v, i) {
-      //     self.selectedlist.goods[i] = {};
-      //     self.selectedlist.goods[i]._id = v;
-      //     self.selectedlist.goods[i].count = v.count;
-      //   });
-      //   self.selectedlist.origin = origin;
-      //   self.selectedlist.uploadUser = uploadUser;
-      // } else {
-      // }
-      console.log(self.selectedlist);
-    },
-    async buy(x) {
-      wx.showLoading({
-        title: "Loading..."
-      });
-      // 统一下单 生成订单号
-      // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
-      qc.request({
-        // login:true,
-        url: conf.service.prepayUrl,
-        // method:"POST",
-        data: {
-          count: x.count,
-          _id: x.goodsid
-        },
-        success: async function(res) {
-          wx.hideLoading();
-          console.log("统一下单返回：");
-          console.log(res.data);
-          if (res.data.code == 1 && res.data.success) {
-            console.log("支付中");
-            let payres = await wxpay(res.data.data);
-            console.log("payres", payres);
-            console.log("支付流程结束，支付成功~");
-            if (payres.errMsg == "requestPayment:ok") {
-              // 前端订单支付完成 等待商家核验（等待微信通知回调）
-              let clientpaidres = await clientpaid(res.data.data);
-              console.log("前端订单支付完成 等待商家核验");
+      arr.map(function(v,i){
+        self.selectedlist[self.tabkey][i] = {}
+        self.selectedlist[self.tabkey][i]._id = v
+        self.selectedlist[self.tabkey][i].count = self[self.tabkey]
 
-              wx.showToast({
-                title: clientpaidres.msg,
-                duration: 1500,
-                icon: "success",
-                mask: true,
-                complete: function() {
-                  setTimeout(function() {
-                    wx.navigateTo({
-                      url: "/pages/orderlist/main?index=0"
-                    });
-                  }, 1500);
-                }
-              });
-            } else {
-              wx.showToast({
-                title: "支付失败",
-                duration: 1000,
-                icon: "none",
-                mask: true,
-                complete: function() {
-                  wx.navigateTo({
-                    url: "/pages/orderlist/main?index=0"
-                  });
-                }
-              });
-            }
-          } else {
-            wx.showToast({
-              title: res.data.data.reason,
-              icon: "none",
-              duration: 2000,
-              complete: function() {
-                wx.navigateBack({
-                  delta: 1
-                });
-              }
-            });
-          }
-        },
-        fail: function(err) {
-          console.log(err);
-          console.log("支付流程结束，支付失败~");
-          // wx.hideLoading();
-          wx.showToast({
-            title: "支付失败,请检查网络",
-            duration: 1500,
-            icon: "none",
-            mask: true,
-            complete: function() {
-              // setTimeout(function(){
-              //   wx.switchTab({
-              //     url:"/pages/my/main"
-              //   })
-              // }, 1500)
-            }
-          });
-        },
-        complete: function() {
-          // wx.hideLoading();
-        }
-      });
+      })
+      this.selectedlist[this.tabkey] = arr
+      console.log(this.selectedlist);
     },
     async paynow() {
+      
+      var self = this
+      if(self.selectedlist[self.tabkey].length<=0){
+        return wx.showToast({
+                title: "尚未选择任何商品",
+                duration: 2500,
+                icon: "none",
+                mask: true
+              });
+      }
+
       wx.showLoading({
         title: "Loading..."
       });
@@ -380,8 +246,8 @@ export default {
         url: conf.service.prepayUrl,
         // method:"POST",
         data: {
-          count: this.count,
-          _id: this.goodsdetail._id
+          origin: self.tabkey,
+          goodslist: self.selectedlist[self.tabkey]
         },
         success: async function(res) {
           wx.hideLoading();
@@ -468,18 +334,14 @@ export default {
         // method:"GET",
         data: {},
         success: function(res) {
-          self.cartgoods = res.data.data
-          self.platform = res.data.data.platform
-          self.bangzhu = res.data.data.bangzhu
-          console.log('bangzhu:');
-          console.log(self.bangzhu);
-          
-          self.user = res.data.data.user;
+          self.platform = res.data.data.platformgoods
+          self.bangzhu = res.data.data.bangzhugoods
+          self.user = res.data.data.usergoods;
           if (res.data.success) {
             if (
               res.data.data.platform == [] &&
-              res.data.data.bangzhu == {} &&
-              res.data.data.user == {}
+              res.data.data.bangzhu == [] &&
+              res.data.data.user == []
             ) {
               self.shownone = true;
             } else {
@@ -545,7 +407,11 @@ export default {
   }
 };
 </script>
-
+<style >
+page{
+  background-color: #f3f3f3;
+}
+</style>
 <style scoped lang='scss'>
 $maincolor: #ce4031;
 .icon-zhuyi {
@@ -553,11 +419,12 @@ $maincolor: #ce4031;
 }
 .container {
   background-color: #f3f3f3;
-  padding: 20rpx 0rpx 70rpx;
+  padding: 0rpx 0rpx 70rpx;
+  min-height: 100%;
 }
 .main {
   // border-top: 20rpx solid #f5f5f5 ;
-  padding: 0 20rpx 10rpx;
+  padding: 0 20rpx 0rpx;
   .u {
     color: #b3b3b3;
     font-size: 32rpx;
@@ -567,10 +434,10 @@ $maincolor: #ce4031;
 }
 .shop {
   width: 710rpx;
-  margin: 0 auto 20rpx;
+  margin: 20rpx auto 0;
   border-radius: 20rpx;
   background-color: #fff;
-  padding: 20rpx 20rpx 10rpx;
+  padding: 10rpx 20rpx 10rpx;
   box-sizing: border-box;
   .shopheader {
     color: #000;
@@ -648,7 +515,7 @@ $maincolor: #ce4031;
   flex-direction: row;
   align-items: center;
   font-size: 28rpx;
-  border-bottom: 1px solid #f5f5f5;
+  // border-bottom: 1px solid #f5f5f5;
   .tips {
     color: $maincolor;
   }

@@ -277,7 +277,8 @@ export default {
           provincecode: self.provincecode,
           citycode: self.citycode,
           countrycode: self.countrycode,
-          origin: self.origin
+          origin: self.origin,
+          goodslist: [self.goodsdetail._id]
         },
         success:async function(res) {
           wx.hideLoading();

@@ -28,9 +28,9 @@
               <div class="r">
                 <div class="u">￥{{x.currentPrice}}</div>
                 <div class="b">
-                  <button @click="platform[i].count--" :disabled="x.count<=1">-</button>
+                  <button @click="minus(x)" :disabled="x.count<=1">-</button>
                   <input type="text" v-model.lazy="x.count" disabled>
-                  <button @click="platform[i].count++">+</button>
+                  <button @click="plus(x)">+</button>
                 </div>
               </div>
             </div>
@@ -67,8 +67,8 @@
         </div>
       </checkbox-group>
     </div>
-    <checkbox-group @change="selectgoods($event,'bangzhu')">
-    <div class="shop bangzhushop" v-for="(m,j) in bangzhu" :key="j" v-if="tabkey=='bangzhu'">
+    <checkbox-group @change="selectgoods($event,'bangzhu')" v-if="tabkey=='bangzhu'">
+    <div class="shop bangzhushop" v-for="(m,j) in bangzhu" :key="j">
       <div v-if='bangzhu.length <= 0'>
         购物车暂无帮主推荐商品
       </div>
@@ -88,9 +88,9 @@
               <div class="r">
                 <div class="u">￥{{m.currentPrice}}</div>
                 <div class="b">
-                  <button @click="m.count--" :disabled="m.count<=1">-</button>
+                  <button @click="minus(m)" :disabled="m.count<=1">-</button>
                   <input type="text" v-model.lazy="m.count" disabled>
-                  <button @click="m.count++">+</button>
+                  <button @click="plus(m)">+</button>
                 </div>
               </div>
             </div>
@@ -104,8 +104,8 @@
       
     </div>
     </checkbox-group>
-    <checkbox-group @change="selectgoods($event,'user')">
-    <div class="shop usershop" v-for="(x,i) in user" :key="i" v-if="tabkey=='user'">
+    <checkbox-group @change="selectgoods($event,'user')" v-if="tabkey=='user'">
+    <div class="shop usershop" v-for="(x,i) in user" :key="i" >
       <div v-if='user.length <= 0'>
         购物车暂无个人卖家商品
       </div>
@@ -131,9 +131,9 @@
               <div class="r">
                 <div class="u">￥{{x.currentPrice}}</div>
                 <div class="b">
-                  <button @click="x.count--" :disabled="x.count<=1">-</button>
+                  <button @click="minus(x)" :disabled="x.count<=1">-</button>
                   <input type="text" v-model.lazy="x.count" disabled>
-                  <button @click="x.count++">+</button>
+                  <button @click="plus(x)">+</button>
                 </div>
               </div>
             </div>
@@ -153,6 +153,37 @@
     <div class="none" v-if="shownone">
       <i class="iconfont icon-tubiao_gouwuche-copy"></i>
       <div>购物车空空如也~</div>
+    </div>
+    <div>
+      <div class="main shouhuo">
+        <div class="u">
+          <span>收货地址</span>
+          <span class="add" @click='toaddress'>添加收货地址></span>
+        </div>
+        <div class="m">
+          <!-- @change="radioChange" -->
+          <radio-group class="radio-group" >
+            <label class="radio" v-for="(x,i) in address" :key="i" @click="radioChange1(i)">
+              <radio :value="i" :checked="x.checked" >
+              <div>
+                <div>
+                  {{x.userName}}-{{x.telNumber}}
+                </div>
+                <div>
+                  {{x.provinceName}}-{{x.cityName}}-{{x.countyName}}-{{x.detailInfo}}
+                </div>
+              </div>
+              </radio>
+            </label>
+          </radio-group>
+        </div>
+      </div>
+      <div class="main beizhu">
+        <div class="u">订单备注</div>
+        <div class="m">
+          <textarea v-model="beizhu" name="beizhu" id=""></textarea>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -176,11 +207,6 @@ export default {
   data() {
     return {
       tabkey:'platform',
-      // cartgoods: {
-      //   platform: [],
-      //   bangzhu: {},
-      //   user: {}
-      // },
       platform: [],
       bangzhu: [],
       user: [],
@@ -196,7 +222,9 @@ export default {
         platform:[],
         bangzhu:[],
         user:[]
-      }
+      },
+      address: '',
+      beizhu: ''
     };
   },
   components: {
@@ -205,12 +233,48 @@ export default {
   },
   computed: {},
   methods: {
+    minus(x){
+      var self = this;
+      x.count>1?x.count--:'';
+      // 读取选中的商品数量 
+      self.selectedlist[self.tabkey].map(function(v,i){
+        self[self.tabkey].map(function(v1,i1){
+          if(v._id == v1._id){
+            v.count = v1.count
+          }
+        })
+      })
+      console.log(self.selectedlist);
+    },
+    plus(x){
+      var self = this;
+      x.count++;
+      // 读取选中的商品数量 
+      self.selectedlist[self.tabkey].map(function(v,i){
+        self[self.tabkey].map(function(v1,i1){
+          if(v._id == v1._id){
+            v.count = v1.count
+          }
+        })
+      })
+      console.log(self.selectedlist);
+    },
     tabChange(e) {
       console.log(e.mp.detail);
       this.tabkey = e.mp.detail.key
+      this.selectedlist = {
+        platform:[],
+        bangzhu:[],
+        user:[]
+      }
     },
     selectgoods(e, origin, uploadUser) {
       var self = this;
+      self.selectedlist = {
+        platform:[],
+        bangzhu:[],
+        user:[]
+      }
       console.log(e);
       console.log(origin);
       console.log(uploadUser);
@@ -218,14 +282,16 @@ export default {
       arr.map(function(v,i){
         self.selectedlist[self.tabkey][i] = {}
         self.selectedlist[self.tabkey][i]._id = v
-        self.selectedlist[self.tabkey][i].count = self[self.tabkey]
-
+        // self.selectedlist[self.tabkey][i].count = self[self.tabkey]
+        self[self.tabkey].map(function(v1, i1){
+          if(v1._id == v){
+            console.log(v1);
+            self.selectedlist[self.tabkey][i].count = v1.count
+          }
+        })
       })
-      this.selectedlist[this.tabkey] = arr
-      console.log(this.selectedlist);
     },
     async paynow() {
-      
       var self = this
       if(self.selectedlist[self.tabkey].length<=0){
         return wx.showToast({
@@ -235,7 +301,11 @@ export default {
                 mask: true
               });
       }
-
+      
+      console.log(self.selectedlist);
+      // 选择 收货地址和填写备注
+      
+      return
       wx.showLoading({
         title: "Loading..."
       });
@@ -247,7 +317,9 @@ export default {
         // method:"POST",
         data: {
           origin: self.tabkey,
-          goodslist: self.selectedlist[self.tabkey]
+          goodslist: self.selectedlist[self.tabkey],
+          address: self.address,
+          beizhu: self.beizhu
         },
         success: async function(res) {
           wx.hideLoading();
@@ -646,6 +718,19 @@ $maincolor: #ce4031;
     font-size: 50rpx;
     text-align: center;
     color: #b3b3b3;
+  }
+}
+.beizhu{
+  .m{
+    padding-top: 10rpx;
+    font-size: 30rpx;
+    textarea{
+      border: 1rpx solid #e5e5e5;
+      width: 690rpx;
+      height: 200rpx;
+      border-radius: 12rpx;
+      padding: 10rpx;
+    }
   }
 }
 </style>

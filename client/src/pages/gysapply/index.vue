@@ -201,7 +201,7 @@ export default {
         })
     },
     getUserInfo() {
-      console.log("getuserinfo");
+      // console.log("getuserinfo");
 
       // 调用登录接口
       wx.login({
@@ -217,14 +217,14 @@ export default {
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(66, locationAuth);
+      // console.log(66, locationAuth);
       if (!locationAuth) {
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(75, locationAuthRes);
+        // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
           let location = await chooselocation();
-          console.log(location);
+          // console.log(location);
         } else {
           // 拒绝了
           let modalres = await modal({
@@ -232,11 +232,11 @@ export default {
             cancelText: "放弃推荐",
             confirmText: "打开定位"
           });
-          console.log(86, modalres);
+          // console.log(86, modalres);
           if (modalres) {
             // 打开设置页面
             let settingres = await openSetting();
-            console.log(settingres);
+            // console.log(settingres);
             if (settingres["scope.userLocation"]) {
               // 已打开定位
               wx.showToast({
@@ -245,7 +245,7 @@ export default {
                 duration: 1000
               });
               let location = await chooselocation();
-              console.log(location);
+              // console.log(location);
             } else {
               wx.showToast({
                 title: "您没有打开定位",
@@ -257,21 +257,21 @@ export default {
         }
       } else {
         let location = await chooselocation();
-        console.log(location);
+        // console.log(location);
         this.location = location.name;
       }
     },
     citychange({label, value, cityCode}){
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
       
     },
     cityconfirm({label, value, cityCode}){
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
       this.citylabel1 = label
       this.code = cityCode
     },
     citycancel({label, value, cityCode}){
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
 
     },
     showcitypicker(){
@@ -301,12 +301,12 @@ export default {
         filePath: filePath,
         name: 'file',
         success: function(res){
-          console.log(res);
+          // console.log(res);
           
           let format = JSON.parse(res.data)
           
-          console.log(format.data);
-          console.log(format.data.imgUrl);
+          // console.log(format.data);
+          // console.log(format.data.imgUrl);
           
           if(format.data.imgUrl){
             self.imgurls[which]= format.data.imgUrl
@@ -326,7 +326,7 @@ export default {
     },
     formSubmit(data){
       let obj = data.mp.detail
-      console.log(obj.value);
+      // console.log(obj.value);
       var self = this
       // 数据校验
       for (const key in obj.value) {
@@ -351,7 +351,7 @@ export default {
 
 
       
-      console.log(formId , value);
+      // console.log(formId , value);
       if(self.globalData.loginstate !== true){
         return wx.showToast({
           title:'请先登录',
@@ -378,7 +378,7 @@ export default {
         data:{formId , ...value},
         url: conf.service.gysapplyUrl,
         success(res){
-          console.log(res);
+          // console.log(res);
           wx.hideLoading()
           wx.showToast({
             title:res.data.msg,
@@ -402,7 +402,7 @@ export default {
 
     },
     radioChange(e) {
-      console.log("whoami:", e.mp.detail.value);
+      // console.log("whoami:", e.mp.detail.value);
       this.whoami = e.mp.detail.value
     },
     

@@ -11,8 +11,8 @@
 
 const wxpay = async ( x ) => {
     // {timeStamp, nonceStr,package,paySign}
-    console.log(...x);
-    console.log('调起支付');
+    // console.log(...x);
+    // console.log('调起支付');
     
     let res = await new Promise(function(resolve, reject){
         wx.requestPayment({
@@ -22,11 +22,11 @@ const wxpay = async ( x ) => {
             paySign:x.paySign, //:'DD32FD592AF142FA6E330DC236EBA968'
             signType:"MD5",
             success:function(res){
-                console.log('success');
+                // console.log('success');
                 resolve(res)
             },
             fail:function(err){
-                console.log('fail');
+                // console.log('fail');
                 resolve(err)
             }
         })

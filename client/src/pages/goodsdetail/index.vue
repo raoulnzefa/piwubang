@@ -142,12 +142,12 @@ export default {
       })
     },
     buynow() {
-      console.log("buynow");
+      // console.log("buynow");
       let url = `/pages/order/main?goodsdetail=${JSON.stringify(this.goodsdetail)}&origin=${this.origin}`
       wx.navigateTo({url})
     },
     jointocart(){
-      console.log("goodsdetail jointocart");
+      // console.log("goodsdetail jointocart");
       var self = this;
       wx.showLoading({
         title:'Loading',
@@ -160,7 +160,7 @@ export default {
         },
         success:function(res) {
           wx.hideLoading()
-          console.log('addtocart res', res.data.data);
+          // console.log('addtocart res', res.data.data);
           if(res.data.success){
             wx.showToast({
               title:"添加成功",
@@ -208,7 +208,7 @@ export default {
     this.goodsid = goodsid
     this.origin = origin
 
-    console.log('goodsid:',goodsid);
+    // console.log('goodsid:',goodsid);
     
     var self = this;
       qc.request({
@@ -218,7 +218,7 @@ export default {
           goodsid, origin
         },
         success:function(res) {
-          console.log('goodsdetail', res.data.data);
+          // console.log('goodsdetail', res.data.data);
           let goodsinfo = res.data.data
           goodsinfo.dtimgs = []
           goodsinfo.detailImg.map(function(v,i){
@@ -236,16 +236,16 @@ export default {
   },
   onShareAppMessage(){
     var self = this
-    console.log('share');
+    // console.log('share');
     return {
       title: `【批物帮-买啥都是批发价!】${self.goodsdetail.name}`,
       path: `/pages/goodsdetail/main?goodsid=${self.goodsid}&origin=${self.origin}`,
       imageUrl: `${self.goodsdetail.urls[0]}`,
       success: (res) => {
-        console.log("转发成功", res);
+        // console.log("转发成功", res);
       },
       fail: (res) => {
-        console.log("转发失败", res);
+        // console.log("转发失败", res);
       }
     }
   }

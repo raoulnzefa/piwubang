@@ -4,13 +4,39 @@
       <nav-bar :tabs="tabs" :activeIndex="index" @tabClick="tabClick"></nav-bar>
     </div>
     <div class="main">
-      <orderlist-item v-for='(x,i) in which' :key="i" :orderinfo="x"></orderlist-item>  
-    </div>
+      <!-- <orderlist-item></orderlist-item> -->
+      <div class="ordercon" v-for='(x,i) in which' :key="i" >
+        <div class="header main">
+          <div class="u">
+            <div class="status">
+              {{statusname[x.status]}}
+            </div>
+            <div class="time">
+              {{ x._createtime }}
+            </div>
+          </div>
+          <div class="m">
+            <div class="l">
+                <div v-for='(m,k) in x.ordergoods' :key="k" >
+                  {{k+1}}. {{m.name}} x {{m.count}}
+                </div>
+            </div>
+            <div class="r">
+              <div class="total_fee">总价:￥{{x.total_fee/100}}</div>
+            </div>
+          </div>
+          <div class="d">
+              <button plain type="warn" @click='deleteModal(x)'  v-if="x.status==1 || x.status==6 || x.status==8|| x.status==10">删除订单</button>
+              <button plain type="warn" @click='confirmModal(x)' v-if="x.status==5 ">确认收货</button>
+              <button plain type="warn" @click='refundModal(x)'  v-if="x.status==4 || x.status==6">退货退款</button>
+          </div>
+        </div>
+      </div>
     <div class="nothing" v-if='!which.length'>
       <i class="iconfont icon-quanbudingdan01"></i>
       <div>您还没有相关订单</div>
     </div>
-    
+  </div> 
 
   </div>
 </template>
@@ -71,7 +97,21 @@ export default {
       over:[],
       service:[],
       which:[],
-      index:0
+      index:0,
+      statusname:{
+        1:'未支付',
+        2:'待商户确认',
+        3:'已发货',
+        4:'已发货',
+        5:'已发货',
+        6:'已收货',
+        7:'退款申请中',
+        8:'已退款',
+        9:'退款申请中',
+        10:'已退款至余额',
+        11:'提现申请中',
+        12:'提现已完成',
+      }
     };
   },
   components: {
@@ -79,23 +119,178 @@ export default {
   },
   onLoad(){
     let routeParam = this.$root.$mp.query
-    console.log(routeParam);
+    // console.log(routeParam);
     this.index = parseInt(routeParam.index)
   },
   methods: {
+    deleteModal(x){
+      var self = this
+      wx.showModal({
+        title: '提示',
+        content: '确定删除订单？',
+        success(res) {
+          if (res.confirm) {
+            // console.log('用户点击确定')
+            self.deleteOrder(x)
+          } else if (res.cancel) {
+          }
+        }
+      })
+    },
+    deleteOrder(x){
+      var self = this
+      wx.showLoading({
+        title:'订单删除中...'
+      })
+      qc.request({
+        // login:true,
+        url: conf.service.deleteorderUrl,
+        // method:"POST",
+        data:{
+          orderid : x.orderid
+        },
+        success:function(res) {
+          wx.hideLoading();
+          // console.log(res.data.msg);
+          
+          wx.showToast({
+              title: res.data.msg, 
+              duration: 1500,
+              icon:'none',
+              mask:true
+          })
+          self.getorderlist()
+        },
+        fail: function(err) {
+          wx.hideLoading();
+          // console.log(err);
+          wx.showToast({
+              title: '请求失败，请检查网络', 
+              duration: 1500,
+              icon:'none',
+              mask:true
+          })
+        },
+        complete:function(){
+          
+        }
+      });
+    },
+    confirmModal(x){
+      var self = this
+      wx.showModal({
+        title: '提示',
+        content: '是否确定收货？',
+        success(res) {
+          if (res.confirm) {
+            // console.log('用户点击确定')
+            self.confirmOrder(x)
+          } else if (res.cancel) {
+          }
+        }
+      })
+    },
+    confirmOrder(x){
+      var self = this
+      wx.showLoading({
+        title:'确认收货中...'
+      })
+      qc.request({
+        // login:true,
+        url: conf.service.confirmshipUrl,
+        // method:"POST",
+        data:{
+          orderid : x.orderid
+        },
+        success:function(res) {
+          wx.hideLoading();
+          wx.showToast({
+              title: res.data.msg, 
+              duration: 1500,
+              icon:'none',
+              mask:true
+          })
+          self.getorderlist()
+        },
+        fail: function(err) {
+          wx.hideLoading();
+          // console.log(err);
+          wx.showToast({
+              title: '请求失败，请检查网络', 
+              duration: 1000,
+              icon:'none',
+              mask:true
+          })
+        },
+        complete:function(){
+          
+        }
+      });
+    },
+    refundModal(x){
+      var self = this
+      wx.showModal({
+        title: '提示',
+        content: '是否申请退货退款？',
+        success(res) {
+          if (res.confirm) {
+            // console.log('用户点击确定')
+            self.refundOrder(x)
+          } else if (res.cancel) {
+          }
+        }
+      })
+    },
+    refundOrder(x){
+      var self = this
+      wx.showLoading({
+        title:'退款申请中...'
+      })
+      qc.request({
+        // login:true,
+        url: conf.service.refundUrl,
+        // method:"POST",
+        data:{
+          orderid : x.orderid
+        },
+        success:function(res) {
+          wx.hideLoading();
+          wx.showToast({
+              title: res.data.msg, 
+              duration: 1500,
+              icon:'none',
+              mask:true
+          })
+          self.getorderlist()
+        },
+        fail: function(err) {
+          wx.hideLoading();
+          // console.log(err);
+          wx.showToast({
+              title: '请求失败，请检查网络', 
+              duration: 1000,
+              icon:'none',
+              mask:true
+          })
+        },
+        complete:function(){
+          
+        }
+      });
+    },
     tabClick:function(x){
-      console.log(x);
+      // console.log(x);
       this.index = x
       this.which = this[this.tabstate[x]]
-      console.log('which:',this.which);
+      // console.log('which:',this.which);
     },
     getorderlist(){
       wx.showLoading({
           title: '订单加载中...', 
           mask:true
       })
-    var self = this
-    qc.request({
+      var self = this
+      qc.request({
         // login:true,
         url: conf.service.getOrderList,
         // method:"POST",
@@ -104,7 +299,7 @@ export default {
         },
         success:function(res) {
           wx.hideLoading();
-          console.log(res.data.data);
+          // console.log(res.data.data);
           self.all = res.data.data
           self.unpay = res.data.data.filter(function(v, i){
             return v.status == 1 || v.status == 2
@@ -125,17 +320,12 @@ export default {
         fail: function(err) {
           wx.hideLoading();
           
-          console.log(err);
+          // console.log(err);
           wx.showToast({
-              title: '请先登录', 
+              title: '请求失败，请检查网络', 
               duration: 1000,
               icon:'none',
-              mask:true,
-              complete:function(){
-                wx.switchTab({
-                  url:"/pages/my/main"
-                })
-              }
+              mask:true
           })
         },
         complete:function(){
@@ -192,5 +382,77 @@ $maincolor: #ce4031;
       text-align:center;
     }
   }
+  .ordercon{
+    .main{
+  border-top: 20rpx solid #f5f5f5 ;
+  padding: 20rpx 20rpx;
+  .u{
+    color: #b3b3b3;
+    font-size: 32rpx;
+    // font-size: 13pt;
+    border-bottom: 1px solid #f5f5f5;
+    display: flex;
+    flex-direction: row;
+    .status{
+      padding: 0 15rpx 0 0;
+      border-right: 1px solid #f5f5f5;
+      color: $maincolor;
+    }
+  }
+}
 
+.header{
+  
+  &>.m{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 20rpx 0;
+    border-bottom: 1px solid #f5f5f5;
+    
+    .l{
+      font-size: 32rpx;
+      width: 60%;
+      text-align: left;
+      img{
+        width: 90%;
+      }
+    }
+    .r{
+      width: 40%;
+      font-size: 32rpx;
+      .count{
+        color:#ccc;
+      }
+      .total_fee{
+        text-align: right;
+      }
+    }
+  }
+  .d{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20rpx 0 0;
+    button{
+      // width: 60rpx;
+      height: 45rpx;
+      padding: 0 8rpx;
+      line-height: 40rpx;
+      text-align: center;
+      font-size: 30rpx;
+      margin: 0 0 0 12rpx;
+    }
+    input{
+      width: 100rpx;
+      height: 60rpx;
+      padding: 0;
+      line-height: 60rpx;
+      text-align: center;
+      font-size: 40rpx;
+    }
+  }
+}
+  }
 </style>

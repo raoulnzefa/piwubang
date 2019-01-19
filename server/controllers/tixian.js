@@ -23,19 +23,19 @@ module.exports = async (ctx, next) => {
                     success:false
                 }
             }else{
-                if(order.status == 1 || order.status == 6 || order.status == 8 || order.status == 10){
-                    await mysql('orders').update({ deleted: '1' }).where({ orderid, openid }).limit(1)
+                if(order.status == 10 ){
+                    await mysql('orders').update({ status: 11 }).where({ orderid, openid }).limit(1)
                     return ctx.body = {
                         code:"ORDER_DELETE_SUCCESS",
                         data:{},
-                        msg:"订单删除成功",
+                        msg:"提现申请成功，请等待平台审核",
                         success:true
                     }
                 }else{
                     return ctx.body = {
-                        code:"ORDER_DELETE_OUT_OF_FLOW",
+                        code:"ORDER_TIXIAN_OUT_OF_FLOW",
                         data:{},
-                        msg:"此订单尚未完成，暂不可删除",
+                        msg:"该笔金额不在提现流程中",
                         success:false
                     }
                 }

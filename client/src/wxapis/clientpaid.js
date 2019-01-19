@@ -10,8 +10,8 @@ import qc from 'wafer2-client-sdk'
 import conf from '@/config'
 
 const clientpaid = async ( x ) => {
-    console.log(...x);
-    console.log('客户端支付了，通知服务端');
+    // console.log(...x);
+    // console.log('客户端支付了，通知服务端');
     let res = await new Promise(function(resolve, reject){
         qc.request({
             url: conf.service.clientpaidUrl,

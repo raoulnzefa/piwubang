@@ -65,6 +65,12 @@ var config = {
 
         // 前端已支付，告知服务器
         clientpaidUrl: `${host}/weapp/clientpaid`,
+        
+        // 提现列表获取
+        getTixianListUrl: `${host}/weapp/gettixianlist` ,
+
+        // 提现申请
+        tixianUrl: `${host}/weapp/tixian` ,
 
         // 帮主申请
         bangzhuapplyUrl: `${host}/weapp/bangzhuapply`,

@@ -13,7 +13,7 @@
  * 7 : 用户发起了退款申请，且status=3/4，
  * 8 : (接着7) 后台确认订单，如果没问题，退虚拟金到其余额，订单置为8，即已退虚拟金，并且订单关闭，除了删除无法再操作，订单完结（2）。可以做的事：删除订单
  * 9 : 用户发起了退款申请，且是status=6时发起退款申请的。要求输入退货运单号，然后提交申请，商家进入待收退货阶段，
- * 10：(接着9)收到退货后通过后台退虚拟金到其余额，并修改订单状态为10，表明已退，关闭订单，无法再操作，订单完结（3）。可以做的事：删除订单
+ * 10：(接着9)收到退货后通过后台退虚拟金到其余额，并修改订单状态为10，表明已退，关闭订单，无法再操作，订单完结（3）。可以做的事：删除订单 发起提现
  * 11 : 发起提现
  * 12 ：该订单的钱已通过提现 真正的返还到他账户中
  * 特别注意：cSessionInfo表中将加入refund字段，值是一个数组，格式是字符串,例如：
@@ -136,6 +136,7 @@ const unifiedorder = async (ctx, next) => {
     let idlist = [] // [ 'bzjhg12jh3g12g' , 'bzk12g3h2gjhd' ]
     let countObj = {} //{ bzjhg12jh3g12g : 4, bzk12g3h2gjhd : 2 }
     goodslist.map(function(v,i){
+        v.goodsid = v._id
         idlist.push(v._id)
         countObj[v._id] = v.count
     })
@@ -425,25 +426,25 @@ const unifiedorder = async (ctx, next) => {
             let cartgoods = await knex('cart').first().where({openid})
             if(cartgoods && cartgoods!={} && cartgoods!=undefined && cartgoods!='undefined'){
                 let goods = JSON.parse( cartgoods[col] ) || []
-                console.log('goods:');
-                console.log(goods);
-                console.log('goods.length:');
-                console.log(goods.length);
+                // console.log('goods:');
+                // console.log(goods);
+                // console.log('goods.length:');
+                // console.log(goods.length);
                 for(var k = goods.length-1; k>=0; k--){
                     for (let j = 0; j < goodslist.length; j++) {
-                        console.log('goods[k]:',`K:${k}`);
-                        console.log(goods[k]);
+                        // console.log('goods[k]:',`K:${k}`);
+                        // console.log(goods[k]);
                         if(goods[k]._id == goodslist[j]._id){
-                            console.log('splice k:');
-                            console.log( k , j );
+                            // console.log('splice k:');
+                            // console.log( k , j );
                             goods.splice(k, 1)
                             break;
                         }
                     }
                 }
                 goods = JSON.stringify(goods)
-                console.log('清除订单商品后的goods：');
-                console.log(goods);            
+                // console.log('清除订单商品后的goods：');
+                // console.log(goods);            
                 await knex('cart').update(col, goods).where({openid}).limit(1)
             }
         }

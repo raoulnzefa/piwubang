@@ -81,6 +81,12 @@ router.get('/refund', validationMiddleware, controllers.refund)
 // GET !!! 小程序删除订单
 router.get('/deleteorder', validationMiddleware, controllers.deleteorder)
 
+// GET !!! 小程序获取可提现的订单
+router.get('/gettixianlist', validationMiddleware, controllers.gettixianlist)
+
+// GET !!! 小程序获取可提现的订单
+router.get('/tixian', validationMiddleware, controllers.tixian)
+
 // POST !!! 小程序帮主申请
 router.post('/bangzhuapply', validationMiddleware, controllers.bangzhuapply)
 

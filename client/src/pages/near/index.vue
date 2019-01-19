@@ -74,12 +74,12 @@ export default {
       try {
         let location = (await chooselocation()) || null;
         this.location = location.name || "切换位置";
-        console.log(location);
+        // console.log(location);
         let querycode = await this.reverseGeocoder(
           location.longitude,
           location.latitude
         );
-        console.log("querycode:", querycode);
+        // console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
         // console.log("this.mypositioncode:", this.mypositioncode);
         this.searchroundshop()
@@ -97,13 +97,13 @@ export default {
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(46, locationAuth);
+      // console.log(46, locationAuth);
       if (!locationAuth) {
-        console.log("未授权过，唤起授权窗口");
+        // console.log("未授权过，唤起授权窗口");
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(49, locationAuthRes);
+        // console.log(49, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
-          console.log("同意授权");
+          // console.log("同意授权");
           this.showopensettingbtn = false;
           // 同意
           let location = (await chooselocation()) || null;
@@ -111,16 +111,16 @@ export default {
             location.longitude,
             location.latitude
           );
-          console.log("querycode:", querycode);
+          // console.log("querycode:", querycode);
           this.mypositioncode = querycode.result.ad_info.adcode;
-          console.log("this.mypositioncode:", this.mypositioncode);
+          // console.log("this.mypositioncode:", this.mypositioncode);
           this.searchroundshop()
     
           this.location = location.name || "切换位置";
           
           wx.setStorageSync("roundposition", location);
         } else {
-          console.log("拒绝授权");
+          // console.log("拒绝授权");
           // 拒绝过
           this.showopensettingbtn = true;
           let modalres = await modal({
@@ -128,20 +128,20 @@ export default {
             // cancelText: "放弃组团",
             confirmText: "好"
           });
-          console.log(65, modalres);
+          // console.log(65, modalres);
           if (modalres) {
             // 需要用户打开设置 开启定位
           }
         }
       } else {
         this.showopensettingbtn = false;
-        console.log("已授权");
+        // console.log("已授权");
       }
     },
     async opensetting() {
       // 打开设置页面
       let settingres = await openSetting();
-      console.log(settingres);
+      // console.log(settingres);
       if (settingres["scope.userLocation"]) {
         this.showopensettingbtn = false;
         // 已打开定位
@@ -186,7 +186,7 @@ export default {
           code: self.mypositioncode
         },
         success(res){
-          console.log(res);
+          // console.log(res);
           if(res.data.success){
             self.shoplist = res.data.data
           }else{
@@ -194,11 +194,11 @@ export default {
           }
         },
         fail(err){
-          console.log(err);
+          // console.log(err);
           self.shoplist = []
         },
         complete(){
-          console.log('complete');
+          // console.log('complete');
           wx.hideLoading()
           wx.stopPullDownRefresh()
         }
@@ -210,7 +210,7 @@ export default {
       });
     },
     handleChange(x) {
-      console.log(x);
+      // console.log(x);
       this.current = x.mp.detail.key;
     },
     togoodsupload() {
@@ -223,7 +223,7 @@ export default {
         url: conf.service.checkuserisshopUrl ,
         data: {},
         success(res){
-          console.log(res);
+          // console.log(res);
           let code = res.data.code
           if(code=='ROUNDSHOP_USER_IS_SHOP'){
             // 是商家 且通过审核 可发布
@@ -252,7 +252,7 @@ export default {
           
         },
         fail(err){
-          console.log(err);
+          // console.log(err);
           wx.showToast({
             title:'请检查网络',
             duration: 1500,
@@ -260,7 +260,7 @@ export default {
           })
         },
         complete(){
-          console.log('complete');
+          // console.log('complete');
           wx.hideLoading()
         }
       })
@@ -275,13 +275,13 @@ export default {
     this.searchroundshop()
   },
   async onLoad() {
-    console.log("onload");
+    // console.log("onload");
     wx.showShareMenu({
       withShareTicket: true
     });
     // 获取storage中存出的地址
     let roundposition = wx.getStorageSync("roundposition") || null;
-    console.log(roundposition);
+    // console.log(roundposition);
     // if(!roundposition){
     //   this.changelocation()
     // }
@@ -292,9 +292,9 @@ export default {
         roundposition.longitude,
         roundposition.latitude
       );
-      console.log("querycode:", querycode);
+      // console.log("querycode:", querycode);
       this.mypositioncode = querycode.result.ad_info.adcode;
-      console.log("this.mypositioncode:", this.mypositioncode);
+      // console.log("this.mypositioncode:", this.mypositioncode);
 
       this.searchroundshop()
 

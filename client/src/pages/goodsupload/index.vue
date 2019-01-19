@@ -383,42 +383,42 @@ export default {
     },
     pickerchange(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
       this.form._start = date
     },
     pickerchange1(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
       this.form._end = date
     },
     pickerchange2(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
       this.form.deliveryTime = date
     },
     pickercancel(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
     },
     pickercancel1(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
     },
     pickercancel2(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
     },
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(66, locationAuth);
+      // console.log(66, locationAuth);
       if (!locationAuth) {
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(75, locationAuthRes);
+        // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
           let location = await chooselocation();
-          console.log(location);
+          // console.log(location);
         } else {
           // 拒绝了
           let modalres = await modal({
@@ -426,11 +426,11 @@ export default {
             cancelText: "放弃推荐",
             confirmText: "打开定位"
           });
-          console.log(86, modalres);
+          // console.log(86, modalres);
           if (modalres) {
             // 打开设置页面
             let settingres = await openSetting();
-            console.log(settingres);
+            // console.log(settingres);
             if (settingres["scope.userLocation"]) {
               // 已打开定位
               wx.showToast({
@@ -439,7 +439,7 @@ export default {
                 duration: 1000
               });
               let location = await chooselocation();
-              console.log(location);
+              // console.log(location);
             } else {
               wx.showToast({
                 title: "您没有打开定位",
@@ -451,21 +451,21 @@ export default {
         }
       } else {
         let location = await chooselocation();
-        console.log(location);
+        // console.log(location);
         this.location = location.name;
         let querycode = await this.reverseGeocoder(
           location.longitude,
           location.latitude
         )
         this.form.code = querycode.result.ad_info.adcode
-        console.log( this.form.code );
+        // console.log( this.form.code );
 
       }
     },
     async chooselocation() {
       try {
         let location = (await chooselocation()) || null;
-        console.log(location);
+        // console.log(location);
         if(!location.address || !location.name){
           wx.showToast({
             title: '请选择提货点',
@@ -485,7 +485,7 @@ export default {
           )
           
           this.form.code = querycode.result.ad_info.adcode ;
-          console.log( this.form.code );
+          // console.log( this.form.code );
           
         }
       } catch (error) {
@@ -497,15 +497,15 @@ export default {
       }
     },
     citychange({ label, value, cityCode }) {
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
     },
     cityconfirm({ label, value, cityCode }) {
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
       this.citylabel1 = label;
       this.code = cityCode;
     },
     citycancel({ label, value, cityCode }) {
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
     },
     showcitypicker() {
       this.$refs.mpCityPicker.show();
@@ -534,12 +534,12 @@ export default {
         filePath: filePath,
         name: "file",
         success: function(res) {
-          console.log(res);
+          // console.log(res);
 
           let format = JSON.parse(res.data);
 
-          console.log(format.data);
-          console.log(format.data.imgUrl);
+          // console.log(format.data);
+          // console.log(format.data.imgUrl);
 
           if (format.data.imgUrl) {
             self.form.urls[which] = format.data.imgUrl;
@@ -577,7 +577,7 @@ export default {
       let obj = data.mp.detail;
       let { formId} = obj;
       let formvalue = obj.value
-      console.log(formvalue);
+      // console.log(formvalue);
 
       formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
       formvalue.deliveryArea = self.form.deliveryArea
@@ -612,7 +612,7 @@ export default {
         data: { formId, ...formvalue },
         url: conf.service.bangzhugoodsuploadUrl,
         success(res) {
-          console.log(res);
+          // console.log(res);
           wx.hideLoading();
           wx.showToast({
             title: res.data.msg,
@@ -636,7 +636,7 @@ export default {
       });
     },
     radioChange(e) {
-      console.log("deliveryMethods:", e.mp.detail.value);
+      // console.log("deliveryMethods:", e.mp.detail.value);
       this.deliveryMethods = e.mp.detail.value;
     },
     reverseGeocoder(longitude, latitude) {

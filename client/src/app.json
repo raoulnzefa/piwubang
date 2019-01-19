@@ -1,20 +1,20 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/mymoney/main",
+    "pages/my/main",
+    "pages/orderlist/main",
     "pages/cart/main",
     "pages/zutuan/main",
     "pages/bangzhuapply/main",
     "pages/shopapply/main",
     "pages/bangzhugoods/main",
-    "pages/my/main",
     "pages/gysapply/main",
     "pages/goodsupload/main",
     "pages/goodsdetail/main",
     "pages/myaddress/main",
-    "pages/mymoney/main",
     "pages/near/main",
     "pages/order/main",
-    "pages/orderlist/main",
     "pages/qqmap/main",
     "pages/shopgoods/main",
     "pages/shopgoodsupload/main"

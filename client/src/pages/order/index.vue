@@ -147,14 +147,14 @@ export default {
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(66, locationAuth);
+      // console.log(66, locationAuth);
       if (!locationAuth) {
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(75, locationAuthRes);
+        // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
           let location = await chooselocation();
-          console.log(location);
+          // console.log(location);
         } else {
           // 拒绝了
           let modalres = await modal({
@@ -162,11 +162,11 @@ export default {
             cancelText: "放弃推荐",
             confirmText: "打开定位"
           });
-          console.log(86, modalres);
+          // console.log(86, modalres);
           if (modalres) {
             // 打开设置页面
             let settingres = await openSetting();
-            console.log(settingres);
+            // console.log(settingres);
             if (settingres["scope.userLocation"]) {
               // 已打开定位
               wx.showToast({
@@ -175,7 +175,7 @@ export default {
                 duration: 1000
               });
               let location = await chooselocation();
-              console.log(location);
+              // console.log(location);
             } else {
               wx.showToast({
                 title: "您没有打开定位",
@@ -187,7 +187,7 @@ export default {
         }
       } else {
         let location = await chooselocation();
-        console.log(location);
+        // console.log(location);
         this.location = location.name;
       }
     },
@@ -202,7 +202,7 @@ export default {
         wx.getStorage({
         key: x,
         success(res) {
-          console.log(res);
+          // console.log(res);
           
           if(res && res.length){
             resolve(res.data)
@@ -220,7 +220,7 @@ export default {
     },
     selectaddress(){
       let address = wx.getStorageSync('address')
-      console.log(address);
+      // console.log(address);
       if(!address || address.length == 0 || address.length == {} ){
         return wx.showModal({
           title:"提示",
@@ -242,7 +242,7 @@ export default {
       // this.showedit = true
     },
     async paynow() {
-      console.log(this.which);
+      // console.log(this.which);
       var self = this
       if(!this.which ){
         return wx.showToast({
@@ -286,17 +286,17 @@ export default {
         },
         success:async function(res) {
           wx.hideLoading();
-          console.log('统一下单返回：');
-          console.log(res.data);
+          // console.log('统一下单返回：');
+          // console.log(res.data);
           if(res.data.code == 1 && res.data.success){
-            console.log('支付中');
+            // console.log('支付中');
             let payres = await wxpay( res.data.data );
-            console.log('payres', payres)
-            console.log('支付流程结束，支付成功~')
+            // console.log('payres', payres)
+            // console.log('支付流程结束，支付成功~')
             if(payres.errMsg == 'requestPayment:ok'){
               // 前端订单支付完成 等待商家核验（等待微信通知回调） 
               let clientpaidres = await clientpaid(res.data.data)
-              console.log('前端订单支付完成 等待商家核验');
+              // console.log('前端订单支付完成 等待商家核验');
               
               wx.showToast({
                 title: clientpaidres.msg, 
@@ -340,8 +340,8 @@ export default {
           }
         },
         fail: function(err) {
-          console.log(err);
-          console.log('支付流程结束，支付失败~')
+          // console.log(err);
+          // console.log('支付流程结束，支付失败~')
           // wx.hideLoading();
           wx.showToast({
               title: '下单失败,请先登录', 
@@ -364,9 +364,9 @@ export default {
 
     },
     radioChange(x){
-      console.log(x.mp.detail.value);
+      // console.log(x.mp.detail.value);
       let k = parseInt(x.mp.detail.value)
-      console.log(k,this.address[k] );
+      // console.log(k,this.address[k] );
 
       let xx = this.address[k]
       let arr = xx.nationalCode.split('')
@@ -375,13 +375,13 @@ export default {
       this.countrycode = arr[4] + arr[5]
 
       let yy = JSON.stringify(this.address[k])
-      console.log(yy);
+      // console.log(yy);
       
       this.which = yy
     },
     radioChange1(k){
-      console.log(k);
-      console.log(k,this.address[k] );
+      // console.log(k);
+      // console.log(k,this.address[k] );
       
       this.address.map(function(v,i){
         delete v.checked
@@ -397,7 +397,7 @@ export default {
       this.countrycode = arr[4] + arr[5]
 
       let yy = JSON.stringify(this.address[k])
-      console.log(yy);
+      // console.log(yy);
       
       this.which = yy
       
@@ -406,7 +406,7 @@ export default {
   onShow(){
     this.count = 1
     let {goodsdetail, origin} = this.$root.$mp.query
-    console.log(goodsdetail);
+    // console.log(goodsdetail);
     this.goodsdetail = JSON.parse(goodsdetail)
     this.origin = origin
 

@@ -258,7 +258,7 @@ export default {
           }
         })
       })
-      console.log(self.selectedlist);
+      // console.log(self.selectedlist);
     },
     plus(x){
       var self = this;
@@ -274,10 +274,10 @@ export default {
           }
         })
       })
-      console.log(self.selectedlist);
+      // console.log(self.selectedlist);
     },
     tabChange(e) {
-      console.log(e.mp.detail);
+      // console.log(e.mp.detail);
       this.tabkey = e.mp.detail.key
       this.selectedlist = {
         platform:[],
@@ -294,9 +294,9 @@ export default {
         user:[]
       }
       self.total = 0
-      console.log(e);
-      console.log(origin);
-      console.log(uploadUser);
+      // console.log(e);
+      // console.log(origin);
+      // console.log(uploadUser);
       let arr = e.mp.detail.value;// 所有选中商品的id
       arr.map(function(v,i){
         self.selectedlist[self.tabkey][i] = {}
@@ -305,7 +305,7 @@ export default {
         self[self.tabkey].map(function(v1, i1){// 当前origin下的所有商品
           if(v1._id == v){
             // id一致时 拿到其数量
-            console.log(v1);
+            // console.log(v1);
             self.selectedlist[self.tabkey][i].count = v1.count
             self.selectedlist[self.tabkey][i].name = v1.name
             self.selectedlist[self.tabkey][i].uploadUser = v1.uploadUser
@@ -318,7 +318,7 @@ export default {
     selectaddress(){
       // 读收货地址
       let address = wx.getStorageSync('address')
-      console.log(address);
+      // console.log(address);
       if(!address || address.length == 0 || address == {} ){
         return wx.showModal({
           title:"提示",
@@ -345,8 +345,8 @@ export default {
       })
     },
     radioChange(k){
-      console.log(k);
-      console.log(k,this.address[k] );
+      // console.log(k);
+      // console.log(k,this.address[k] );
       
       this.address.map(function(v,i){
         delete v.checked
@@ -362,7 +362,7 @@ export default {
       this.countrycode = arr[4] + arr[5]
 
       let yy = JSON.stringify(this.address[k])
-      console.log(yy);
+      // console.log(yy);
       
       this.receipt = yy
       
@@ -385,7 +385,7 @@ export default {
                 mask: true
               });
       }
-      console.log(self.selectedlist);
+      // console.log(self.selectedlist);
       // 选择 收货地址和填写备注
       
       // return
@@ -410,17 +410,17 @@ export default {
         },
         success: async function(res) {
           wx.hideLoading();
-          console.log("统一下单返回：");
-          console.log(res.data);
+          // console.log("统一下单返回：");
+          // console.log(res.data);
           if (res.data.code == 1 && res.data.success) {
-            console.log("支付中");
+            // console.log("支付中");
             let payres = await wxpay(res.data.data);
-            console.log("payres", payres);
-            console.log("支付流程结束，支付成功~");
+            // console.log("payres", payres);
+            // console.log("支付流程结束，支付成功~");
             if (payres.errMsg == "requestPayment:ok") {
               // 前端订单支付完成 等待商家核验（等待微信通知回调）
               let clientpaidres = await clientpaid(res.data.data);
-              console.log("前端订单支付完成 等待商家核验");
+              // console.log("前端订单支付完成 等待商家核验");
 
               wx.showToast({
                 title: clientpaidres.msg,
@@ -463,8 +463,8 @@ export default {
           self.showmodal = false
         },
         fail: function(err) {
-          console.log(err);
-          console.log("支付流程结束，支付失败~");
+          // console.log(err);
+          // console.log("支付流程结束，支付失败~");
           // wx.hideLoading();
           wx.showToast({
             title: "下单失败,请先登录",
@@ -517,7 +517,7 @@ export default {
           }
         },
         fail: function(err) {
-          console.log(err);
+          // console.log(err);
           // wx.removeTabBarBadge({
           //   index : 3
           // })
@@ -528,7 +528,7 @@ export default {
           });
         },
         complete: function() {
-          console.log("456456456456456");
+          // console.log("456456456456456");
 
           wx.stopPullDownRefresh();
           wx.hideLoading();

@@ -75,7 +75,7 @@ export default {
     },
   },
   async onLoad() {
-    console.log("onload");
+    // console.log("onload");
     wx.showShareMenu({
       withShareTicket: true
     });
@@ -102,7 +102,7 @@ export default {
 
     })
     let query = await this.reverseGeocoder(longitude , latitude)
-    console.log(query);
+    // console.log(query);
     
   }
 };

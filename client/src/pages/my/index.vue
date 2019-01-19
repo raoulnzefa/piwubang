@@ -54,7 +54,8 @@
       <div class="list" @click="toaddress">收货地址
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
-      <div class="list">联系我们
+      <div class="list">
+        <button class="contact" open-type='contact'>联系我们</button>
         <i class="iconfont icon-tubiao_xiangyou"></i>
       </div>
       <div class="list" @click="tomymoney">我的余额
@@ -107,9 +108,9 @@ export default {
       withShareTicket: true
     })
     // this.getUserInfo()
-    console.log('my onload');
+    // console.log('my onload');
     let loginstate = this.globalData.loginstate;
-    console.log(loginstate);
+    // console.log('loginstate@my',loginstate);
     if(loginstate === true){
       this.userInfo = this.globalData.userInfo
       this.logged = true
@@ -155,13 +156,13 @@ export default {
       // 调用登录接口
       
       const session = qc.Session.get();
-      console.log('session：',session);
+      // console.log('session：',session);
 
       let checkscoperes = await checkscope('scope.userInfo')
-      console.log( 'my checkscoperes' ,checkscoperes);
+      // console.log( 'my checkscoperes' ,checkscoperes);
       
       if ( session ){
-        console.log('二次登录');
+        // console.log('二次登录');
         // 第二次登录
         // 或者本地已经有登录态
         // 可使用本函数更新登录态
@@ -188,7 +189,7 @@ export default {
       } else {
       //   // 首次登录
         this.showBusy("正在登录");
-        console.log('首次登录');
+        // console.log('首次登录');
         qc.login({
           success: res => {
             self.userInfo = res
@@ -324,6 +325,7 @@ $maincolor: #ce4031;
     }
   }
   .btm {
+    font-size: 32rpx;
     .list {
       display: flex;
       flex-direction: row;
@@ -331,6 +333,19 @@ $maincolor: #ce4031;
       height: 75rpx;
       justify-content: space-between;
       border-bottom: 1px solid #eee;
+    }
+    .contact{
+      background-color: #fff;
+      color: #000;
+      border: 1px solid transparent;
+      margin: 0;
+      height: 70rpx;
+      line-height: 70rpx;
+      padding: 0;
+      font-size: 32rpx;
+    }
+    button::after{
+      border: 0;
     }
   }
   .footer{

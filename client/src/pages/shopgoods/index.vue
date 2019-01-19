@@ -76,7 +76,7 @@ export default {
           shopid: self.shopid
         },
         success(res){
-          console.log(res);
+          // console.log(res);
           if(res.data.success){
             self.goodslist = res.data.data
           }else{
@@ -84,11 +84,11 @@ export default {
           }
         },
         fail(err){
-          console.log(err);
+          // console.log(err);
           self.goodslist = []
         },
         complete(){
-          console.log('complete');
+          // console.log('complete');
           wx.hideLoading()
         }
       })
@@ -122,7 +122,7 @@ export default {
     this.latitude = latitude
     this.citylabel1 = citylabel1
     this.citylabel2 = citylabel2
-    console.log(shopid, shopname, logo, longitude, latitude, citylabel1, citylabel2);
+    // console.log(shopid, shopname, logo, longitude, latitude, citylabel1, citylabel2);
     
     this.getshopgoods()
   }

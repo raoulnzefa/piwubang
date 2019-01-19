@@ -26,6 +26,7 @@
         </i-card>
       </div>
     </div>
+    <div class="spacing"></div>
     <div class="fabu">
       <button hover-class="btnhover" @click="togoodsupload">我要发布</button>
     </div>
@@ -77,14 +78,14 @@ export default {
   },
   methods: {
     onChange(e){
-      console.log(e);
+      // console.log(e);
       wx.setStorageSync("mycommunity", {
         name: e.label ,
         _id: e.value[0]
       });
     },
     onConfirm(e){
-      console.log(e);
+      // console.log(e);
       wx.setStorageSync("mycommunity", {
         name: e.label ,
         _id: e.value[0]
@@ -111,7 +112,7 @@ export default {
               v.value = v._id
             })
             self.communities = data
-            console.log(self.communities);
+            // console.log(self.communities);
             self.$refs.mpPicker.show();
             self.tip = ''
             self.tipshow = false
@@ -150,7 +151,7 @@ export default {
           wx.stopPullDownRefresh()
           let data = res.data.data
           self.goodslist = data
-          console.log(self.goodslist);
+          // console.log(self.goodslist);
           if(data && data.length > 0){
             self.tip = ''
             self.tipshow = false
@@ -179,12 +180,12 @@ export default {
       try {
         let location = (await chooselocation()) || {};
         this.location = location.name || "切换位置";
-        console.log(location);
+        // console.log(location);
         let querycode = await this.reverseGeocoder(
           location.longitude,
           location.latitude
         );
-        console.log("querycode:", querycode);
+        // console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
         // console.log( "this.mypositioncode:", this.mypositioncode );
         // this.searchbangzhu()
@@ -207,13 +208,13 @@ export default {
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(46, locationAuth);
+      // console.log(46, locationAuth);
       if (!locationAuth) {
-        console.log("未授权过，唤起授权窗口");
+        // console.log("未授权过，唤起授权窗口");
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(49, locationAuthRes);
+        // console.log(49, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
-          console.log("同意授权");
+          // console.log("同意授权");
           this.showopensettingbtn = false;
           // 同意
           let location = (await chooselocation()) || {};
@@ -221,9 +222,9 @@ export default {
             location.longitude,
             location.latitude
           );
-          console.log("querycode:", querycode);
+          // console.log("querycode:", querycode);
           this.mypositioncode = querycode.result.ad_info.adcode;
-          console.log("this.mypositioncode:", this.mypositioncode);
+          // console.log("this.mypositioncode:", this.mypositioncode);
           this.location = location.name || "切换位置";
 
           // this.searchbangzhu()
@@ -231,7 +232,7 @@ export default {
           
           wx.setStorageSync("zutuanposition", location);
         } else {
-          console.log("拒绝授权");
+          // console.log("拒绝授权");
           // 拒绝过
           this.showopensettingbtn = true;
           let modalres = await modal({
@@ -239,20 +240,20 @@ export default {
             // cancelText: "放弃组团",
             confirmText: "好"
           });
-          console.log(65, modalres);
+          // console.log(65, modalres);
           if (modalres) {
             // 需要用户打开设置 开启定位
           }
         }
       } else {
         this.showopensettingbtn = false;
-        console.log("已授权");
+        // console.log("已授权");
       }
     },
     async opensetting() {
       // 打开设置页面
       let settingres = await openSetting();
-      console.log(settingres);
+      // console.log(settingres);
       if (settingres["scope.userLocation"]) {
         this.showopensettingbtn = false;
         // 已打开定位
@@ -298,11 +299,11 @@ export default {
         },
         success(res){
           wx.hideLoading()
-          console.log(res);
+          // console.log(res);
           self.bangzhulist = res.data.data
         },
         fail(err){
-          console.log(err);
+          // console.log(err);
           self.bangzhulist = []
           wx.hideLoading()
           wx.showToast({
@@ -312,7 +313,7 @@ export default {
           })
         },
         complete(){
-          console.log('complete');
+          // console.log('complete');
           wx.hideLoading()
           wx.stopPullDownRefresh()
         }
@@ -326,11 +327,11 @@ export default {
           code: self.mypositioncode
         },
         success(res){
-          console.log(res);
+          // console.log(res);
           self.nearuserlist = res.data.data
         },
         fail(err){
-          console.log(err);
+          // console.log(err);
           self.nearuserlist = []
         }
       })
@@ -360,7 +361,7 @@ export default {
           openid: who
         },
         success(res){
-          console.log(res);
+          // console.log(res);
         },
         fail(err){
           wx.hideLoading()
@@ -369,7 +370,7 @@ export default {
             title:'请求失败，请检查网络',
             duration: 2000
           })
-          console.log(err);
+          // console.log(err);
         }
       })
     },
@@ -394,13 +395,13 @@ export default {
     },
     async init(){
       
-      console.log("onload");
+      // console.log("onload");
       wx.showShareMenu({
         withShareTicket: true
       });
       // 获取storage中存出的地址
       let zutuanposition = wx.getStorageSync("zutuanposition") || {};
-      console.log(zutuanposition);
+      // console.log(zutuanposition);
       // if(!zutuanposition){
       //   this.changelocation()
       // }
@@ -411,9 +412,9 @@ export default {
           zutuanposition.longitude,
           zutuanposition.latitude
         );
-        console.log("querycode:", querycode);
+        // console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
-        console.log("this.mypositioncode:", this.mypositioncode);
+        // console.log("this.mypositioncode:", this.mypositioncode);
         // this.searchbangzhu()
         // this.searchzutuanuser()
 
@@ -532,5 +533,8 @@ $maincolor: #ce4031;
   .btnhover {
     background-color: rgb(138, 0, 0);
   }
+}
+.spacing{
+  height: 100rpx;
 }
 </style>

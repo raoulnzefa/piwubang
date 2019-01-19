@@ -184,7 +184,7 @@ export default {
         })
     },
     getUserInfo() {
-      console.log("getuserinfo");
+      // console.log("getuserinfo");
 
       // 调用登录接口
       wx.login({
@@ -200,14 +200,14 @@ export default {
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
-      console.log(66, locationAuth);
+      // console.log(66, locationAuth);
       if (!locationAuth) {
         let locationAuthRes = await authorize("scope.userLocation");
-        console.log(75, locationAuthRes);
+        // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
           // 同意
           let location = await chooselocation();
-          console.log(location);
+          // console.log(location);
         } else {
           // 拒绝了
           let modalres = await modal({
@@ -215,11 +215,11 @@ export default {
             cancelText: "放弃推荐",
             confirmText: "打开定位"
           });
-          console.log(86, modalres);
+          // console.log(86, modalres);
           if (modalres) {
             // 打开设置页面
             let settingres = await openSetting();
-            console.log(settingres);
+            // console.log(settingres);
             if (settingres["scope.userLocation"]) {
               // 已打开定位
               wx.showToast({
@@ -228,7 +228,7 @@ export default {
                 duration: 1000
               });
               let location = await chooselocation();
-              console.log(location);
+              // console.log(location);
             } else {
               wx.showToast({
                 title: "您没有打开定位",
@@ -240,7 +240,7 @@ export default {
         }
       } else {
         let location = await chooselocation();
-        console.log(location);
+        // console.log(location);
         this.location = location.name;
       }
     },
@@ -249,7 +249,7 @@ export default {
       try {
         let location = (await chooselocation()) || null;
         this.location = location.name || "切换位置";
-        console.log(location);
+        // console.log(location);
         this.form.citylabel = location.address+' '+location.name;
         this.form.longitude = location.longitude;
         this.form.latitude = location.latitude;
@@ -258,7 +258,7 @@ export default {
           location.longitude,
           location.latitude
         );
-        console.log("querycode:", querycode);
+        // console.log("querycode:", querycode);
 
         this.form.code = querycode.result.ad_info.adcode;
         
@@ -294,16 +294,16 @@ export default {
       });
     },
     citychange({label, value, cityCode}){
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
       
     },
     cityconfirm({label, value, cityCode}){
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
       this.citylabel = label
       this.code = cityCode
     },
     citycancel({label, value, cityCode}){
-      console.log(label, value, cityCode);
+      // console.log(label, value, cityCode);
 
     },
     showcitypicker(){
@@ -335,8 +335,8 @@ export default {
         success: function(res){
           let data = JSON.parse(res.data)
           
-          console.log(data.data);
-          console.log(data.data.imgUrl);
+          // console.log(data.data);
+          // console.log(data.data.imgUrl);
           
           if(data.data.imgUrl){
             self.imgurls[which]= data.data.imgUrl
@@ -375,7 +375,7 @@ export default {
 
       let {formId, value} = data.mp.detail
       
-      console.log(value);
+      // console.log(value);
       
       // 数据校验
       for (const key in value) {
@@ -392,7 +392,7 @@ export default {
         }
       }
       
-      console.log(formId , value);
+      // console.log(formId , value);
       let arr = value.code.split('')     // 110201
       value.provincecode = arr[0]+arr[1] // 11
       value.citycode =     arr[2]+arr[3] // 02
@@ -411,7 +411,7 @@ export default {
         data:{formId , ...value},
         url: conf.service.bangzhuapplyUrl,
         success(res){
-          console.log(res);
+          // console.log(res);
 
           // if(res.data.code == ){
 

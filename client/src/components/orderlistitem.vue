@@ -23,11 +23,9 @@
         </div>
       </div>
       <div class="d">
-          <button plain type="warn">删除订单</button>
+          <button plain type="warn" @click='deleteOrder()'>删除订单</button>
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -63,6 +61,11 @@ export default {
     }
   },
   computed: {},
+  methods: {
+    deleteOrder(){
+
+    }
+  },
 };
 </script>
 

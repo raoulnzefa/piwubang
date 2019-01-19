@@ -44,11 +44,11 @@ export default {
           openid: openid
         },
         success(res){
-          console.log(res);
+          // console.log(res);
           self.goodslist = res.data.data
         },
         fail(err){
-          console.log(err);
+          // console.log(err);
           self.goodslist = []
         }
       })
@@ -74,7 +74,7 @@ export default {
       });
     }
     let openid = this.$root.$mp.query.openid
-    console.log(openid);
+    // console.log(openid);
     if(openid){
       this.searchgoods(openid)
     }

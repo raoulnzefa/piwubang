@@ -9,7 +9,7 @@ function save(key, data) {
       d: data
     })
   } catch (e) {
-    console.log(`存储失败，原因：${e}`);
+    // console.log(`存储失败，原因：${e}`);
     
   }
 }

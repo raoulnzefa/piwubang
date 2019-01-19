@@ -79,7 +79,7 @@ function login (opts) {
             method: opts.method,
             success (result) {
                 const data = result.data;
-                console.log('微信登录结果，result：',result);
+                // console.log('微信登录结果，result：',result);
                 if (!data || data.code !== 0 || !data.data || !data.data.skey) {
                     return opts.fail(new Error(`响应错误，${JSON.stringify(data)}`))
                 }
@@ -136,7 +136,7 @@ function loginWithCode (opts) {
                 method: opts.method,
                 success (result) {
                     const data = result.data;
-                    console.log('微信登录结果，result：',result.data);
+                    // console.log('微信登录结果，result：',result.data);
                     if (!data || data.code !== 0 || !data.data || !data.data.skey) {
                         return opts.fail(new Error(`用户未登录过，请先使用 login() 登录`))
                     }

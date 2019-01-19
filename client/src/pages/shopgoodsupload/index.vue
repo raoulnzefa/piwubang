@@ -247,30 +247,30 @@ export default {
     },
     pickerchange(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
       this.form._start = date
     },
     pickerchange1(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
       this.form._end = date
     },
     pickerchange2(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
       this.form.deliveryTime = date
     },
     pickercancel(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
     },
     pickercancel1(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
     },
     pickercancel2(x){
       let date = x.mp.detail.value
-      console.log(date);
+      // console.log(date);
     },
     upLoadSuccess(res, which) {
       var self = this;
@@ -296,12 +296,12 @@ export default {
         filePath: filePath,
         name: "file",
         success: function(res) {
-          console.log(res);
+          // console.log(res);
 
           let format = JSON.parse(res.data);
 
-          console.log(format.data);
-          console.log(format.data.imgUrl);
+          // console.log(format.data);
+          // console.log(format.data.imgUrl);
 
           if (format.data.imgUrl) {
             self.form.urls[which] = format.data.imgUrl;
@@ -339,7 +339,7 @@ export default {
       let obj = data.mp.detail;
       let { formId} = obj;
       let formvalue = obj.value
-      console.log(formvalue);
+      // console.log(formvalue);
 
       formvalue.urls=[formvalue.urls0 ,formvalue.urls1 , formvalue.urls2 ]
      
@@ -370,7 +370,7 @@ export default {
         data: { formId, ...formvalue },
         url: conf.service.roundshopgoodsuploadUrl,
         success(res) {
-          console.log(res);
+          // console.log(res);
           wx.hideLoading();
           wx.showToast({
             title: res.data.msg,
@@ -394,7 +394,7 @@ export default {
       });
     },
     radioChange(e) {
-      console.log("deliveryMethods:", e.mp.detail.value);
+      // console.log("deliveryMethods:", e.mp.detail.value);
       this.deliveryMethods = e.mp.detail.value;
     },
     reverseGeocoder(longitude, latitude) {

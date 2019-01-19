@@ -53,6 +53,9 @@ router.get('/addtocart', validationMiddleware, controllers.addtocart)
 
 // GET !!! 小程序统一下单
 router.get('/prepay', validationMiddleware, unifiedorder)
+router.post('/prepay', validationMiddleware, unifiedorder)
+// router.get('/prepay', validationMiddleware, controllers.prepay)
+
 
 // GET !!! 小程序获取收货地址列表
 router.get('/addresslist', validationMiddleware, controllers.addresslist)

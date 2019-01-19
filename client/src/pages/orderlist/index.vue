@@ -43,7 +43,8 @@ import orderlistItem from '@/components/orderlistitem';
  * 8 : (接着7) 后台确认订单，如果没问题，退虚拟金到其余额，订单置为8，即已退虚拟金，并且订单关闭，除了删除无法再操作，订单完结（2）。可以做的事：删除订单
  * 9 : 用户发起了退款申请，且是status=6时发起退款申请的。要求输入退货运单号，然后提交申请，商家进入待收退货阶段，
  * 10：(接着9)收到退货后通过后台退虚拟金到其余额，并修改订单状态为10，表明已退，关闭订单，无法再操作，订单完结（3）。可以做的事：删除订单
- * 11 : 该订单的钱已通过提现 真正的返还到他账户中
+ * 11 : 发起提现
+ * 12 : 该订单的钱已通过提现 真正的返还到他账户中
  * 特别注意：cSessionInfo表中将加入refund字段，值是一个数组，格式是字符串,例如：
  * [{
  *   orderid:"adasdas8a7s9d87",
@@ -108,17 +109,15 @@ export default {
           self.unpay = res.data.data.filter(function(v, i){
             return v.status == 1 || v.status == 2
           })
-          self.undelivery = res.data.data.filter(function(v, i){
-            return v.status == 3 || v.status == 4
-          })
+          self.undelivery = []
           self.delivery = res.data.data.filter(function(v, i){
-            return v.status == 5
+            return v.status == 3 || v.status == 4 || v.status == 5
           })
           self.over = res.data.data.filter(function(v, i){
-            return v.status == 6 || v.status == 7 || v.status == 9
+            return v.status == 6 || v.status == 8 || v.status == 9 || v.status == 10 || v.status == 12
           })
           self.service = res.data.data.filter(function(v, i){
-            return v.status == 7 || v.status == 8 || v.status == 9
+            return v.status == 7 || v.status == 9 || v.status == 11
           })
           self.which = self[self.tabstate[self.index]]
           

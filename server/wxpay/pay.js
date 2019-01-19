@@ -32,7 +32,7 @@
  * @author shenjie
  *
  * Created at     : 2018-12-17 16:14:34 
- * Last modified  : 2019-01-10 15:14:50
+ * Last modified  : 2019-01-18 17:53:53
  */
 var request = require('request');
 var xmlreader = require("xmlreader");
@@ -72,52 +72,103 @@ const unifiedorder = async (ctx, next) => {
     // console.log('ctx.query:');
     // console.log(ctx.query);
     // console.log('-------------');
-
+    console.log('ctx.request.body:');
+    console.log(ctx.request.body);
+    // origin: self.tabkey,
+    // goodslist: self.selectedlist[self.tabkey],
+    // receipt: self.receipt,
+    // beizhu: self.beizhu,
+    // provincecode:self.provincecode,
+    // citycode:self.citycode,
+    // countrycode:self.countrycode,
     // 用户信息 存储于 ctx.state.$wxInfo
     console.log(ctx.state.$wxInfo);
     // STEP1 用户校验
     if(!ctx.state.$wxInfo || ctx.state.$wxInfo.loginState !== 1 ){
-        ctx.body = {
+        return ctx.body = {
             code:0,
             data:{},
             success:false,
             msg:"用户尚未登录"
         }
-        return
+        
     }
     // STEP2 拿到前端传过来的参数 查询商品，计算价格
-    let {_id, count , receipt, beizhu, provincecode, citycode, countrycode, origin} = ctx.query
-    console.log(`APP传过来的参数是：goodsid:${_id},count:${count},receipt:${receipt},beizhu:${beizhu},provincecode:${provincecode},citycode:${citycode},countrycode:${countrycode},origin:${origin}` );
+    // let {_id, count , receipt, beizhu, provincecode, citycode, countrycode, origin} = ctx.query
+    let { origin, goodslist, receipt, beizhu, provincecode, citycode, countrycode, from } = ctx.request.body
+
+    console.log(`goodslist:${goodslist},receipt:${receipt},beizhu:${beizhu},provincecode:${provincecode},citycode:${citycode},countrycode:${countrycode},origin:${origin}，from:${from}` );
+    // 校验origin
     if(origin === 'platform'){
         var table = 't_product'
     }else if(origin === 'bangzhu'){
         var table = 't_product_zutuan'
     }else if(origin === 'user'){
+        var table = 't_product_zutuan'
+    }else{
         return ctx.body = {
-            code:"GOODS_FROM_USER_CANNOT_BUY",
+            code:"ORDER_GOODS_ORIGIN_MISSED",
             success:false,
             data:null,
-            msg:"普通用户商品不可购买"
+            msg:"订单商品信息有误，请重新下单"
         }
     }
-    let goodsinfo = await knex(table).where({
-        _id
-      }).first()
-    console.log('goodsinfo:', goodsinfo);
-    if(!goodsinfo || goodsinfo == {}){
+    // 校验订单商品数量
+    if(!goodslist || goodslist.length<1){
         return ctx.body = {
-            code:0,
+            code:"ORDER_NO_ANY_GOODS",
             success:false,
-            data:{},
-            msg:"该商品不存在"
+            data:null,
+            msg:"订单中没有任何商品，请重新下单"
         }
-        
     }
-    let singleprice = goodsinfo.currentPrice ;
-    let goodsname = goodsinfo.name ;
-    let uploadUser = goodsinfo.uploadUser || 'platform' ;
-    let total_price = (singleprice * 10 * 10) * count  ;
-    console.log('total_price:',total_price);
+    // 校验收货地址
+    if(!receipt){
+        return ctx.body = {
+            code:"ORDER_NO_ANY_GOODS",
+            success:false,
+            data:null,
+            msg:"订单中没有任何商品，请重新下单"
+        }
+    }
+    try {
+    // 生成商品id的数组 以及商品数量的对象
+    let idlist = [] // [ 'bzjhg12jh3g12g' , 'bzk12g3h2gjhd' ]
+    let countObj = {} //{ bzjhg12jh3g12g : 4, bzk12g3h2gjhd : 2 }
+    goodslist.map(function(v,i){
+        idlist.push(v._id)
+        countObj[v._id] = v.count
+    })
+
+    // 查询商品信息
+    
+        let goodsinfo = await knex(table).whereIn('_id', idlist).limit(idlist.length)
+        console.log('goodsinfo:', goodsinfo);
+        
+        if(!goodsinfo || goodsinfo.length<1 || goodsinfo.length != idlist.length){
+            return ctx.body = {
+                code:'ORDER_GOODS_QUERY_NOT_EXIST',
+                success:false,
+                data:null,
+                msg:"未查询到订单内商品"
+            }
+        }
+    
+    // 计算总价
+    var total_price = 0
+    goodsinfo.map(function(v,i){
+        let singleprice = v.currentPrice ;
+        let goodsname = v.name ;
+        let uploadUser = v.uploadUser  ;// 平台：'platform'
+        // 把单件商品价格累加到总价
+        total_price += (singleprice * 10 * 10) * countObj[v._id]  ;
+    })
+    console.log(`totalprice:${total_price}`);
+    
+    // let singleprice = goodsinfo.currentPrice ;
+    // let goodsname = goodsinfo.name ;
+    // let uploadUser = goodsinfo.uploadUser || 'platform' ;
+    // let total_price = (singleprice * 10 * 10) * count  ;
     
     // STEP3 组装数据，签名
     // let orderid = "asc4as1cas1c3" 
@@ -309,17 +360,18 @@ const unifiedorder = async (ctx, next) => {
                             _createtime,
                             endtime,
                             _endtime,
-                            goodsname ,
-                            goodsid: _id ,
-                            price: singleprice,
-                            count,
-                            receipt,
-                            beizhu,
-                            provincecode,
-                            citycode,
-                            countrycode,
-                            origin,
-                            bangzhuid:uploadUser,
+                            // goodsname ,
+                            // goodsid: _id ,
+                            // price: singleprice,
+                            // count,
+                            ordergoods: JSON.stringify(goodslist) , //前端直传
+                            receipt,               //前端直传
+                            beizhu,                //前端直传
+                            provincecode,          //前端直传
+                            citycode,              //前端直传
+                            countrycode,           //前端直传
+                            origin,                //前端直传
+                            // bangzhuid:uploadUser,
                             total_fee,
                             status:1, //未支付
                             prepay_id:  prepay_id, 
@@ -328,11 +380,9 @@ const unifiedorder = async (ctx, next) => {
                             package:   'prepay_id='+prepay_id, 
                             paySign:   paySign,
                             signType: "MD5",
-                            
                         })
                         console.log('save info:');
                         console.log(save);
-                        
                         
                         resolve({ 
                             'data':{
@@ -358,8 +408,56 @@ const unifiedorder = async (ctx, next) => {
         })
     }
     
-    let res = await getunifiedorder(url, formData )
-    ctx.body = res
+        let res = await getunifiedorder(url, formData )
+        ctx.body = res
+
+        // 从购物车删除订单商品信息
+        // 前端传的：goodslist=[{_id: "bz20190102449216006750366", count: 1, name: "椰子", uploadUser: "oxw_15Ul35xC40YCRmCxSgzl1trQ"}]
+        // 前端传的：origin=platform bangzhu user
+        if(from == 'cart'){
+            if(origin === 'platform'){
+                var col = 'platformgoods'
+            }else if(origin === 'bangzhu'){
+                var col = 'bangzhugoods'
+            }else if(origin === 'user'){
+                var col = 'usergoods'
+            }
+            let cartgoods = await knex('cart').first().where({openid})
+            if(cartgoods && cartgoods!={} && cartgoods!=undefined && cartgoods!='undefined'){
+                let goods = JSON.parse( cartgoods[col] ) || []
+                console.log('goods:');
+                console.log(goods);
+                console.log('goods.length:');
+                console.log(goods.length);
+                for(var k = goods.length-1; k>=0; k--){
+                    for (let j = 0; j < goodslist.length; j++) {
+                        console.log('goods[k]:',`K:${k}`);
+                        console.log(goods[k]);
+                        if(goods[k]._id == goodslist[j]._id){
+                            console.log('splice k:');
+                            console.log( k , j );
+                            goods.splice(k, 1)
+                            break;
+                        }
+                    }
+                }
+                goods = JSON.stringify(goods)
+                console.log('清除订单商品后的goods：');
+                console.log(goods);            
+                await knex('cart').update(col, goods).where({openid}).limit(1)
+            }
+        }
+    } catch (error) {
+        console.log('pay error:');
+        console.log(error);
+        
+        return ctx.body = {
+            code:'ORDER_GOODS_QUERY_ERROR',
+            success:false,
+            data:null,
+            msg:"系统错误，订单商品查询失败"
+        }
+    }
 }
 
 module.exports = unifiedorder

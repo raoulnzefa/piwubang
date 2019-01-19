@@ -266,19 +266,23 @@ export default {
       // 统一下单 生成订单号
       // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
       qc.request({
-        // login:true,
+        login:false,
         url: conf.service.prepayUrl,
-        // method:"POST",
+        method:"POST",
         data:{
-          count: self.count,
-          _id: self.goodsdetail._id,
+          origin: self.origin,
+          // count: self.count,
+          // _id: self.goodsdetail._id,
+          goodslist:[{
+            _id: self.goodsdetail._id,
+            count: self.count
+          }],
           receipt: self.which,
           beizhu:self.beizhu,
           provincecode: self.provincecode,
           citycode: self.citycode,
           countrycode: self.countrycode,
-          origin: self.origin,
-          goodslist: [self.goodsdetail._id]
+          from: 'goodsdetail'
         },
         success:async function(res) {
           wx.hideLoading();
@@ -322,13 +326,15 @@ export default {
             }
           }else{
             wx.showToast({
-              title: res.data.data.reason,
+              title: "系统错误，请重新下单",
               icon: 'none',
               duration: 2000,
               complete:function(){
-                wx.navigateBack({
-                  delta: 1
-                })
+                setTimeout(function(){
+                  // wx.navigateBack({
+                  //   delta: 1
+                  // })
+                },2000)
               }
             })
           }

@@ -148,41 +148,47 @@
     </checkbox-group>
     <div class="jiesuan">
       <span class="total">总价：￥{{total}}</span>
-      <button hover-class="btnhover" @click="paynow">结算</button>
+      <button hover-class="btnhover" @click="showmodal=true">结算</button>
     </div>
     <div class="none" v-if="shownone">
       <i class="iconfont icon-tubiao_gouwuche-copy"></i>
       <div>购物车空空如也~</div>
     </div>
-    <div>
-      <div class="main shouhuo">
-        <div class="u">
-          <span>收货地址</span>
-          <span class="add" @click='toaddress'>添加收货地址></span>
-        </div>
-        <div class="m">
-          <!-- @change="radioChange" -->
-          <radio-group class="radio-group" >
-            <label class="radio" v-for="(x,i) in address" :key="i" @click="radioChange1(i)">
-              <radio :value="i" :checked="x.checked" >
-              <div>
+    <div class="modal" v-if='showmodal'>
+      <div class="contain">
+        <div class="main shouhuo">
+          <div class="u">
+            <span>收货地址</span>
+            <span class="add" @click='toaddress'>添加收货地址></span>
+          </div>
+          <div class="m">
+            <!-- @change="radioChange" -->
+            <radio-group class="radio-group" >
+              <label class="radio" v-for="(x,i) in address" :key="i" @click="radioChange(i)">
+                <radio :value="i" :checked="x.checked" >
                 <div>
-                  {{x.userName}}-{{x.telNumber}}
+                  <div>
+                    {{x.userName}}-{{x.telNumber}}
+                  </div>
+                  <div>
+                    {{x.provinceName}}-{{x.cityName}}-{{x.countyName}}-{{x.detailInfo}}
+                  </div>
                 </div>
-                <div>
-                  {{x.provinceName}}-{{x.cityName}}-{{x.countyName}}-{{x.detailInfo}}
-                </div>
-              </div>
-              </radio>
-            </label>
-          </radio-group>
+                </radio>
+              </label>
+            </radio-group>
+          </div>
         </div>
-      </div>
       <div class="main beizhu">
         <div class="u">订单备注</div>
         <div class="m">
           <textarea v-model="beizhu" name="beizhu" id=""></textarea>
         </div>
+      </div>
+      <div class="footer">
+        <button class="btn cancelbtn" @click="showmodal=false">取消</button>
+        <button class="btn confirmbtn" hover-class='confirmhover' @click='paynow'>确认下单</button>
+      </div>
       </div>
     </div>
   </div>
@@ -223,8 +229,13 @@ export default {
         bangzhu:[],
         user:[]
       },
-      address: '',
-      beizhu: ''
+      address: [],
+      receipt:'',
+      beizhu: '',
+      provincecode:'',
+      citycode:'',
+      countrycode:'',
+      showmodal:false
     };
   },
   components: {
@@ -235,12 +246,15 @@ export default {
   methods: {
     minus(x){
       var self = this;
+      self.total = 0
       x.count>1?x.count--:'';
       // 读取选中的商品数量 
       self.selectedlist[self.tabkey].map(function(v,i){
         self[self.tabkey].map(function(v1,i1){
           if(v._id == v1._id){
             v.count = v1.count
+            // 计算价格
+            self.total += (v1.currentPrice * 10 * 10) * v1.count / 100
           }
         })
       })
@@ -248,12 +262,15 @@ export default {
     },
     plus(x){
       var self = this;
+      self.total = 0
       x.count++;
       // 读取选中的商品数量 
       self.selectedlist[self.tabkey].map(function(v,i){
         self[self.tabkey].map(function(v1,i1){
           if(v._id == v1._id){
             v.count = v1.count
+            // 计算价格
+            self.total += (v1.currentPrice * 10 * 10) * v1.count / 100
           }
         })
       })
@@ -267,6 +284,7 @@ export default {
         bangzhu:[],
         user:[]
       }
+      this.total = 0
     },
     selectgoods(e, origin, uploadUser) {
       var self = this;
@@ -275,51 +293,120 @@ export default {
         bangzhu:[],
         user:[]
       }
+      self.total = 0
       console.log(e);
       console.log(origin);
       console.log(uploadUser);
-      let arr = e.mp.detail.value;
+      let arr = e.mp.detail.value;// 所有选中商品的id
       arr.map(function(v,i){
         self.selectedlist[self.tabkey][i] = {}
         self.selectedlist[self.tabkey][i]._id = v
         // self.selectedlist[self.tabkey][i].count = self[self.tabkey]
-        self[self.tabkey].map(function(v1, i1){
+        self[self.tabkey].map(function(v1, i1){// 当前origin下的所有商品
           if(v1._id == v){
+            // id一致时 拿到其数量
             console.log(v1);
             self.selectedlist[self.tabkey][i].count = v1.count
+            self.selectedlist[self.tabkey][i].name = v1.name
+            self.selectedlist[self.tabkey][i].uploadUser = v1.uploadUser
+            // 计算价格
+            self.total += (v1.currentPrice * 10 * 10) * v1.count / 100
           }
         })
       })
+    },
+    selectaddress(){
+      // 读收货地址
+      let address = wx.getStorageSync('address')
+      console.log(address);
+      if(!address || address.length == 0 || address == {} ){
+        return wx.showModal({
+          title:"提示",
+          content:"请先添加收货地址",
+          success(res){
+            if(res){
+              wx.navigateTo({
+                url:"/pages/myaddress/main"
+              })
+            }else{
+
+            }
+          }
+        })
+      }
+      this.address = address
+      // this.address[0].checked = true
+      // this.which
+      // this.showedit = true
+    },
+    toaddress(){
+      wx.navigateTo({
+        url:'/pages/myaddress/main'
+      })
+    },
+    radioChange(k){
+      console.log(k);
+      console.log(k,this.address[k] );
+      
+      this.address.map(function(v,i){
+        delete v.checked
+      })
+
+      this.address[k].checked = true
+
+      let xx = this.address[k]
+
+      let arr = xx.nationalCode.split('')
+      this.provincecode = arr[0] + arr[1]
+      this.citycode = arr[2] + arr[3]
+      this.countrycode = arr[4] + arr[5]
+
+      let yy = JSON.stringify(this.address[k])
+      console.log(yy);
+      
+      this.receipt = yy
+      
     },
     async paynow() {
       var self = this
       if(self.selectedlist[self.tabkey].length<=0){
         return wx.showToast({
                 title: "尚未选择任何商品",
-                duration: 2500,
+                duration: 2000,
                 icon: "none",
                 mask: true
               });
       }
-      
+      if(!self.receipt){
+        return wx.showToast({
+                title: "尚未选择收货地址",
+                duration: 2000,
+                icon: "none",
+                mask: true
+              });
+      }
       console.log(self.selectedlist);
       // 选择 收货地址和填写备注
       
-      return
+      // return
       wx.showLoading({
         title: "Loading..."
       });
       // 统一下单 生成订单号
       // qcloud.request  https://github.com/tencentyun/wafer-client-sdk#request
       qc.request({
-        // login:true,
+        login:false,
         url: conf.service.prepayUrl,
-        // method:"POST",
+        method:"POST",
         data: {
           origin: self.tabkey,
           goodslist: self.selectedlist[self.tabkey],
-          address: self.address,
-          beizhu: self.beizhu
+          receipt: self.receipt,
+          beizhu: self.beizhu,
+          provincecode:self.provincecode,
+          citycode:self.citycode,
+          countrycode:self.countrycode,
+          from: 'cart'
         },
         success: async function(res) {
           wx.hideLoading();
@@ -373,6 +460,7 @@ export default {
               }
             });
           }
+          self.showmodal = false
         },
         fail: function(err) {
           console.log(err);
@@ -389,6 +477,8 @@ export default {
               });
             }
           });
+          self.showmodal = false
+
         },
         complete: function() {
           // wx.hideLoading();
@@ -468,6 +558,7 @@ export default {
       });
     }
     this.getcartgoods();
+    this.selectaddress()
   },
   onLoad() {
     wx.showShareMenu({
@@ -720,17 +811,77 @@ $maincolor: #ce4031;
     color: #b3b3b3;
   }
 }
-.beizhu{
-  .m{
-    padding-top: 10rpx;
-    font-size: 30rpx;
-    textarea{
-      border: 1rpx solid #e5e5e5;
-      width: 690rpx;
-      height: 200rpx;
-      border-radius: 12rpx;
-      padding: 10rpx;
+
+.modal{
+  width: 750rpx;
+  height: 100vh;
+  background: rgba(0, 0, 0, .4);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  .contain{
+    background: #fff;
+    border: 1rpx solid #ccc;
+    border-radius: 16rpx;
+    width: 700rpx;
+    margin: 0 auto;
+    .shouhuo{
+      .u{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      .m{
+        font-size: 30rpx;
+      }
+    }
+    .beizhu{
+      .m{
+        padding-top: 10rpx;
+        font-size: 30rpx;
+        textarea{
+          border: 1rpx solid #e5e5e5;
+          width: 690rpx;
+          height: 200rpx;
+          border-radius: 12rpx;
+          padding: 10rpx;
+        }
+      }
+    }
+    .footer{
+      padding: 16rpx 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .btn{
+        width: 38%;
+        height: 60rpx;
+        line-height: 60rpx;
+        font-size: 36rpx;
+        border-radius: 30rpx; 
+      }
+      .cancelbtn{
+        background: #fff;
+        border: 1rpx solid $maincolor;
+        color: $maincolor;
+      }
+      .confirmbtn{
+        background: $maincolor;
+        border: 1rpx solid $maincolor;
+        color: #fff ;
+      }
+      .confirmhover{
+        background: rgb(136, 1, 1);
+        border: 1rpx solid rgb(136, 1, 1);
+        color: rgb(192, 192, 192) ;
+      }
     }
   }
 }
+
 </style>

@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/index/main",
     "pages/cart/main",
     "pages/zutuan/main",
     "pages/bangzhuapply/main",
-    "pages/index/main",
     "pages/shopapply/main",
     "pages/bangzhugoods/main",
     "pages/my/main",

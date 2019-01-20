@@ -1,9 +1,16 @@
 <template>
   <div class="container">
-    <swiper indicator-dots="true" circular="true" next-margin="0" previous-margin="0">
+    <swiper v-if="goodsdetail.origin != 'platform'" indicator-dots="true" circular="true" next-margin="0" previous-margin="0">
       <block v-for="(x, i) in goodsdetail.urls" :key="i">
         <swiper-item>
           <img :src="x" class="slide-image" mode>
+        </swiper-item>
+      </block>
+    </swiper>
+    <swiper v-if="goodsdetail.origin == 'platform'" indicator-dots="true" circular="true" next-margin="0" previous-margin="0">
+      <block v-for="(x, i) in goodsdetail.urls" :key="i">
+        <swiper-item>
+          <img :src="x.url" class="slide-image" mode>
         </swiper-item>
       </block>
     </swiper>
@@ -12,7 +19,7 @@
     </div> -->
     <div class="head">
       <div class="title">{{goodsdetail.name}}</div>
-      <div class="brdesc" v-if="goodsdetail.origin == 'paltform'">{{goodsdetail.briefDesc}}</div>
+      <div class="brdesc" v-if="goodsdetail.origin == 'platform'">{{goodsdetail.briefDesc}}</div>
     </div>
     <!-- #f9ffea -->
     <div class="price">
@@ -27,7 +34,7 @@
             <div class="oldmoney">￥{{goodsdetail.oldPrice}}</div>
           </div>
         </div>
-        <div class="r" v-if="origin == 'paltform'">
+        <div class="r" v-if="origin == 'platform'">
           <div class="tag">各大商超价</div>
           <div
             class="marketprice"
@@ -54,23 +61,23 @@
             <span class='iconfont icon-round position'></span>
             <span class='position'>{{goodsdetail.deliveryArea || '商家未注明'}}</span>
           </div>
-          <div>组团时间 :{{goodsdetail._start+'~'+goodsdetail._end}}</div>
+          <div v-if="goodsdetail.origin!='platform'">组团时间 :{{goodsdetail._start+'~'+goodsdetail._end}}</div>
           <div>发货/提货时间 :{{goodsdetail.deliveryTime || '商家未注明'}}</div>
-          <div>可购区域 :<span>{{goodsdetail.targetArea_name || '商家未注明'}}</span> </div>
+          <!-- <div>可购区域 :<span>{{goodsdetail.targetArea_name || '商家未注明'}}</span> </div> -->
           <div class="tips"></div>
           <div>是否包邮 :{{goodsdetail.shipping?'包邮':'不包邮'}}</div>
       </div>
     </div>
-    <div class="fahuo" v-if="origin != 'platform'">
+    <div class="fahuo" v-if="goodsdetail.origin != 'platform'">
       <div class="u">[卖家提示]</div>
       <div>
         {{goodsdetail.tips}}
       </div>
     </div>
-    <div class="dtimgs" v-if="origin == 'paltform'">
+    <div class="dtimgs" v-if="goodsdetail.origin == 'platform'">
       <div>商品详情：</div>
       <div>
-        <img v-for='(x,i) in goodsdetail.dtimgs' :key='i' :src="x" alt="">
+        <img v-for='(x,i) in goodsdetail.detailImg' :key='i' :src="x.url" alt="">
       </div>
     </div>
     <div class="spacing">

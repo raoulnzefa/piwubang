@@ -180,24 +180,22 @@ export default {
       try {
         let location = (await chooselocation()) || {};
         this.location = location.name || "切换位置";
-        // console.log(location);
+        console.log(location);
         let querycode = await this.reverseGeocoder(
           location.longitude,
           location.latitude
         );
-        // console.log("querycode:", querycode);
+        console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
         // console.log( "this.mypositioncode:", this.mypositioncode );
-        // this.searchbangzhu()
-        // this.searchzutuanuser()
 
         // 获取该地区所有小区列表
         this.getCommunity()
 
-
-
         wx.setStorageSync("zutuanposition", location);
       } catch (error) {
+        console.log(error);
+        
         wx.showToast({
           title: '您没有选择定位',
           duration: 1500,

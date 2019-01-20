@@ -37,7 +37,7 @@
       <span class="l">*</span>
       <span class="m">是否能全职：</span>
       <span class="r">
-        <switch name='fulltime' :checked="form.fulltime" ></switch>
+        <switch name='fulltime' v-model="form.fulltime" ></switch>
       </span>
     </div>
     <div class="item line">

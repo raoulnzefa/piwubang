@@ -5,7 +5,11 @@
 // 此处主机域名修改成腾讯云解决方案分配的域名
 // var host = 'http://192.168.2.102:8899';
 // var host = 'http://192.168.1.146:8899';
-var host = 'http://111.231.78.250:8899';
+// var host = 'http://111.231.78.250:8899';
+var host = 'http://111.231.112.2:8899';
+// var host = 'http://www.tech997.cn:8899';
+
+
 
 
 
@@ -112,7 +116,7 @@ var config = {
         roundshopgoodsuploadUrl: `${host}/weapp/roundshopgoodsupload`,
 
     },
-    mapkey:'HOOBZ-FGYRX-3SC4H-ZDMLM-6ZJG6-V7BJD'
+    mapkey:'2XEBZ-7DR66-RFZSB-EM52P-TK7W7-3YFA3'
 };
 
 export default config;

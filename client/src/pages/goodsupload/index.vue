@@ -574,6 +574,19 @@ export default {
         });
       }
       
+      var community = wx.getStorageSync('mycommunity')
+      console.log(community);
+      
+      if(!community||community=={}){
+        return wx.showToast({
+          title:"请先选择一个小区",
+          duration:1500,
+          icon:'none'
+        })
+      }
+      var communityid = community._id
+
+
       let obj = data.mp.detail;
       let { formId} = obj;
       let formvalue = obj.value
@@ -609,7 +622,11 @@ export default {
       qc.request({
         // login:true,
         method: "POST",
-        data: { formId, ...formvalue },
+        data: { 
+          formId,
+          communityid,
+          ...formvalue
+        },
         url: conf.service.bangzhugoodsuploadUrl,
         success(res) {
           // console.log(res);

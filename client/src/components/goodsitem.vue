@@ -1,7 +1,7 @@
 <template>
   <div class="goodscon">
     <div class="l">
-      <img :src="goodsinfo.urls[0]" mode="aspectFill" alt="商品图片">
+      <img :src="goodsinfo.thumbnail" mode="aspectFill" alt="商品图片">
     </div>
     <div class="r">
       <div class="part1">{{goodsinfo.name}}</div>

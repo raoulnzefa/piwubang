@@ -196,6 +196,7 @@ export default {
         },
         complete(){
           wx.hideLoading()
+          wx.stopPullDownRefresh()
         }
       })
     }

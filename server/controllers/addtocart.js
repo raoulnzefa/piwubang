@@ -43,7 +43,7 @@ module.exports = async (ctx, next) => {
                 }
                 console.log('goodsinfo:', goodsinfo);
                 
-                if(!goodsinfo || goodsinfo.expired == 1 || parseInt(goodsinfo.remaining) <= 0){
+                if(!goodsinfo || goodsinfo.expired == 1 || parseInt(goodsinfo.stock) <= 0){
                     console.log('expired为1 或 remaining小于1');
                     // 无此商品
                     return ctx.body = {

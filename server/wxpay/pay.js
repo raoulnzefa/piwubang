@@ -32,7 +32,7 @@
  * @author shenjie
  *
  * Created at     : 2018-12-17 16:14:34 
- * Last modified  : 2019-01-18 17:53:53
+ * Last modified  : 2019-01-20 14:23:53
  */
 var request = require('request');
 var xmlreader = require("xmlreader");
@@ -288,7 +288,8 @@ const unifiedorder = async (ctx, next) => {
                                 code:0,
                                 success:false,
                                 data:{},
-                                msg:`统一下单接口调用失败。return_code是：${return_code},返回信息是：${return_msg}`
+                                msg:`统一下单接口调用失败。return_code是：${return_code},返回信息是：${return_msg}`,
+                                reason: return_msg
                             })
                             return
                         }

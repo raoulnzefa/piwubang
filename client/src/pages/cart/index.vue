@@ -324,7 +324,9 @@ export default {
           title:"提示",
           content:"请先添加收货地址",
           success(res){
-            if(res){
+            if(res.confirm){
+              console.log(res);
+              
               wx.navigateTo({
                 url:"/pages/myaddress/main"
               })
@@ -424,7 +426,9 @@ export default {
 
               wx.showToast({
                 title: clientpaidres.msg,
-                duration: 1500,
+                // title: '支付成功',
+
+                duration: 1600,
                 icon: "success",
                 mask: true,
                 complete: function() {
@@ -438,26 +442,23 @@ export default {
             } else {
               wx.showToast({
                 title: "支付失败",
-                duration: 1000,
+                duration: 1600,
                 icon: "none",
                 mask: true,
                 complete: function() {
-                  wx.navigateTo({
-                    url: "/pages/orderlist/main?index=0"
-                  });
+                  setTimeout(function(){
+                    wx.navigateTo({
+                      url: "/pages/orderlist/main?index=0"
+                    });
+                  },1500)
                 }
               });
             }
           } else {
             wx.showToast({
-              title: res.data.data.reason,
+              title: res.data.reason,
               icon: "none",
-              duration: 2000,
-              complete: function() {
-                wx.navigateBack({
-                  delta: 1
-                });
-              }
+              duration: 2000
             });
           }
           self.showmodal = false

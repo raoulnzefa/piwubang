@@ -5,7 +5,7 @@
       <div class="u">订单详情</div>
       <div class="m">
         <div class="l">
-          <img :src="goodsdetail.urls[0]" mode='widthFix' alt="">
+          <img :src="goodsdetail.thumbnail" mode='widthFix' alt="">
         </div>
         <div class="m">
           {{goodsdetail.name}}
@@ -39,10 +39,10 @@
           <td>发货时间 :</td>
           <td>{{goodsdetail.deliveryTime}}</td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td>可购区域 :</td>
           <td>{{goodsdetail.targetArea_name}}</td>
-        </tr>
+        </tr> -->
         <tr>
           <td>是否包邮 :</td>
           <td>{{goodsdetail.shipping?'包邮':'不包邮'}}</td>

@@ -16,7 +16,7 @@ const CONF = {
     tunnelServerUrl: '',
     tunnelSignatureKey: '',
     // 腾讯云存储的相关信息 见：https://console.qcloud.com/cos5/bucket/setting?type=filelist&bucketName=piwubang-1257779595&path=%252Ftestupload%252F&region=ap-shanghai
-    qcloudAppId: '1257779595', 
+    qcloudAppId: '1258545973', 
     qcloudSecretId: 'AKIDc5DzdAbt0xkJVYtTr6QeruoYfXHuCgpo', 
     qcloudSecretKey: 'JWgaO3awGnFf2IOL8lzsPuNtJYgEpuof', 
     /**
@@ -25,11 +25,12 @@ const CONF = {
      * 开发环境下，MySQL 的初始密码为您的微信小程序 appid
      */
     mysql: {
-        host: 'localhost',
+        // 172.17.0.13:3360
+        host: '172.17.0.13',
         db: 'pwb',
-        port: 3306,
+        port: 3360,
         user: 'root',
-        pass: 'root',
+        pass: 'piwubang@123',
         char: 'utf8mb4'
     },
     cos: {
@@ -41,12 +42,12 @@ const CONF = {
         // Bucket 名称
         fileBucket: 'piwubang',
         // 文件夹
-        uploadFolder: 'testupload'
+        uploadFolder: 'upload'
     },
     // 支付配置项
     payconf:{
-         appid :     'wx88152eef614c3441',
-         appsecret : '37971006ed3baa814e0de260131788cd',
+         appid :     'wx71b9095ab1c56852',
+         appsecret : '800d2439563462b1f494f76d9f79e81f',
          mchid :     '1515387251',  //商户号
          mchkey :    'TVU1MO18PS9YQLW58P2SENSEW6O46JIY', // 商户API密码
          wxurl :     'http://www.tech997.cn:8899/weapp/getnotification', // 下单后的通知地址

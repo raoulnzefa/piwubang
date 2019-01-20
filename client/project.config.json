@@ -9,7 +9,7 @@
 	},
 	"miniprogramRoot": "dist/wx/",
 	"compileType": "miniprogram",
-	"appid": "touristappid",
+	"appid": "wx71b9095ab1c56852",
 	"projectname": "piwubang",
 	"condition": {
 		"search": {

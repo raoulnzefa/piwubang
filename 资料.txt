@@ -1,0 +1,39 @@
+苏总
+身份证
+320322198001295919
+手机
+18652260829
+邮件
+114879457@qq.com
+
+公司名
+南京宝瓶智慧信息技术有限公司
+营业执照号码
+91320191MA1WC82166
+企业地址
+南京市江北新区星火路9号软件大厦B座3层304室
+企业法人
+段金贵
+座机
+69800012
+
+域名备案预计1个月
+域名备案必须要有服务器，申请备案服务号，用作备案流程
+域名备案服务号
+6ad60c31-68bd-400f-9798-aa1236bcb1c2
+
+
+腾讯云
+主账号id 100009081391 
+子账号 shenjie piwubang@123
+API id  AKIDauxn4RwU0xe65LgipsgXsIWgahcq2JVW
+key 6kAsY3eCcLmeSwMbPzmJeAQl1NUzEsPe
+
+地图key 
+2XEBZ-7DR66-RFZSB-EM52P-TK7W7-3YFA3
+
+小程序 appid wx71b9095ab1c56852
+secret 800d2439563462b1f494f76d9f79e81f
+
+阿里云
+piwubang  piwubang@123

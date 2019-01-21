@@ -11,7 +11,7 @@
     </div> -->
 
     <swiper indicator-dots="true" autoplay="true" interval="2500" duration="500" circular="true">
-      <block v-for="(x, i) in swiperUrls" :key="i">
+      <block v-for="(x, i) in swiperlist" :key="i">
         <swiper-item>
           <img :src="x.url" class="slide-image" mode="widthFix">
         </swiper-item>
@@ -76,23 +76,7 @@ export default {
       loginstate:this.globalData.loginstate,
       userInfo: {},
       location: "点击查看周边好物",
-      swiperUrls: [
-        {
-          id: 1,
-          url:
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/yingtao1.png"
-        },
-        {
-          id: 2,
-          url:
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E6%A8%B1%E6%A1%832.png"
-        },
-        {
-          id: 3,
-          url:
-            "https://piwubang-1257779595.cos.ap-shanghai.myqcloud.com/testupload/%E7%8C%95%E7%8C%B4%E6%A1%831.png"
-        }
-      ],
+      swiperlist: [],
       goodslist: []
     };
   },
@@ -199,6 +183,24 @@ export default {
           wx.stopPullDownRefresh()
         }
       })
+    },
+    getswiperlist(){
+      var self = this;
+      qc.request({
+        url: conf.service.swiperUrl,
+        data:{},
+        success:function(res) {
+          // console.log('getgoodslist', res.data.data);
+          if(res.data.data != []){
+            self.swiperlist = res.data.data
+          }
+          
+        },
+        fail(){
+        },
+        complete(){
+        }
+      })
     }
   },
   async onLoad(){
@@ -207,10 +209,10 @@ export default {
       withShareTicket: true
     })
     this.getgoodslist()
+    this.getswiperlist()
     // console.log('index 242 onLoad',this.globalData);
-    console.log('index globalData:',this.globalData );
-
-    console.log('index globalData.loginstate:',this.globalData.loginstate, this.globalData.loginstate == true );
+    // console.log('index globalData:',this.globalData );
+    // console.log('index globalData.loginstate:',this.globalData.loginstate, this.globalData.loginstate == true );
 
     
   },

@@ -6,7 +6,7 @@
 // var host = 'http://192.168.2.102:8899';
 // var host = 'http://192.168.1.146:8899';
 // var host = 'http://111.231.78.250:8899';
-var host = 'http://111.231.112.2:8899';
+var host = 'https://www.piwubang.com';
 // var host = 'http://www.tech997.cn:8899';
 
 
@@ -32,7 +32,7 @@ var config = {
         uploadUrl: `${host}/weapp/upload`,
 
         // 获取热门商品列表（轮播图）
-        swiperUrl: `${host}/weapp/swiper`,
+        swiperUrl: `${host}/weapp/swiperlist`,
 
         // 获取商品列表
         goodslistUrl: `${host}/weapp/goodslist`,
@@ -75,6 +75,12 @@ var config = {
 
         // 提现申请
         tixianUrl: `${host}/weapp/tixian` ,
+
+        // 获取已发布商品
+        myreleaseUrl: `${host}/weapp/myrelease` ,
+
+        // 删除已发布商品
+        deletemyreleaseUrl: `${host}/weapp/deletemyrelease` ,
 
         // 帮主申请
         bangzhuapplyUrl: `${host}/weapp/bangzhuapply`,

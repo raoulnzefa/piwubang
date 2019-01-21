@@ -42,6 +42,9 @@ router.post('/message', controllers.message.post)
 // GET !!! 小程序查询商品列表
 router.get('/goodslist', controllers.getgoodslist)
 
+// GET !!! 小程序查询首页轮播图
+router.get('/swiperlist', controllers.getswiperlist)
+
 // GET !!! 小程序查询商品详情
 router.get('/goodsdetail', validationMiddleware, controllers.getgoodsdetail)
 
@@ -52,10 +55,8 @@ router.get('/cartgoods', validationMiddleware, controllers.getcartgoods)
 router.get('/addtocart', validationMiddleware, controllers.addtocart)
 
 // GET !!! 小程序统一下单
-router.get('/prepay', validationMiddleware, unifiedorder)
+// router.get('/prepay', validationMiddleware, unifiedorder)
 router.post('/prepay', validationMiddleware, unifiedorder)
-// router.get('/prepay', validationMiddleware, controllers.prepay)
-
 
 // GET !!! 小程序获取收货地址列表
 router.get('/addresslist', validationMiddleware, controllers.addresslist)
@@ -104,6 +105,12 @@ router.get('/searchbangzhugoods', validationMiddleware, controllers.searchbangzh
 
 // POST !!! 小程序帮主/用户发布商品
 router.post('/bangzhugoodsupload', validationMiddleware, controllers.bangzhugoodsupload)
+
+// GET !!! 小程序帮主/用户获取自己的已发布商品
+router.get('/myrelease', validationMiddleware, controllers.myrelease)
+
+// GET !!! 小程序帮主/用户删除自己的已发布商品
+router.get('/deletemyrelease', validationMiddleware, controllers.deletemyrelease)
 
 // GET !!! 小程序搜索该地区已开放小区列表
 router.get('/getcommunitylist', validationMiddleware, controllers.getcommunitylist)

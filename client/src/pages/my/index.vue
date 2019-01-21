@@ -230,6 +230,11 @@ export default {
       wx.navigateTo({
         url:"/pages/mymoney/main"
       })
+    },
+    tomygoods(){
+      wx.navigateTo({
+        url:"/pages/myrelease/main"
+      })
     }
   }
 };

@@ -3,6 +3,7 @@
     "pages/index/main",
     "pages/mymoney/main",
     "pages/my/main",
+    "pages/myrelease/main",
     "pages/orderlist/main",
     "pages/cart/main",
     "pages/zutuan/main",

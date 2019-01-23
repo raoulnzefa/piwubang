@@ -73,7 +73,13 @@ export default {
       communities:[],
       goodslist:[],
       tipshow:false,
-      tip:''
+      tip:'',
+      community:'',
+      communitymarkid:'',
+      longitude:'',
+      latitude:'',
+      citylabel1:'',
+      citylabel2:''
     };
   },
   methods: {
@@ -101,7 +107,13 @@ export default {
       qc.request({
         url:conf.service.getcommunitylistUrl,
         data:{
-          code: self.mypositioncode
+          code: self.mypositioncode,
+          community: self.community,
+          communitymarkid: self.communitymarkid,
+          longitude: self.longitude,
+          latitude: self.latitude,
+          citylabel1:self.citylabel1,
+          citylabel2:self.citylabel2
         },
         success(res){
           wx.hideLoading()
@@ -179,7 +191,20 @@ export default {
     async chooselocation() {
       try {
         let location = (await chooselocation()) || {};
+
+        if( !location.address || !location.name ){
+          return wx.showToast({
+            title: '您没有选择定位',
+            duration: 1500,
+            icon: "none"
+          });
+        }
+
+        this.longitude = location.longitude
+        this.latitude = location.latitude 
         this.location = location.name || "切换位置";
+        this.citylabel2 = location.address + ' ' +location.name
+        console.log('location:');
         console.log(location);
         let querycode = await this.reverseGeocoder(
           location.longitude,
@@ -187,6 +212,15 @@ export default {
         );
         console.log("querycode:", querycode);
         this.mypositioncode = querycode.result.ad_info.adcode;
+        if(querycode.result.address_reference && querycode.result.address_reference.landmark_l2){
+          this.community = querycode.result.address_reference.landmark_l2.title;
+          this.communitymarkid = querycode.result.address_reference.landmark_l2.id;
+        }else{
+          this.community = querycode.result.formatted_addresses.recommend ;
+          this.communitymarkid =  '';
+        }
+        this.citylabel1 = querycode.result.address_component.province + querycode.result.address_component.city + querycode.result.address_component.district
+        
         // console.log( "this.mypositioncode:", this.mypositioncode );
 
         // 获取该地区所有小区列表
@@ -379,12 +413,12 @@ export default {
     // },
     togoodsupload() {
       // 要先加入一个小区
-      let mycommunity = wx.getStorageSync("mycommunity") || {};
-      if(!mycommunity.name || !mycommunity._id){
+      let mycommunity = wx.getStorageSync("mycommunity");
+      if(!mycommunity || !mycommunity.name || !mycommunity._id){
         return wx.showToast({
           icon:'none',
           duration: 3000,
-          title:'要先成为帮主或加入一个小区才能发布商品'
+          title:'先加入一个小区才能发布商品'
         })
       }
       wx.navigateTo({

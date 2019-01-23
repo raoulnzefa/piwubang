@@ -21,11 +21,8 @@
       <span class="l">*</span>
       <span class="m">帮主地盘：</span>
       <div class="r">
-        <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
         <div>
-          <!-- <input type="text" name='citylabel' disabled placeholder="点击选择你的小区" @click='showcitypicker' v-model="citylabel"> -->
           <input type="text" name='citylabel' disabled placeholder="点击选择你的小区位置" @click='chooselocation' v-model="form.citylabel">
-
           <input type="text" name='code' disabled v-model="form.code" hidden>
         </div>
         <div>
@@ -247,7 +244,15 @@ export default {
     
     async chooselocation() {
       try {
-        let location = (await chooselocation()) || null;
+        let location = (await chooselocation()) || {};
+        if( !location.address || !location.name ){
+          return wx.showToast({
+            title: '您没有选择定位',
+            duration: 1500,
+            icon: "none"
+          });
+        }
+
         this.location = location.name || "切换位置";
         // console.log(location);
         this.form.citylabel = location.address+' '+location.name;

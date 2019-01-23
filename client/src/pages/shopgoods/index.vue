@@ -33,6 +33,9 @@
         </div>
       </div>
     </div>
+    <div class="tips" v-if='goodslist.length==0'>
+      Ta还没有发布任何商品
+    </div>
   </div>
 </template>
 <script>
@@ -201,6 +204,11 @@ $maincolor: #ce4031;
         font-size: 32rpx;
       }
     }
+  }
+  .tips{
+    text-align: center;
+    font-size: 32rpx;
+    
   }
 }
 

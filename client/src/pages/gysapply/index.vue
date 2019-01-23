@@ -28,13 +28,13 @@
         </radio-group>
       </span>
     </div>
-    <div class="item line">
+    <!-- <div class="item line">
       <span class="l">*</span>
       <span class="m">身份证号码：</span>
       <span class="r">
         <input type="idcard" name='idno' v-model="form.idno" placeholder="请输入身份证号" confirm-type='next' maxlength='18'>
       </span>
-    </div>
+    </div> -->
     <div class="item line">
       <span class="l">*</span>
       <span class="m">字号：</span>
@@ -53,7 +53,6 @@
       <span class="l">*</span>
       <span class="m">所在地：</span>
       <div class="r">
-        <!-- <div><button hover-class='btnhover'>选择城市</button></div> -->
         <div>
           <input type="text" name='citylabel1' disabled placeholder="省市区选择" @click='showcitypicker' v-model="citylabel1">
           <input type="text" name='code' disabled v-model="code" hidden>
@@ -65,7 +64,15 @@
     </div>
     <div class="item block">
       <span class="l">*</span>
-      <span class="m">身份证正面：</span>
+      <span class="m">营业执照：</span>
+      <div class="r">
+        <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail3" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='4'></mp-uploader>
+        <input type="text" name='yyzhizhao' disabled v-model="imgurls['4']" hidden>
+      </div>
+    </div>
+    <div class="item block">
+      <span class="l">*</span>
+      <span class="m">门头或商品图：</span>
       <div class="r">
         <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail0" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='1'></mp-uploader>
           <input type="text" name='idcard1' disabled v-model="imgurls['1']" hidden>
@@ -73,31 +80,24 @@
     </div>
     <div class="item block">
       <span class="l">*</span>
-      <span class="m">身份证反面：</span>
+      <span class="m">门头或商品图：</span>
       <div class="r">
         <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail1" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='2'></mp-uploader>
           <input type="text" name='idcard2' disabled v-model="imgurls['2']" hidden>
       </div>
     </div>
-    <div class="item block">
+    <!-- <div class="item block">
       <span class="l">*</span>
       <span class="m">手持身份证<br>半身照：</span>
       <div class="r">
         <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail2" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='3'></mp-uploader>
         <input type="text" name='idcard3' disabled v-model="imgurls['3']" hidden>
       </div>
-    </div>
-    <div class="item block">
-      <span class="l">*</span>
-      <span class="m">营业执照：</span>
-      <div class="r">
-        <mp-uploader @upLoadSuccess="upLoadSuccess" @upLoadFail="upLoadFail3" @uploadDelete="uploadDelete" :showTip='showtip' :count='piccount' :maxLength='maxlength' :which='4'></mp-uploader>
-        <input type="text" name='yyzhizhao' disabled v-model="imgurls['4']" hidden>
-      </div>
-    </div>
+    </div> -->
+    
     <div class="textarea">
       <span class="l">*</span>
-      <span class="m">商品说明：</span>
+      <span class="m">主营商品：</span>
       <span class="r">
         <textarea name='applydesc' type="text" v-model="form.desc" class="desc" placeholder="简单描述一下你的商品种类"></textarea>
       </span>
@@ -383,17 +383,17 @@ export default {
           wx.showToast({
             title:res.data.msg,
             icon:'none',
-            duration:1400
+            duration:2000
           })
           setTimeout(function(){
             wx.hideToast()
             wx.switchTab({
               url:'/pages/index/main'
             })
-          },1600)
+          },2100)
         },
         fail(){
-          
+          wx.hideLoading()
         },
         complete(){
           

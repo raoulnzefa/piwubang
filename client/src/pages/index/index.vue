@@ -10,7 +10,8 @@
       <i class="iconfont icon-tubiao_xiala"></i>
     </div> -->
 
-    <swiper indicator-dots="true" autoplay="true" interval="2500" duration="500" circular="true">
+    <swiper indicator-dots="true" autoplay="true" interval="2500" duration="500" circular="true"
+     @click='loadswiper'>
       <block v-for="(x, i) in swiperlist" :key="i">
         <swiper-item>
           <img :src="x.url" class="slide-image" mode="widthFix">
@@ -86,6 +87,11 @@ export default {
     goodsItem,authModal
   },
   methods: {
+    loadswiper(){
+      if(this.swiperlist.length == 0){
+        this.getswiperlist()
+      }
+    },
     async changelocation() {
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
@@ -149,7 +155,7 @@ export default {
       })
     },
     tobangpai(){
-      let url = `/pages/zutuan/main`
+      let url = `/pages/my/main`
       wx.switchTab({
         url
       })
@@ -331,6 +337,7 @@ swiper {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  font-size: 30rpx;
   .joinbtn {
     background-color: #fff;
     color: $maincolor;
@@ -344,29 +351,23 @@ swiper {
   .imgcon{
     // width: 150rpx;
     // height: 127.5rpx;
-    width: 120rpx;
-    height: 102rpx;
+    width: 100rpx;
+    height: 100rpx;
     // background-color: pink;
     overflow: hidden;
     margin: 0 auto;
+    
     img{
       width: 100%;
       height: 100%;
     }
+
   }
   .bzzm{
     text-align: center;
-    img{
-      width: 96%;
-      height: 100%;
-    }
   }
   .gysrz{
     text-align: center;
-    img{
-      width: 85%;
-      height: 100%;
-    }
   }
 }
 .onbottom{

@@ -392,12 +392,14 @@ export default {
           wx.showToast({
             title:res.data.msg,
             icon:'none',
-            duration:1400
+            duration:2000
           })
           if(res.data.code == 'ROUNDSHOP_APPLY_SUCCESS'){
-            wx.switchTab({
-              url:'/pages/near/main'
-            })
+            setTimeout(function(){
+              wx.switchTab({
+                url:'/pages/near/main'
+              })
+            },2100)
           }
         },
         fail(){

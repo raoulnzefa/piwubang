@@ -22,11 +22,14 @@
       <span class="m">帮主地盘：</span>
       <div class="r">
         <div>
-          <input type="text" name='citylabel' disabled placeholder="点击选择你的小区位置" @click='chooselocation' v-model="form.citylabel">
+          <input class='ainput' type="text" name='citylabel' disabled placeholder="点击选择你的小区位置" @click='chooselocation' v-model="form.citylabel">
           <input type="text" name='code' disabled v-model="form.code" hidden>
         </div>
         <div>
-          <textarea name="community" id="" placeholder="详细地址(如九龙仓1区3幢201室,中海七区5幢601室...)" v-model="form.community" confirm-type='next'></textarea>
+          小区名:<input class='linput' name="community" id="" placeholder="小区名" v-model="form.community" confirm-type='next' />
+        </div>
+        <div>
+          楼栋房号:<input class='linput' name="communitydetail" id="" placeholder="例：1区3幢201室" v-model="form.communitydetail" confirm-type='next' />
         </div>
       </div>
     </div>
@@ -137,6 +140,8 @@ export default {
         code:'',
         citylabel:'',
         community:'',
+        communitydetail:'',
+        communityid:'',
         province:'',
         city:'',
         country:''
@@ -150,7 +155,7 @@ export default {
         1:'',
         2:'',
         3:''
-      }
+      },
 
     };
   },
@@ -264,10 +269,17 @@ export default {
           location.latitude
         );
         // console.log("querycode:", querycode);
+        
+        if(querycode.result.address_reference && querycode.result.address_reference.landmark_l2){
+          // this.community = querycode.result.address_reference.landmark_l2.title;
+          this.form.communityid = querycode.result.address_reference.landmark_l2.id;
+          this.form.community = querycode.result.address_reference.landmark_l2.title;
+        }else{
+          this.form.community = querycode.result.formatted_addresses.recommend ;
+          this.form.communityid =  '';
+        }
 
         this.form.code = querycode.result.ad_info.adcode;
-        
-
         this.form.province = querycode.result.address_component.province;
         this.form.city = querycode.result.address_component.city;
         this.form.country = querycode.result.address_component.district;
@@ -409,6 +421,8 @@ export default {
 
       value.longitude = self.form.longitude
       value.latitude = self.form.latitude
+      value.communityid = self.form.communityid
+      value.citylabel = self.form.citylabel + value.communitydetail
 
       qc.request({
         // login:true,
@@ -416,16 +430,11 @@ export default {
         data:{formId , ...value},
         url: conf.service.bangzhuapplyUrl,
         success(res){
-          // console.log(res);
-
-          // if(res.data.code == ){
-
-          // }
           wx.hideLoading()
           wx.showToast({
             title:res.data.msg,
             icon:'none',
-            duration:1400
+            duration:1500
           })
           setTimeout(function(){
             wx.hideToast()
@@ -507,6 +516,8 @@ $maincolor: #ce4031;
       input{
         border: 1px solid #ccc;
         border-radius: 5px;
+        color: #000;
+        padding-left: 10rpx;
       }
       textarea{
         border-radius: 5px;
@@ -515,6 +526,19 @@ $maincolor: #ce4031;
         width: 100%;
         box-sizing: border-box;
         margin-top: 12rpx;
+      }
+      div{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 10rpx;
+        font-size: 30rpx;
+        .ainput{
+          width: 100%;
+        }
+        .linput{
+          width: 300rpx;
+        }
       }
     }
   }

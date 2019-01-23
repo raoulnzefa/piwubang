@@ -26,6 +26,16 @@
         </i-card>
       </div>
     </div>
+    <div class="zhinan" v-if="goodslist.length == 0">
+      <div class='title'>【组团攻略】</div>
+      <div class='content'>
+        点击上方定位到您所在的小区位置，然后选择下拉列表中符合的小区名，再点击确定，即表示您加入了这个小区的组团。
+        您可以发布商品，也可以购买小区内其他用户发布的组团商品。
+      </div>
+      <div class='content'>
+        您也可以点击右上角邀请其他邻居一起加入！
+      </div>
+    </div>
     <div class="spacing"></div>
     <div class="fabu">
       <button hover-class="btnhover" @click="togoodsupload">我要发布</button>
@@ -104,6 +114,13 @@ export default {
       wx.showLoading({
         title:'小区列表加载中...'
       })
+      if(!self.community || !self.longitude || !self.latitude || !self.citylabel1 || !self.citylabel2){
+        return wx.showToast({
+              icon:'none',
+              title:'位置信息有误，请重新选择',
+              duration: 2000
+            })
+      }
       qc.request({
         url:conf.service.getcommunitylistUrl,
         data:{
@@ -568,5 +585,17 @@ $maincolor: #ce4031;
 }
 .spacing{
   height: 100rpx;
+}
+.zhinan{
+  padding: 60rpx;
+  .title{
+    font-size: 32rpx;
+    font-weight: 600;
+    text-align: center;
+  }
+  .content{
+    font-size: 28rpx;
+    text-indent: 2em;
+  }
 }
 </style>

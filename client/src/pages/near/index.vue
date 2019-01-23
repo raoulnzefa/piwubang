@@ -19,7 +19,7 @@
             <button class="jindian" hover-class='jindian-hover' @click="toshop(x)">进店看看</button>
           </div>
         </div>
-        <div class="main" @click="toshop(x)">
+        <!-- <div class="main" @click="toshop(x)">
           <div class="goods" v-for="(y,n) in x.goodslist" :key="n">
             <img :src="y.thumbnail" alt="">
             <div class="name">{{y.name}}</div>
@@ -28,7 +28,7 @@
               <div class='old'>{{y.oldPrice}}</div>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="locate" @click="toqqmap(x)">
           <span class="iconfont icon-round"></span>
           <span>{{x.citylabel1}}</span>

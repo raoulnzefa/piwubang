@@ -17,7 +17,6 @@ module.exports = async (ctx, next) => {
                 msg:"申请成功"
             }
         }else if(searchs.length===1){
-            // 
             let search = searchs[0]
             if(search.status == 1){
                 return ctx.body = {
@@ -42,7 +41,6 @@ module.exports = async (ctx, next) => {
                 }
             }else{
                 console.log('GYS_APPLY_SYSTEM_ERROR1');
-                
                 return ctx.body = {
                     code:"GYS_APPLY_SYSTEM_ERROR",
                     data:{},
@@ -52,7 +50,6 @@ module.exports = async (ctx, next) => {
             }
         }else{
             console.log('GYS_APPLY_SYSTEM_ERROR2');
-
             return ctx.body = {
                 code:"GYS_APPLY_SYSTEM_ERROR",
                 data:{},

@@ -1,16 +1,16 @@
 <template>
   <div class="goodscon">
-    <div class="l">
+    <div class="l" @click="routeTo(goodsinfo._id)">
       <img :src="goodsinfo.thumbnail" mode="aspectFill" alt="商品图片">
     </div>
     <div class="r">
-      <div class="part1">{{goodsinfo.name}}</div>
-      <div class="part2">{{goodsinfo.briefDesc}}</div>
+      <div class="part1" @click="routeTo(goodsinfo._id)">{{goodsinfo.name}}</div>
+      <div class="part2" @click="routeTo(goodsinfo._id)">{{goodsinfo.briefDesc}}</div>
       <div class="part3">
         <span>已售{{goodsinfo.salescount}}件</span>
       </div>
       <div class="part4">
-        <div class="l">
+        <div class="l" @click="routeTo(goodsinfo._id)">
           <div>批物价</div>
           <div class="price">
             <span class="nowprice">￥{{goodsinfo.currentPrice}}</span>

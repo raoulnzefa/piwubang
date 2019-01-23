@@ -1,7 +1,7 @@
 {
     "navigationBarBackgroundColor": "#CE4031",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "批物帮",
+    "navigationBarTitleText": "每日一批",
     "backgroundColor": "#CE4031",
     "backgroundTextStyle": "light",
     "onReachBottomDistance":10,

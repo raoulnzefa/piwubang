@@ -265,9 +265,13 @@ export default {
             let data = res.data.data
             let list = []
             for(let i=0;i<data.length-1;i++){
+              if(!data[i].targetArea_name){
+                list.push( data[i] )
+                continue
+              }
               data[i].targetArea_name = JSON.parse(data[i].targetArea_name) || []
               data[i].targetArea_name.map(function(v1,i1){
-                if(v1.name == self.location){
+                if(v1.name == self.location|| v1.name =='全国' || !v1.name ){
                   list.push( data[i] )
                   return
                 }

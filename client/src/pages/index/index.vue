@@ -4,12 +4,11 @@
     <slogan type='index'></slogan>
     <!-- 打开授权设置页面 -->
     <!-- <mp-button @click='opensetting'>opensetting</mp-button> -->
-    <!-- <div class="location" @click="changelocation">
+    <div class="location" @click="changelocation" v-if='!locationauthed'>
       <i class="iconfont icon-round"></i>
       <span>{{location}}</span>
       <i class="iconfont icon-tubiao_xiala"></i>
-    </div> -->
-
+    </div>
     <swiper indicator-dots="true" autoplay="true" interval="2500" duration="500" circular="true"
      @click='loadswiper'>
       <block v-for="(x, i) in swiperlist" :key="i">
@@ -19,9 +18,6 @@
       </block>
     </swiper>
     <div class="join">
-      <!-- <button class="joinbtn" hover-class="joinbtnhover" @click='toBZapply'>帮主招募</button>
-      <button class="joinbtn" hover-class="joinbtnhover" @click='toGYSapply'>供应商入驻</button>
-      <button class="joinbtn" hover-class="joinbtnhover" @click='tobangpai'>加入帮派</button> -->
       <div @click='toBZapply'> 
         <!-- widthFix -->
         <div class="bzzm imgcon">
@@ -45,10 +41,7 @@
     <div class="dailygoods">
       <goods-item v-for="(x,k) in goodslist" :key="k" :goodsinfo="x"></goods-item>
     </div>
-    <!-- <div class='onbottom'>{{onbottom}}</div> -->
-    <!-- <i-divider :content="onbottom"></i-divider> -->
-    <i-divider content="已经到底啦"></i-divider>
-
+    <i-divider :content="divider"></i-divider>
     <auth-modal :show="authmodalshow"></auth-modal>
   </div>
 </template>
@@ -56,6 +49,11 @@
 <script>
 import qc from 'wafer2-client-sdk'
 import conf from '@/config'
+import qqmap from "@/wxapis/qqmap.js";
+var mymap = new qqmap({
+  // 地图开发秘钥
+  key: conf.mapkey // 必填
+});
 
 import checkscope from "@/wxapis/check_scope";
 import authorize from "@/wxapis/authorize";
@@ -76,9 +74,12 @@ export default {
       onbottom: '上划加载更多',
       loginstate:this.globalData.loginstate,
       userInfo: {},
-      location: "点击查看周边好物",
+      location: "点击切换城市",
       swiperlist: [],
-      goodslist: []
+      goodslist: [],
+      mycity:'',
+      locationauthed:false,
+      divider:'已经到底啦'
     };
   },
   components: {
@@ -93,6 +94,7 @@ export default {
       }
     },
     async changelocation() {
+      var self = this
       // 检查定位授权
       let locationAuth = await checkscope("scope.userLocation"); //userInfo
       // console.log(66, locationAuth);
@@ -100,17 +102,38 @@ export default {
         let locationAuthRes = await authorize("scope.userLocation");
         // console.log(75, locationAuthRes);
         if (locationAuthRes.errMsg == "authorize:ok") {
+          self.locationauthed = true
           // 同意
-          let location = await chooselocation() || {};
-          this.location = location.name || '切换位置';
-          console.log(location);
-          
+          // let location = await chooselocation() || {};
+          // this.location = location.name || '切换位置';
+          // console.log(location);
+          wx.getLocation({
+            type:'gcj02', // wgs84
+            async success(res){
+              console.log(res);
+              let querycode = await self.reverseGeocoder(
+                res.longitude,
+                res.latitude
+              );
+              console.log(querycode);
+              self.location = querycode.result.address_component.city
+              wx.setStorageSync('mycity', querycode.result.address_component.city)
+            },
+            fail(){
+              wx.showToast({
+                title:"位置获取失败，请检查网络",
+                duration: 1800,
+                icon:'none'
+              })
+            }
+          })
         } else {
           // 拒绝了
+          self.locationauthed = false
           let modalres = await modal({
-            content: "打开定位可以看到离你最近的批发商哦",
+            content: "通过点击右上角->关于->右上角->设置->使用我的位置可重新打开定位",
             cancelText: "放弃推荐",
-            confirmText: "打开定位"
+            confirmText: "我知道了"
           });
           // console.log(86, modalres);
           if (modalres) {
@@ -118,16 +141,38 @@ export default {
             let settingres = await openSetting();
             // console.log(settingres);
             if (settingres["scope.userLocation"]) {
+              self.locationauthed = true
               // 已打开定位
               wx.showToast({
                 title: "定位打开成功",
                 icon: "none",
                 duration: 1000
               });
-              let location = await chooselocation() || {};
-              this.location = location.name || '切换位置';
-              console.log(location);
+              // let location = await chooselocation() || {};
+              // this.location = location.name || '切换位置';
+              // console.log(location);
+              wx.getLocation({
+                type:'gcj02', // wgs84
+                async success(res){
+                  console.log(res);
+                  let querycode = await self.reverseGeocoder(
+                    res.longitude,
+                    res.latitude
+                  );
+                  console.log(querycode);
+                  self.location = querycode.result.address_component.city
+                  wx.setStorageSync('mycity', querycode.result.address_component.city)
+                },
+                fail(){
+                  wx.showToast({
+                    title:"位置获取失败，请检查网络",
+                    duration: 1800,
+                    icon:'none'
+                  })
+                }
+              })
             } else {
+              self.locationauthed = false
               wx.showToast({
                 title: "您没有打开定位",
                 icon: "none",
@@ -135,12 +180,53 @@ export default {
               });
             }
           }
+          self.location = '全国'
+          self.locationauthed = true
+          wx.setStorageSync('mycity','全国')
+
         }
       } else {
-        let location = await chooselocation() || {};
-        this.location = location.name || '切换位置';
-        console.log(location);
+        self.locationauthed = true
+        // let location = await chooselocation() || {};
+        // this.location = location.name || '切换位置';
+        // console.log(location);
+        wx.getLocation({
+          type:'gcj02', // wgs84
+          async success(res){
+            console.log(res);
+            let querycode = await self.reverseGeocoder(
+              res.longitude,
+              res.latitude
+            );
+            console.log(querycode);
+            self.location = querycode.result.address_component.city
+            wx.setStorageSync('mycity', querycode.result.address_component.city)
+          },
+          fail(){
+            wx.showToast({
+              title:"位置获取失败，请检查网络",
+              duration: 1800,
+              icon:'none'
+            })
+          }
+        })
       }
+    },
+    reverseGeocoder(longitude, latitude) {
+      return new Promise(function(resolve, reject) {
+        mymap.reverseGeocoder({
+          location: {
+            latitude: latitude,
+            longitude: longitude
+          },
+          success: function(res) {
+            resolve(res);
+          },
+          fail: function(res) {
+            resolve(null);
+          }
+        });
+      });
     },
     toBZapply(){
       let url = `/pages/bangzhuapply/main`
@@ -175,7 +261,23 @@ export default {
           if(res.data.data == []){
             self.onbottom = '已经到底啦！'
           }
-          self.goodslist = res.data.data
+          if( self.location && self.location != '点击切换城市' ){
+            let data = res.data.data
+            let list = []
+            for(let i=0;i<data.length-1;i++){
+              data[i].targetArea_name = JSON.parse(data[i].targetArea_name) || []
+              data[i].targetArea_name.map(function(v1,i1){
+                if(v1.name == self.location){
+                  list.push( data[i] )
+                  return
+                }
+              })
+            }
+            self.goodslist = list
+            self.divider = `以上推荐的是${self.location}的商品`
+          }else{
+            self.goodslist = res.data.data
+          }
         },
         fail(){
           wx.showToast({
@@ -216,16 +318,11 @@ export default {
     })
     this.getgoodslist()
     this.getswiperlist()
-    // console.log('index 242 onLoad',this.globalData);
-    // console.log('index globalData:',this.globalData );
-    // console.log('index globalData.loginstate:',this.globalData.loginstate, this.globalData.loginstate == true );
-
-    
   },
   onShow() {
     // console.log('index show');
     if(!this.globalData.loginstate){
-      wx.showToast({
+      return wx.showToast({
         title:"请先登录哦",
         icon:"none",
         mask:true,
@@ -233,10 +330,17 @@ export default {
         success(){
           setTimeout(function(){
             wx.switchTab({url:"/pages/my/main"})
-          },1500)
+          },1600)
         }
       })
     }
+    let mycity = wx.getStorageSync('mycity')
+    if(!mycity){
+      this.location = '点击切换城市';
+    }else{
+      this.location = mycity
+    }
+    this.changelocation()
   },
   created () {
     console.log('index created');

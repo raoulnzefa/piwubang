@@ -63,38 +63,36 @@ module.exports = async (ctx, next) => {
             }
         }else{
             let _id = 'user'+ranstr
-            // bu是帮主 是普通用户 只允许发一个
+            // 不是帮主 是普通用户 只允许发一个
             // 查是否发过
-            let query = await mysql('t_product_zutuan').first().where({openid})
+            let query = await mysql('t_product_zutuan').first().where({openid,hasdelete: 0})
             if(query){
+                // 删除
                 await mysql('t_product_zutuan').update({
-                    uploadUser: openid,
-                    _id,
-                    ...params
-                }).limit(1).where({openid})
-                return ctx.body = {
-                    code:"ZUTUAN_UPDATE_SUCCESS",
-                    data:null,
-                    success:true,
-                    msg:"商品上传成功，旧商品已被删除"
-                }
-            }else{
-                await mysql('t_product_zutuan').insert({
-                    _id,
-                    ...params,
-                    openid,
-                    uploadUser: openid,
-                    origin:'user',
-                    uploaderRole:'user',
-                    thumbnail,
-                    userinfo
-                })
-                return ctx.body = {
-                    code:"ZUTUAN_UPLOAD_SUCCESS",
-                    data:null,
-                    success:true,
-                    msg:"商品上传成功"
-                }
+                    hasdelete: 1
+                }).limit(1).where({openid, hasdelete: 0})
+                // return ctx.body = {
+                //     code:"ZUTUAN_UPDATE_SUCCESS",
+                //     data:null,
+                //     success:true,
+                //     msg:"商品上传成功，旧商品已被删除"
+                // }
+            }
+            await mysql('t_product_zutuan').insert({
+                _id,
+                ...params,
+                openid,
+                uploadUser: openid,
+                origin:'user',
+                uploaderRole:'user',
+                thumbnail,
+                userinfo
+            })
+            return ctx.body = {
+                code:"ZUTUAN_UPLOAD_SUCCESS",
+                data:null,
+                success:true,
+                msg:"商品上传成功"
             }
             
         }

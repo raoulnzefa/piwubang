@@ -70,7 +70,7 @@
           <span class="m">计量单位：</span>
           <span class="r">
             <input
-              type="digit"
+              type="text"
               name="unit"
               v-model="form.unit"
               placeholder="斤,件,份,公斤..."

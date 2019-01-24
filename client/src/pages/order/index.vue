@@ -39,10 +39,12 @@
           <td>发货时间 :</td>
           <td>{{goodsdetail.deliveryTime}}</td>
         </tr>
-        <!-- <tr>
+        <tr>
           <td>可购区域 :</td>
-          <td>{{goodsdetail.targetArea_name}}</td>
-        </tr> -->
+          <td>
+            <span v-for='(m,k) in goodsdetail.targetArea_name' :key="k"> {{ m.name }} </span>
+          </td>
+        </tr>
         <tr>
           <td>是否包邮 :</td>
           <td>{{goodsdetail.shipping?'包邮':'不包邮'}}</td>
